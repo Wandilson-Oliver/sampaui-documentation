@@ -1,0 +1,588 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+@import 'tailwindcss';
+@import '../../vendor/sampaui/sampaui/dist/sampaui.css';
+
+@theme {
+    --font-sans: "Plus Jakarta Sans", "Outfit", ui-sans-serif, system-ui, sans-serif;
+    --color-primary: #5574C9;
+    --color-secondary: #2E314A;
+    --color-accent: #FDB82E;
+    --color-danger: #E84586;
+    --color-light: #F4F6FA;
+    --color-success: #79C8BC;
+    --color-warning: #FF7D3D;
+    --color-info: #43BEE3;
+    --color-purple: #895FC4;
+    --color-muted: #B7B8C5;
+
+    --radius-default: 1rem;
+    --radius-lg: 1.5rem;
+    --shadow-default: 0 16px 40px rgba(85, 116, 201, 0.14);
+}
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../../app/**/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@layer components {
+    .doc-shell {
+        @apply min-h-screen overflow-x-hidden bg-[#F4F6FA] text-primary antialiased;
+    }
+
+    .doc-app-frame {
+        @apply flex h-screen w-screen overflow-hidden rounded-none bg-[#F4F6FA];
+    }
+
+    .doc-menu-panel {
+        @apply hidden h-full w-80 shrink-0 overflow-y-auto border-r border-white/70 bg-white/90 px-6 py-7 shadow-[18px_0_60px_rgb(85_116_201_/_0.06)] lg:block;
+    }
+
+    .doc-brand-block {
+        @apply rounded-[1.35rem] border border-white bg-gradient-to-br from-white to-light p-5 shadow-sm;
+    }
+
+    .doc-menu-link {
+        @apply flex cursor-pointer items-center gap-4 rounded-[1.15rem] px-4 py-3 text-base font-medium text-secondary transition hover:bg-light/60 hover:text-primary;
+    }
+
+    .doc-menu-link-active {
+        @apply text-primary;
+    }
+
+    .doc-menu-item {
+        @apply block cursor-pointer rounded-default px-4 py-2 text-sm font-medium text-secondary transition hover:bg-light/35 hover:text-primary;
+    }
+
+    .doc-menu-item-active {
+        @apply bg-light/60 text-primary;
+    }
+
+    .doc-menu-section {
+        @apply space-y-1 border-t border-light/80 pt-4 first:border-t-0 first:pt-0;
+    }
+
+    .doc-menu-section-title {
+        @apply flex items-center gap-2 px-4 text-[0.68rem] font-bold uppercase tracking-[0.22em] text-secondary/50;
+    }
+
+    .doc-menu-section-icon {
+        @apply flex h-8 w-8 items-center justify-center rounded-default bg-light text-sm text-primary;
+    }
+
+    .doc-menu-icon {
+        @apply flex h-10 w-10 items-center justify-center rounded-default bg-light text-primary transition;
+    }
+
+    .doc-menu-link:hover .doc-menu-icon,
+    .doc-menu-link-active .doc-menu-icon {
+        @apply bg-primary text-white;
+    }
+
+    .doc-menu-footer {
+        @apply mt-10 rounded-default border border-dashed border-secondary/30 bg-white p-5;
+    }
+
+    .doc-stack-pill {
+        @apply block rounded-full bg-light px-3 py-2 text-sm font-medium text-secondary;
+    }
+
+    .doc-topbar {
+        @apply sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-white/70 bg-[#F4F6FA]/90 px-5 py-3 backdrop-blur-xl md:px-8;
+    }
+
+    .doc-search-wrap {
+        @apply relative w-full max-w-xl;
+    }
+
+    .doc-search {
+        @apply flex h-11 w-full items-center gap-3 rounded-full border border-white bg-white px-5 text-sm font-medium text-secondary shadow-sm transition focus-within:border-primary/20 focus-within:ring-4 focus-within:ring-primary/10;
+    }
+
+    .doc-search input {
+        @apply w-full border-0 bg-transparent p-0 text-sm font-medium text-secondary outline-none placeholder:text-secondary/70;
+    }
+
+    .doc-search-panel {
+        @apply absolute left-0 right-0 top-full z-50 mt-3 max-h-[28rem] overflow-y-auto rounded-[1.25rem] border border-light bg-white p-2;
+    }
+
+    .doc-search-result {
+        @apply block w-full cursor-pointer rounded-[1rem] px-4 py-3 text-left transition hover:bg-light/40;
+    }
+
+    .doc-search-result-active {
+        @apply bg-light/60;
+    }
+
+    .doc-search-result-meta {
+        @apply flex flex-wrap items-center gap-2 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-primary/80;
+    }
+
+    .doc-search-result-title {
+        @apply mt-1 block text-sm font-semibold text-primary;
+    }
+
+    .doc-search-result-copy {
+        @apply mt-1 line-clamp-2 text-xs leading-5 text-secondary;
+    }
+
+    .doc-search-empty {
+        @apply px-4 py-6 text-center text-sm font-medium text-secondary;
+    }
+
+    .doc-status-dot {
+        @apply h-3 w-3 rounded-full bg-accent shadow-[0_0_0_6px_rgb(245_158_11_/_0.16)];
+    }
+
+    .doc-content {
+        @apply mx-auto max-w-[104rem] space-y-6 bg-[#F4F6FA] px-4 py-5 md:px-8 md:py-6;
+    }
+
+    .doc-component-intro-grid {
+        @apply grid gap-5;
+    }
+
+    .doc-component-layout {
+        @apply grid gap-6 xl:grid-cols-[minmax(0,1fr)_24rem] 2xl:grid-cols-[minmax(0,1fr)_26rem];
+    }
+
+    .doc-examples-column {
+        @apply min-w-0 space-y-6;
+    }
+
+    .doc-explanations-column {
+        @apply min-w-0 space-y-4 xl:sticky xl:top-5 xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto xl:pr-1;
+    }
+
+    .doc-explanation-card {
+        @apply rounded-[1.25rem] border border-white bg-white/95 p-5 shadow-sm;
+    }
+
+    .doc-dashboard-grid {
+        @apply grid gap-7 xl:grid-cols-[minmax(0,1fr)_26rem];
+    }
+
+    .doc-dashboard-grid-install {
+        @apply xl:grid-cols-[22rem_minmax(0,1fr)];
+    }
+
+    .doc-hero-card {
+        @apply relative overflow-hidden rounded-[1.25rem] border border-white bg-white/95 px-5 py-4 shadow-sm md:px-6;
+    }
+
+    .doc-component-hero {
+        @apply min-h-0;
+    }
+
+    .doc-hero-card::after {
+        @apply pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-light/45 content-[''];
+    }
+
+    .doc-home-hero::after {
+        @apply -right-10 -top-10 h-44 w-44;
+    }
+
+    .doc-preview-column {
+        @apply space-y-6;
+    }
+
+    .doc-breadcrumb {
+        @apply flex flex-wrap items-center gap-2 text-sm font-medium text-secondary;
+    }
+
+    .doc-hero-facts {
+        @apply mt-8 grid gap-3 border-t border-light pt-6 md:grid-cols-3;
+    }
+
+    .doc-hero-facts div {
+        @apply rounded-[1.15rem] bg-light p-4;
+    }
+
+    .doc-hero-facts strong {
+        @apply block text-lg font-semibold text-primary;
+    }
+
+    .doc-hero-facts span {
+        @apply mt-1 block text-xs font-medium leading-5 text-secondary;
+    }
+
+    .doc-component-summary-grid {
+        @apply relative z-[1] mt-8 grid gap-3 md:grid-cols-3;
+    }
+
+    .doc-component-summary-grid div {
+        @apply rounded-[1.15rem] border border-light bg-light p-4;
+    }
+
+    .doc-component-summary-grid span {
+        @apply block text-xs font-semibold uppercase tracking-[0.18em] text-primary;
+    }
+
+    .doc-component-summary-grid strong {
+        @apply mt-2 block text-sm font-medium leading-6 text-secondary;
+    }
+
+    .doc-quick-card {
+        @apply rounded-[1.75rem] border border-light bg-white p-6;
+    }
+
+    .doc-quick-row {
+        @apply flex items-center gap-2 rounded-full bg-light px-3 py-2 text-xs font-medium leading-5 text-secondary;
+    }
+
+    .doc-quick-row i {
+        @apply shrink-0 text-sm text-primary;
+    }
+
+    .doc-package-panel {
+        @apply rounded-[1.75rem] border border-light bg-white p-6;
+    }
+
+    .doc-status-badge {
+        @apply inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary text-xs font-semibold text-white shadow-sm;
+    }
+
+    .doc-health-row {
+        @apply flex items-center justify-between gap-4 rounded-[1rem] bg-light px-4 py-3 text-sm;
+    }
+
+    .doc-health-row span {
+        @apply font-medium text-secondary;
+    }
+
+    .doc-health-row strong {
+        @apply text-right font-semibold text-primary;
+    }
+
+    .doc-dashed-card {
+        @apply flex h-24 items-center justify-between rounded-[1.75rem] border-2 border-dashed border-secondary/30 bg-white/72 px-7 text-2xl font-semibold text-light;
+    }
+
+    .doc-team-card,
+    .doc-preview-panel,
+    .doc-component-board,
+    .doc-stat-card,
+    .doc-code-card,
+    .doc-table-card,
+    .doc-example-card {
+        @apply rounded-[1.45rem] border border-white bg-white/95 p-5 shadow-sm md:p-6;
+    }
+
+    .doc-preview-panel {
+        @apply bg-gradient-to-b from-white to-light   p-7;
+    }
+
+    .doc-round-button {
+        @apply flex h-12 w-12 items-center justify-center rounded-full bg-white text-xl text-primary shadow-xl;
+    }
+
+    .doc-face {
+        @apply flex h-14 w-14 items-center justify-center rounded-full border-4 border-white text-sm font-semibold text-white shadow-sm;
+    }
+
+    .doc-chip {
+        @apply inline-flex items-center rounded-full border border-light bg-white px-3 py-1 text-xs font-semibold text-secondary;
+    }
+
+    .doc-section-header {
+        @apply flex flex-wrap items-end justify-between gap-4 border-b border-light/80 pb-4;
+    }
+
+    .doc-stat-card {
+        @apply flex items-start gap-5;
+    }
+
+    .doc-api-section {
+        @apply overflow-hidden rounded-[1.75rem] border border-light bg-white;
+    }
+
+    .doc-api-section-compact {
+        @apply rounded-[1.35rem];
+    }
+
+    .doc-api-intro {
+        @apply w-full rounded-none border-b border-light bg-gradient-to-b from-white to-light   p-6 shadow-none md:p-7;
+    }
+
+    .doc-api-section-compact .doc-api-intro {
+        @apply p-5;
+    }
+
+    .doc-api-section-compact .doc-api-intro .doc-stat-icon {
+        @apply hidden;
+    }
+
+    .doc-api-intro .doc-stat-icon {
+        @apply h-14 w-14 rounded-default text-xl;
+    }
+
+    .doc-stat-icon {
+        @apply flex h-16 w-16 shrink-0 items-center justify-center rounded-default text-2xl text-white shadow-xl;
+    }
+
+    .doc-code-card {
+        @apply overflow-hidden border-0 bg-primary p-0 text-white;
+    }
+
+    .doc-code-card pre,
+    .doc-code pre {
+        @apply overflow-x-auto p-6 text-sm leading-7;
+    }
+
+    .doc-examples-list {
+        @apply mt-6 space-y-4;
+    }
+
+    .doc-showcase-list {
+        @apply mt-6 space-y-5;
+    }
+
+    .doc-page-preview {
+        @apply mt-7 w-full overflow-x-auto rounded-[1.5rem] border border-light bg-[#F4F6FA] p-4;
+    }
+
+    .doc-page-preview > * {
+        @apply w-full;
+    }
+
+    .doc-page-launch {
+        @apply mt-7 flex flex-col gap-5 rounded-[1.5rem] border border-light bg-gradient-to-br from-light/60 to-primary/10   p-6 md:flex-row md:items-center md:justify-between;
+    }
+
+    .doc-page-launch h3 {
+        @apply mt-2 text-2xl font-semibold text-primary;
+    }
+
+    .doc-page-launch p:not(.doc-kicker) {
+        @apply mt-3 max-w-3xl text-sm leading-6 text-secondary;
+    }
+
+    .doc-showcase-card {
+        @apply overflow-visible rounded-[1.35rem] border border-light/90 bg-white shadow-sm;
+    }
+
+    .doc-showcase-header {
+        @apply flex flex-wrap items-start justify-between gap-4 border-b border-light/80 bg-light/70 px-5 py-4 md:px-6;
+    }
+
+    .doc-showcase-header h2 {
+        @apply text-lg font-semibold text-primary;
+    }
+
+    .doc-showcase-header p {
+        @apply mt-1 max-w-3xl text-sm leading-6 text-secondary;
+    }
+
+    .doc-showcase-preview {
+        @apply relative z-20 flex min-h-36 flex-wrap items-center gap-x-4 gap-y-3 rounded-b-[1.35rem] bg-white px-5 py-7 md:px-6;
+    }
+
+    .doc-showcase-preview > label,
+    .doc-showcase-preview > input,
+    .doc-showcase-preview > select,
+    .doc-showcase-preview > textarea,
+    .doc-showcase-preview > p,
+    .doc-showcase-preview > div {
+        @apply w-full;
+    }
+
+    .doc-showcase-preview > .sampaui-dropdown {
+        @apply w-max;
+    }
+
+    .doc-showcase-preview > .doc-sidebar-preview {
+        width: auto;
+    }
+
+    .doc-showcase-preview > button,
+    .doc-showcase-preview > a,
+    .doc-showcase-preview > [role='button'] {
+        @apply w-auto;
+    }
+
+    .doc-showcase-code-wrap {
+        @apply relative z-0 border-t border-light bg-light;
+    }
+
+    .doc-copy-button {
+        @apply absolute right-4 top-4 z-10 flex h-10 w-10 cursor-pointer items-center justify-center rounded-default border border-light bg-white text-base text-secondary shadow-sm transition hover:border-primary/30 hover:text-primary;
+    }
+
+    .doc-code-label {
+        @apply border-b border-light px-6 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-secondary/60;
+    }
+
+    .doc-showcase-code {
+        @apply max-h-[32rem] overflow-auto px-6 py-5 pr-20 font-mono text-sm leading-7 text-secondary;
+    }
+
+    .doc-example-row {
+        @apply grid items-center gap-5 p-5 lg:grid-cols-[18rem_minmax(0,1fr)];
+    }
+
+    .doc-example-copy {
+        @apply min-w-0;
+    }
+
+    .doc-recipe-list {
+        @apply mt-7 grid gap-5;
+    }
+
+    .doc-recipe-row {
+        @apply grid gap-4 rounded-[1.25rem] border border-light/90 bg-white p-4 md:p-5;
+    }
+
+    .doc-recipe-copy {
+        @apply min-w-0 max-w-3xl;
+    }
+
+    .doc-recipe-copy h3 {
+        @apply text-xl font-semibold text-primary;
+    }
+
+    .doc-recipe-copy p {
+        @apply mt-2 text-sm leading-6 text-secondary;
+    }
+
+    .doc-recipe-code {
+        @apply relative min-w-0 overflow-hidden rounded-[1.15rem] bg-primary text-white shadow-[0_18px_40px_rgb(85_116_201_/_0.18)];
+    }
+
+    .doc-recipe-code .doc-copy-button {
+        @apply border-white/10 bg-white/10 text-white hover:bg-white hover:text-primary;
+    }
+
+    .doc-recipe-code pre {
+        @apply max-h-[28rem] overflow-auto p-5 pr-20 font-mono text-sm leading-7 md:p-6 md:pr-24;
+    }
+
+    .doc-component-tile {
+        @apply cursor-pointer rounded-[1.35rem] border border-light bg-white p-5 text-left transition hover:-translate-y-0.5 hover:border-primary/30 hover:bg-light;
+    }
+
+    .doc-tile-icon {
+        @apply flex h-14 w-14 items-center justify-center rounded-default bg-light text-2xl text-primary;
+    }
+
+    .doc-kicker {
+        @apply text-xs font-semibold uppercase tracking-[0.24em] text-primary;
+    }
+
+    .doc-heading {
+        @apply mt-2 text-2xl font-semibold leading-tight text-primary;
+    }
+
+    .doc-copy {
+        @apply mt-3 text-sm leading-6 text-secondary;
+    }
+
+    .doc-table-card {
+        @apply overflow-hidden p-0;
+    }
+
+    .doc-attribute-strip {
+        @apply flex flex-col gap-3 border-b border-light bg-light px-6 py-5 md:flex-row md:items-start md:justify-between;
+    }
+
+    .doc-attribute-strip-compact {
+        @apply px-5 py-4 md:flex-col md:items-start;
+    }
+
+    .doc-attribute-strip span {
+        @apply text-sm font-semibold text-primary;
+    }
+
+    .doc-attribute-strip div {
+        @apply flex max-w-4xl flex-wrap gap-2;
+    }
+
+    .doc-attribute-strip code {
+        @apply rounded-full border border-light bg-white px-3 py-1 text-xs font-semibold text-secondary;
+    }
+
+    .doc-api-table-card {
+        @apply w-full overflow-x-auto rounded-none shadow-none;
+    }
+
+    .doc-table {
+        @apply w-full min-w-[52rem] table-fixed text-sm;
+    }
+
+    .doc-table th {
+        @apply bg-light px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-secondary;
+    }
+
+    .doc-table td {
+        @apply border-t border-light px-5 py-5 align-top leading-6 text-secondary;
+        overflow-wrap: anywhere;
+    }
+
+    .doc-table code {
+        @apply inline-block max-w-full whitespace-normal break-words rounded-md bg-light px-1.5 py-0.5 text-[0.92em] text-secondary;
+        overflow-wrap: anywhere;
+    }
+
+    .doc-table td:first-child {
+        @apply font-semibold text-primary;
+    }
+
+    .doc-prop-list {
+        @apply divide-y divide-light;
+    }
+
+    .doc-prop-item {
+        @apply p-4 text-sm leading-6 text-secondary;
+    }
+
+    .doc-prop-item h3 {
+        @apply font-semibold text-primary;
+    }
+
+    .doc-prop-item code {
+        @apply inline-block max-w-full break-words rounded-md bg-light px-1.5 py-0.5 font-mono text-xs text-secondary;
+        overflow-wrap: anywhere;
+    }
+
+    .doc-prop-type {
+        @apply mt-2 font-mono text-xs text-primary;
+        overflow-wrap: anywhere;
+    }
+
+    .doc-code {
+        @apply overflow-hidden rounded-default bg-primary text-white;
+    }
+
+    .doc-code-inline {
+        @apply min-w-0 overflow-x-auto whitespace-nowrap rounded-[1rem] px-5 py-4 font-mono text-sm leading-6;
+    }
+
+    .doc-check-card {
+        @apply flex w-full items-start gap-3 rounded-default border border-light/90 bg-white p-4 text-sm leading-6 text-secondary;
+    }
+
+    .doc-check-card i {
+        @apply shrink-0 text-lg text-primary;
+    }
+
+    .doc-check-card span {
+        @apply min-w-0;
+    }
+
+    .doc-influence-grid {
+        @apply mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-5;
+    }
+
+    .doc-influence-card {
+        @apply rounded-[1.15rem] border border-light bg-light p-4;
+    }
+
+    .doc-influence-card h3 {
+        @apply text-sm font-semibold text-primary;
+    }
+
+    .doc-influence-card p {
+        @apply mt-2 text-xs leading-5 text-secondary;
+    }
+}
