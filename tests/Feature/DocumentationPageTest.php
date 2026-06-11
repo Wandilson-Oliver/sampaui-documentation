@@ -10,12 +10,14 @@ it('renders the overview with installation guidance and component links', functi
     $response
         ->assertOk()
         ->assertSee('Documentação SampaUI')
-        ->assertSee('dist/sampaui.css')
-        ->assertSee('dist/sampaui.js')
-        ->assertSee('Composer, publish e CSS')
-        ->assertSee('Explorar componentes')
+        ->assertSee('Componentes Blade para produtos imobiliários profissionais.')
+        ->assertSee('CRM imobiliário')
+        ->assertSee('Ver padrões imobiliários')
+        ->assertSee('Composer, install e build')
+        ->assertSee('Fluxos imobiliários')
+        ->assertSee('Páginas para copiar e adaptar')
         ->assertSee('npm run build')
-        ->assertSee('bi bi-rocket-takeoff', false)
+        ->assertSee('bi bi-buildings', false)
         ->assertSee('doc-app-frame', false)
         ->assertDontSee('doc-rail', false)
         ->assertDontSee('asset(\'vendor/sampaui/sampaui.css\')', false)
@@ -28,6 +30,17 @@ it('renders the overview with installation guidance and component links', functi
         ->assertSee('Card')
         ->assertSee('Drawer')
         ->assertSee('Toast');
+});
+
+it('renders the real estate patterns documentation page', function () {
+    $this->get(route('documentation.pages.show', 'real-estate-patterns'))
+        ->assertOk()
+        ->assertSee('Padrões imobiliários')
+        ->assertSee('CRM imobiliário')
+        ->assertSee('Lead comprador')
+        ->assertSee('Trechos recomendados para IA')
+        ->assertSee('x-sampaui::card', false)
+        ->assertSee('x-sampaui::currency-br', false);
 });
 
 it('renders a dedicated documentation page for each component', function () {
@@ -151,12 +164,23 @@ it('documents input icons badges skeleton and command palette examples', functio
 it('renders real-world examples in the documentation navigation', function () {
     $this->get(route('examples.index'))
         ->assertOk()
-        ->assertSee('Páginas reais com SampaUI')
+        ->assertSee('Páginas reais para produtos imobiliários')
         ->assertSee('Exemplos')
-        ->assertSee('Autenticação')
-        ->assertSee('Form Profile')
+        ->assertSee('Login completo')
+        ->assertSee('Dashboard operacional')
+        ->assertSee('CRUD de usuários')
+        ->assertSee('Formulário administrativo')
+        ->assertSee('Modal destrutivo')
+        ->assertSee('Drawer de filtros')
+        ->assertSee('Tabela avançada')
+        ->assertSee('Upload e perfil')
+        ->assertSee('Verificação 2FA')
+        ->assertSee('Command palette')
+        ->assertSee('Configurações em abas')
+        ->assertSee('Estados de feedback')
+        ->assertSee('Chat atendimento')
         ->assertSee('Bootstrap Icons')
-        ->assertSee('Listagem de usuários');
+        ->assertSee('Abrir exemplo');
 });
 
 it('renders the authentication example with SampaUI and Livewire usage', function () {
@@ -174,15 +198,17 @@ it('renders the authentication example with SampaUI and Livewire usage', functio
 it('renders the form profile example with upload contact and password fields', function () {
     $this->get(route('examples.profile'))
         ->assertOk()
-        ->assertSee('Form Profile')
+        ->assertSee('Upload e perfil')
         ->assertSee('Salvar perfil')
         ->assertSee('Avatar')
+        ->assertSee('Documentos do perfil')
         ->assertSee('WhatsApp')
         ->assertSee('Confirmação de senha')
         ->assertSee('Trecho de uso')
         ->assertSee('wire:submit.prevent=&quot;saveProfile&quot;', false)
         ->assertSee('wire:model.live=&quot;name&quot;', false)
         ->assertSee('x-sampaui::avatar-upload', false)
+        ->assertSee('x-sampaui::file-upload', false)
         ->assertSee('x-sampaui::phone', false);
 });
 
@@ -197,8 +223,28 @@ it('renders the bootstrap icons search example', function () {
         ->assertSee('x-model="query"', false);
 });
 
-it('does not expose the dashboard example page anymore', function () {
-    $this->get('/examples/dashboard')->assertNotFound();
+it('renders the new complete example pages', function () {
+    $examples = [
+        'examples.dashboard' => ['Dashboard operacional', 'Painel comercial', 'x-sampaui::sidebar'],
+        'examples.admin-form' => ['Formulário administrativo', 'Cadastro de cliente', 'x-sampaui::select-multiple'],
+        'examples.destructive-modal' => ['Modal destrutivo', 'Excluir cliente?', 'x-sampaui::modal'],
+        'examples.filter-drawer' => ['Drawer de filtros', 'Listagem comercial', 'x-sampaui::drawer'],
+        'examples.advanced-table' => ['Tabela avançada', 'Clientes', 'x-sampaui::dropdown'],
+        'examples.verification' => ['Verificação 2FA', 'Confirme seu acesso', 'x-sampaui::pin'],
+        'examples.command-palette' => ['Command palette', 'Central de comandos', 'x-sampaui::command-palette'],
+        'examples.settings' => ['Configurações em abas', 'Configurações da conta', 'x-sampaui::tabs'],
+        'examples.feedback' => ['Estados de feedback', 'Ações com toast', 'x-sampaui::toast'],
+        'examples.chat' => ['Chat atendimento', 'Mensagem para Ana', 'x-sampaui::chat-layout'],
+    ];
+
+    foreach ($examples as $route => [$heading, $preview, $snippet]) {
+        $this->get(route($route))
+            ->assertOk()
+            ->assertSee($heading)
+            ->assertSee($preview)
+            ->assertSee('Trecho de uso')
+            ->assertSee($snippet, false);
+    }
 });
 
 it('renders the users listing example with filters table actions and pagination', function () {

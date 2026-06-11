@@ -148,6 +148,24 @@
         @apply grid gap-6 xl:grid-cols-[minmax(0,1fr)_24rem] 2xl:grid-cols-[minmax(0,1fr)_26rem];
     }
 
+    .doc-chat-context-grid {
+        @apply grid h-full min-h-0 min-w-0 bg-light/60;
+    }
+
+    .doc-chat-context-panel {
+        @apply hidden min-h-0 flex-col bg-white/90;
+    }
+
+    @media (min-width: 80rem) {
+        .doc-chat-context-grid {
+            grid-template-columns: minmax(0, 1fr) 19rem;
+        }
+
+        .doc-chat-context-panel {
+            display: flex;
+        }
+    }
+
     .doc-examples-column {
         @apply min-w-0 space-y-6;
     }

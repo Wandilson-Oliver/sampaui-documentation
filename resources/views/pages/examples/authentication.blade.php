@@ -3,10 +3,16 @@
 @php
     $snippet = <<<'BLADE'
 <form wire:submit.prevent="authenticate" class="space-y-5">
+    <x-sampaui::alert variant="danger" title="Credenciais inválidas" wire:dirty.remove>
+        Confira email e senha antes de tentar novamente.
+    </x-sampaui::alert>
+
     <x-sampaui::input name="email" type="email" label="Email" icon="envelope" wire:model.live="email" />
     <x-sampaui::input name="password" type="password" label="Senha" icon="lock" wire:model="password" />
     <x-sampaui::checkbox name="remember" label="Lembrar de mim" wire:model="remember" />
-    <x-sampaui::button type="submit" icon="box-arrow-in-right" full>Entrar</x-sampaui::button>
+    <x-sampaui::button type="submit" icon="box-arrow-in-right" loading="{{ $this->isAuthenticating }}" full>
+        Entrar
+    </x-sampaui::button>
 </form>
 BLADE;
 @endphp
@@ -38,6 +44,10 @@ BLADE;
                     </div>
 
                     <form class="space-y-5" wire:submit.prevent="authenticate">
+                        <x-sampaui::alert variant="danger" title="Credenciais inválidas">
+                            Confira email e senha antes de tentar novamente.
+                        </x-sampaui::alert>
+
                         <x-sampaui::input name="email" type="email" label="Email" icon="envelope" placeholder="admin@sampa.dev" wire:model.live="email" />
 
                         <x-sampaui::input name="password" type="password" label="Senha" icon="lock" placeholder="Digite sua senha" wire:model="password" />
@@ -47,7 +57,7 @@ BLADE;
                             <a href="#" class="text-sm font-semibold text-primary transition hover:text-primary/80">Esqueceu a senha?</a>
                         </div>
 
-                        <x-sampaui::button type="submit" icon="box-arrow-in-right" full>
+                        <x-sampaui::button type="submit" icon="box-arrow-in-right" loading full>
                             Entrar
                         </x-sampaui::button>
                     </form>
@@ -60,23 +70,6 @@ BLADE;
             </div>
         </div>
 
-        <x-sampaui::card title="Trecho de uso" description="Blade + atributos Livewire usados pela página" padding="lg">
-            <div class="doc-showcase-code-wrap rounded-[1.35rem] border border-light" x-data="{ copied: false }">
-                <button
-                    type="button"
-                    class="doc-copy-button"
-                    x-bind:aria-label="copied ? 'Codigo copiado' : 'Copiar codigo'"
-                    x-on:click="
-                        navigator.clipboard?.writeText($refs.code.innerText);
-                        copied = true;
-                        setTimeout(() => copied = false, 1200);
-                    "
-                >
-                    <i class="bi" x-bind:class="copied ? 'bi-check2' : 'bi-copy'"></i>
-                </button>
-
-                <pre class="doc-showcase-code"><code x-ref="code">{{ trim($snippet) }}</code></pre>
-            </div>
-        </x-sampaui::card>
+        @include('pages.examples.partials.code', ['snippet' => $snippet, 'description' => 'Blade + atributos Livewire usados pela pagina'])
     </section>
 @endsection

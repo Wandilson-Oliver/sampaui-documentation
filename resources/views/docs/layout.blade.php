@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="Documentação SampaUI para Laravel 13, Livewire 4 e Tailwind 4.">
+        <meta name="description" content="Documentação SampaUI para produtos imobiliários em Laravel 13, Livewire 4 e Tailwind 4.">
 
         <title>{{ $title ?? 'Documentação SampaUI' }}</title>
 
@@ -16,9 +16,9 @@
                 <aside class="doc-menu-panel">
                     <div class="doc-brand-block">
                         <p class="text-xs font-semibold uppercase tracking-[0.24em] text-primary">SampaUI</p>
-                        <h1 class="mt-2 text-2xl font-semibold text-primary">Documentação de componentes</h1>
+                        <h1 class="mt-2 text-2xl font-semibold text-primary">Componentes para imobiliárias</h1>
                         <p class="mt-3 text-sm leading-6 text-secondary">
-                            Pacote Laravel com componentes Blade reais, Composer path e CSS compilado.
+                            Pacote Laravel para CRM, captação, atendimento, dashboards e auth com componentes Blade reais.
                         </p>
                     </div>
 
@@ -159,7 +159,7 @@
                             <div class="doc-menu-section">
                                 <p class="doc-menu-section-title">
                                     <span class="doc-menu-section-icon"><i class="bi bi-file-earmark-richtext"></i></span>
-                                    <span>Pages</span>
+                                    <span>Guias</span>
                                 </p>
 
                                 <div class="mt-2 space-y-1">

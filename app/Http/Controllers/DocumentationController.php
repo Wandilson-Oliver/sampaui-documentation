@@ -18,6 +18,7 @@ class DocumentationController extends Controller
             'influences' => DocumentationComponents::influences(),
             'navigationComponents' => $components,
             'navigationPages' => array_values(DocumentationPages::all()),
+            'navigationExamples' => ExampleController::navigationExamples(),
         ]);
     }
 
@@ -32,6 +33,7 @@ class DocumentationController extends Controller
             'influences' => DocumentationComponents::influences(),
             'navigationComponents' => array_values($components),
             'navigationPages' => array_values(DocumentationPages::all()),
+            'navigationExamples' => ExampleController::navigationExamples(),
         ]);
     }
 
@@ -46,6 +48,7 @@ class DocumentationController extends Controller
             'components' => array_values($components),
             'navigationComponents' => array_values($components),
             'navigationPages' => array_values($pages),
+            'navigationExamples' => ExampleController::navigationExamples(),
         ]);
     }
 

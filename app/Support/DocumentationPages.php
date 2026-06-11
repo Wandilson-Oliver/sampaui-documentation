@@ -148,6 +148,108 @@ BLADE,
 {{-- php artisan view:clear --}}
 BLADE,
             ],
+            'real-estate-patterns' => [
+                'slug' => 'real-estate-patterns',
+                'name' => 'Padrões imobiliários',
+                'icon' => 'buildings',
+                'tag' => 'Imobiliário',
+                'summary' => 'Receitas objetivas para CRM, captação, funil comercial, atendimento e propostas.',
+                'description' => 'Guia de composição para manter produtos imobiliários Laravel consistentes com o ecossistema SampaUI.',
+                'preview' => <<<'BLADE'
+<div class="space-y-6">
+    <x-sampaui::card padding="lg">
+        <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.24em] text-primary">CRM imobiliário</p>
+                <h2 class="mt-3 text-3xl font-semibold tracking-tight text-primary">Padrões para captação, atendimento e conversão</h2>
+                <p class="mt-4 max-w-2xl text-sm leading-6 text-secondary">
+                    Use estes blocos para orientar agentes de IA e times de produto. A regra é compor telas com componentes SampaUI antes de criar marcação solta.
+                </p>
+            </div>
+
+            <x-sampaui::alert title="Regra prática" variant="info">
+                Componentes primeiro, `class=""` para ajuste fino e novo componente apenas quando o padrão se repetir.
+            </x-sampaui::alert>
+        </div>
+    </x-sampaui::card>
+
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        @foreach ([
+            ['title' => 'Captar', 'icon' => 'person-plus', 'copy' => 'Formulários de lead, proprietário e imóvel.'],
+            ['title' => 'Qualificar', 'icon' => 'funnel', 'copy' => 'Origem, orçamento, região, interesse e prioridade.'],
+            ['title' => 'Atender', 'icon' => 'chat-dots', 'copy' => 'Histórico de conversa, anexos e follow-up.'],
+            ['title' => 'Converter', 'icon' => 'file-earmark-check', 'copy' => 'Proposta, visita, contrato e assinatura.'],
+        ] as $step)
+            <x-sampaui::card padding="lg">
+                <span class="inline-flex h-12 w-12 items-center justify-center rounded-default bg-light text-xl text-primary">
+                    <i class="bi bi-{{ $step['icon'] }}"></i>
+                </span>
+                <h3 class="mt-5 text-xl font-semibold text-primary">{{ $step['title'] }}</h3>
+                <p class="mt-2 text-sm leading-6 text-secondary">{{ $step['copy'] }}</p>
+            </x-sampaui::card>
+        @endforeach
+    </div>
+
+    <div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+        <x-sampaui::card title="Lead comprador" description="Ficha de qualificação" padding="lg">
+            <div class="grid gap-4 md:grid-cols-2">
+                <x-sampaui::input name="lead_name" label="Nome" icon="person" placeholder="Ana Souza" />
+                <x-sampaui::phone name="lead_phone" label="WhatsApp" value="11988887777" />
+                <x-sampaui::currency-br name="lead_budget" label="Orçamento" value="890000" />
+                <x-sampaui::select-search
+                    name="lead_broker"
+                    label="Corretor"
+                    :options="['ana' => 'Ana Souza', 'bruno' => 'Bruno Lima', 'carla' => 'Carla Martins']"
+                    value="ana"
+                />
+            </div>
+        </x-sampaui::card>
+
+        <x-sampaui::card title="Meta mensal" description="Fechamento projetado" padding="lg">
+            <div class="space-y-5">
+                <div class="flex items-end justify-between gap-4">
+                    <div>
+                        <p class="text-3xl font-semibold text-primary">68%</p>
+                        <p class="mt-1 text-sm text-secondary">R$ 2,4 mi em propostas</p>
+                    </div>
+                    <x-sampaui::badge variant="success">No prazo</x-sampaui::badge>
+                </div>
+                <x-sampaui::progress value="68" label="Receita" />
+                <x-sampaui::button full icon="clipboard-check">Revisar propostas</x-sampaui::button>
+            </div>
+        </x-sampaui::card>
+    </div>
+
+    <x-sampaui::card title="Trechos recomendados para IA" description="Copie o bloco certo e adapte dados/rotas ao app consumidor" padding="lg">
+        <pre class="overflow-x-auto rounded-[1rem] bg-secondary p-4 text-xs leading-6 text-white"><code>&lt;x-sampaui::card title="Apartamento Vila Mariana" description="Lead quente"&gt;
+    &lt;x-sampaui::badge variant="success"&gt;Disponível&lt;/x-sampaui::badge&gt;
+    &lt;x-sampaui::badge variant="accent"&gt;R$ 890.000&lt;/x-sampaui::badge&gt;
+    &lt;x-sampaui::button icon="calendar2-check"&gt;Agendar visita&lt;/x-sampaui::button&gt;
+&lt;/x-sampaui::card&gt;</code></pre>
+    </x-sampaui::card>
+</div>
+BLADE,
+                'code' => <<<'BLADE'
+{{-- Card de imóvel --}}
+<x-sampaui::card title="Apartamento Vila Mariana" description="Lead quente" padding="lg">
+    <div class="flex flex-wrap gap-2">
+        <x-sampaui::badge variant="success">Disponível</x-sampaui::badge>
+        <x-sampaui::badge variant="accent">R$ 890.000</x-sampaui::badge>
+        <x-sampaui::badge variant="light">2 dorms</x-sampaui::badge>
+    </div>
+
+    <div class="mt-5 flex flex-wrap gap-3">
+        <x-sampaui::button icon="calendar2-check">Agendar visita</x-sampaui::button>
+        <x-sampaui::button variant="outline" icon="chat-dots">Conversar</x-sampaui::button>
+    </div>
+</x-sampaui::card>
+
+{{-- Formulário de lead --}}
+<x-sampaui::input name="name" label="Nome" icon="person" wire:model.live="lead.name" />
+<x-sampaui::phone name="phone" label="WhatsApp" wire:model.live="lead.phone" />
+<x-sampaui::currency-br name="budget" label="Orçamento" wire:model.live="lead.budget" />
+BLADE,
+            ],
         ];
 
         return $pages;
