@@ -1,56 +1,48 @@
 @extends('docs.layout', ['title' => $page['name'].' · SampaUI Pages'])
 
 @section('content')
-    @unless ($page['slug'] === 'dashboard-home')
-        <section>
-            <article class="doc-hero-card">
-                <div class="doc-breadcrumb">
-                    <a href="{{ route('documentation') }}" class="transition hover:text-primary">Dashboard</a>
-                    <i class="bi bi-chevron-right text-xs"></i>
-                    <span>Pages</span>
-                    <i class="bi bi-chevron-right text-xs"></i>
-                    <span>{{ $page['name'] }}</span>
-                </div>
-
-                <p class="mt-8 text-xs font-semibold uppercase tracking-[0.24em] text-primary">{{ $page['tag'] }}</p>
-                <h1 class="mt-3 text-4xl font-semibold tracking-tight text-primary md:text-5xl">{{ $page['name'] }}</h1>
-                <p class="mt-5 max-w-3xl text-base leading-7 text-secondary">{{ $page['description'] }}</p>
-            </article>
-        </section>
-    @endunless
-
-    <section @class(['doc-component-board' => $page['slug'] !== 'dashboard-home'])>
-        @unless ($page['slug'] === 'dashboard-home')
-            <div class="doc-section-header">
-                <div>
-                    <p class="doc-kicker">Preview</p>
-                    <h2 class="doc-heading">Pagina composta com SampaUI</h2>
-                    <p class="doc-copy">
-                        O exemplo abaixo usa somente componentes do pacote e classes utilitarias do layout consumidor.
-                    </p>
-                </div>
-                <div class="flex flex-wrap items-center gap-3">
-                    <span class="doc-chip">{{ $page['tag'] }}</span>
-                    <x-sampaui::button
-                        variant="outline"
-                        size="sm"
-                        icon="box-arrow-up-right"
-                        icon-position="right"
-                        onclick="window.open('{{ route('documentation.pages.preview', $page['slug']) }}', '_blank')"
-                    >
-                        Abrir página completa
-                    </x-sampaui::button>
-                </div>
+    <section>
+        <article class="doc-hero-card">
+            <div class="doc-breadcrumb">
+                <a href="{{ route('documentation') }}" class="transition hover:text-primary">Dashboard</a>
+                <i class="bi bi-chevron-right text-xs"></i>
+                <span>Pages</span>
+                <i class="bi bi-chevron-right text-xs"></i>
+                <span>{{ $page['name'] }}</span>
             </div>
-        @endunless
 
-        @if ($page['slug'] === 'dashboard-home')
+            <p class="mt-8 text-xs font-semibold uppercase tracking-[0.24em] text-primary">{{ $page['tag'] }}</p>
+            <h1 class="mt-3 text-4xl font-semibold tracking-tight text-primary md:text-5xl">{{ $page['name'] }}</h1>
+            <p class="mt-5 max-w-3xl text-base leading-7 text-secondary">{{ $page['description'] }}</p>
+        </article>
+    </section>
+
+    <section class="doc-component-board">
+        <div class="doc-section-header">
+            <div>
+                <p class="doc-kicker">Preview</p>
+                <h2 class="doc-heading">Pagina composta com SampaUI</h2>
+                <p class="doc-copy">
+                    O exemplo abaixo usa somente componentes do pacote e classes utilitarias do layout consumidor.
+                </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <span class="doc-chip">{{ $page['tag'] }}</span>
+                <x-sampaui::button
+                    variant="outline"
+                    size="sm"
+                    icon="box-arrow-up-right"
+                    icon-position="right"
+                    onclick="window.open('{{ route('documentation.pages.preview', $page['slug']) }}', '_blank')"
+                >
+                    Abrir página completa
+                </x-sampaui::button>
+            </div>
+        </div>
+
+        <div class="doc-page-preview">
             {!! \Illuminate\Support\Facades\Blade::render($page['preview']) !!}
-        @else
-            <div class="doc-page-preview">
-                {!! \Illuminate\Support\Facades\Blade::render($page['preview']) !!}
-            </div>
-        @endif
+        </div>
     </section>
 
     <section class="doc-component-board">

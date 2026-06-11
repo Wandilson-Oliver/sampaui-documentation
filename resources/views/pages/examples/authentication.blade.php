@@ -24,7 +24,7 @@ BLADE;
         </article>
     </section>
 
-    <section class="grid gap-7 xl:grid-cols-[minmax(0,1fr)_28rem]">
+    <section class="space-y-7">
         <div class="rounded-[2rem] border border-light bg-light p-4 md:p-8">
             <div class="mx-auto flex min-h-[42rem] max-w-lg items-center justify-center">
                 <x-sampaui::card padding="lg" class="w-full shadow-default">
@@ -61,7 +61,22 @@ BLADE;
         </div>
 
         <x-sampaui::card title="Trecho de uso" description="Blade + atributos Livewire usados pela página" padding="lg">
-            <pre class="overflow-x-auto rounded-default bg-primary p-5 text-xs leading-6 text-white"><code>{{ trim($snippet) }}</code></pre>
+            <div class="doc-showcase-code-wrap rounded-[1.35rem] border border-light" x-data="{ copied: false }">
+                <button
+                    type="button"
+                    class="doc-copy-button"
+                    x-bind:aria-label="copied ? 'Codigo copiado' : 'Copiar codigo'"
+                    x-on:click="
+                        navigator.clipboard?.writeText($refs.code.innerText);
+                        copied = true;
+                        setTimeout(() => copied = false, 1200);
+                    "
+                >
+                    <i class="bi" x-bind:class="copied ? 'bi-check2' : 'bi-copy'"></i>
+                </button>
+
+                <pre class="doc-showcase-code"><code x-ref="code">{{ trim($snippet) }}</code></pre>
+            </div>
         </x-sampaui::card>
     </section>
 @endsection

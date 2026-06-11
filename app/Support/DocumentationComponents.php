@@ -9,7 +9,7 @@ class DocumentationComponents
      */
     public static function all(): array
     {
-        return (new self())->components();
+        return (new self)->components();
     }
 
     /**
@@ -322,22 +322,26 @@ BLADE,
                 'slug' => 'select',
                 'name' => 'Select',
                 'tag' => '<x-sampaui::select />',
-                'summary' => 'Select estilizado com placeholder, estados de erro e seta visual embutida.',
-                'description' => 'Bom para formularios administrativos e filtros curtos. O componente preserva o slot para as `option`s e recebe atributos Livewire no elemento `<select>` real.',
+                'summary' => 'Select com combobox Alpine, dropdown customizado, placeholder, erro e sombra forte na listagem.',
+                'description' => 'Bom para formularios administrativos e filtros curtos. O componente aceita `options` ou `option`s no slot, usa `x-modelable` para Livewire e preserva um `<select>` real oculto para formularios.',
                 'preview_title' => 'Filtro operacional',
                 'preview_caption' => 'Placeholder inicial, opcoes reais e estado com erro.',
                 'props' => [
                     ['name' => 'label', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Renderiza `<label>` associado.'],
                     ['name' => 'name', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Usado como `name`, `id` fallback e chave de erro.'],
-                    ['name' => 'placeholder', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Cria uma primeira `option` vazia.'],
+                    ['name' => 'value', 'type' => 'string|int|null', 'default' => 'null', 'notes' => 'Valor inicial selecionado.'],
+                    ['name' => 'options', 'type' => 'array', 'default' => '[]', 'notes' => 'Aceita `valor => label` ou arrays com `value`, `label` e `disabled`.'],
+                    ['name' => 'placeholder', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Texto exibido antes de selecionar uma opcao.'],
+                    ['name' => 'emptyText', 'type' => 'string', 'default' => 'Nenhuma opcao encontrada.', 'notes' => 'Mensagem quando nao ha opcoes.'],
                     ['name' => 'error', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Mensagem de erro manual ou fallback do ErrorBag.'],
                     ['name' => 'disabled', 'type' => 'bool', 'default' => 'false', 'notes' => 'Desliga interacao e reduz opacidade.'],
+                    ['name' => 'required', 'type' => 'bool', 'default' => 'false', 'notes' => 'Aplica `required` ao select real.'],
                     ['name' => '$slot', 'type' => 'Blade slot', 'default' => '-', 'notes' => 'Recebe as `option` e `optgroup` do consumo.'],
                 ],
-                'attributes' => ['class', 'id', 'wire:model', 'required', 'multiple', 'aria-*'],
+                'attributes' => ['class', 'id', 'wire:model.live', 'wire:model', 'x-on:select:changed.window', 'aria-*', 'data-*'],
                 'accessibility' => [
                     'Use `label` claro para contexto do conjunto de opcoes.',
-                    'Quando usar `multiple`, complemente com ajuda textual externa explicando a selecao.',
+                    'Para selecao multipla, prefira `select-multiple`.',
                     'Evite placeholders ambiguos; prefira instrucoes orientadas a tarefa.',
                 ],
                 'examples' => [
@@ -349,11 +353,12 @@ BLADE,
     name="status"
     label="Status do atendimento"
     placeholder="Selecione um status"
->
-    <option value="new">Novo</option>
-    <option value="qualified">Qualificado</option>
-    <option value="won">Fechado</option>
-</x-sampaui::select>
+    :options="[
+        'new' => 'Novo',
+        'qualified' => 'Qualificado',
+        'won' => 'Fechado',
+    ]"
+/>
 BLADE,
                     ],
                     [
@@ -364,10 +369,11 @@ BLADE,
     name="owner"
     label="Responsavel"
     error="Escolha um membro da equipe para continuar."
->
-    <option value="ana">Ana</option>
-    <option value="joao">Joao</option>
-</x-sampaui::select>
+    :options="[
+        'ana' => 'Ana',
+        'joao' => 'Joao',
+    ]"
+/>
 BLADE,
                     ],
                     [
@@ -378,10 +384,11 @@ BLADE,
     name="city"
     label="Cidade"
     wire:model.live="city"
->
-    <option value="sp">Sao Paulo</option>
-    <option value="campinas">Campinas</option>
-</x-sampaui::select>
+    :options="[
+        'sp' => 'Sao Paulo',
+        'campinas' => 'Campinas',
+    ]"
+/>
 BLADE,
                     ],
                 ],
@@ -1337,6 +1344,9 @@ BLADE,
                     ['name' => 'hover', 'type' => 'bool', 'default' => 'true', 'notes' => 'Ativa destaque ao passar o mouse nas linhas.'],
                     ['name' => 'bordered', 'type' => 'bool', 'default' => 'true', 'notes' => 'Controla borda externa da tabela.'],
                     ['name' => 'compact', 'type' => 'bool', 'default' => 'false', 'notes' => 'Reduz padding das celulas.'],
+                    ['name' => 'sortBy', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Chave da coluna ordenada quando a coluna tem `sortable => true`.'],
+                    ['name' => 'sortDirection', 'type' => 'asc|desc', 'default' => 'asc', 'notes' => 'Direcao ativa da ordenacao.'],
+                    ['name' => 'sortMethod', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Metodo Livewire chamado nos botoes de ordenacao.'],
                     ['name' => '$head/$body', 'type' => 'Named slots', 'default' => '-', 'notes' => 'Substituem renderizacao automatica quando precisar de markup completo.'],
                 ],
                 'attributes' => ['class', 'id', 'wire:key', 'x-data', 'aria-*', 'data-*'],
@@ -1355,6 +1365,26 @@ BLADE,
         'name' => 'Cliente',
         'status' => 'Status',
         'amount' => ['label' => 'Valor', 'key' => 'amount', 'align' => 'right'],
+    ]"
+    :rows="[
+        ['name' => 'Ana Souza', 'status' => 'Ativo', 'amount' => 'R$ 1.200,00'],
+        ['name' => 'Bruno Lima', 'status' => 'Em analise', 'amount' => 'R$ 850,00'],
+    ]"
+/>
+BLADE,
+                    ],
+                    [
+                        'title' => 'Ordenacao',
+                        'description' => 'Somente colunas marcadas como `sortable` exibem o controle de ordenacao.',
+                        'code' => <<<'BLADE'
+<x-sampaui::table
+    sort-by="name"
+    sort-direction="asc"
+    sort-method="sortBy"
+    :columns="[
+        'name' => ['label' => 'Cliente', 'sortable' => true],
+        'status' => 'Status',
+        'amount' => ['label' => 'Valor', 'key' => 'amount', 'align' => 'right', 'sortable' => true],
     ]"
     :rows="[
         ['name' => 'Ana Souza', 'status' => 'Ativo', 'amount' => 'R$ 1.200,00'],
@@ -1765,34 +1795,46 @@ BLADE,
     <option value="won">Fechado</option>
 </x-sampaui::select>
 
-<x-sampaui::select name="owner" label="Responsavel">
-    <option value="ana">Ana</option>
-    <option value="bruno">Bruno</option>
-</x-sampaui::select>
+<x-sampaui::select
+    name="owner"
+    label="Responsavel"
+    value="ana"
+    :options="[
+        'ana' => 'Ana',
+        'bruno' => 'Bruno',
+    ]"
+/>
 
-<x-sampaui::select name="team" label="Equipe" disabled>
-    <option>Comercial</option>
-</x-sampaui::select>
+<x-sampaui::select
+    name="team"
+    label="Equipe"
+    disabled
+    :options="['commercial' => 'Comercial']"
+/>
 
-<x-sampaui::select name="city" label="Cidade" error="Escolha uma cidade.">
-    <option value="sp">Sao Paulo</option>
-</x-sampaui::select>
+<x-sampaui::select
+    name="city"
+    label="Cidade"
+    error="Escolha uma cidade."
+    :options="['sp' => 'Sao Paulo']"
+/>
 BLADE,
             ],
             [
-                'title' => 'Livewire e grupos',
-                'description' => 'Atributos dinamicos e agrupamento de opcoes continuam no select real.',
+                'title' => 'Livewire',
+                'description' => 'Atributos dinamicos sincronizam o estado pelo `x-modelable`.',
                 'code' => <<<'BLADE'
-<x-sampaui::select name="pipeline" label="Pipeline" wire:model.live="pipeline">
-    <optgroup label="Atendimento">
-        <option value="new">Novo</option>
-        <option value="qualified">Qualificado</option>
-    </optgroup>
-    <optgroup label="Venda">
-        <option value="proposal">Proposta</option>
-        <option value="won">Fechado</option>
-    </optgroup>
-</x-sampaui::select>
+<x-sampaui::select
+    name="pipeline"
+    label="Pipeline"
+    wire:model.live="pipeline"
+    :options="[
+        'new' => 'Novo',
+        'qualified' => 'Qualificado',
+        'proposal' => 'Proposta',
+        'won' => 'Fechado',
+    ]"
+/>
 BLADE,
             ],
             [
@@ -1805,13 +1847,14 @@ BLADE,
 </x-sampaui::select>
 
 <x-sampaui::select
-    name="status_clean"
+    name="status_borderless"
     label="Status sem borda"
     class="border-0"
->
-    <option value="active">Ativo</option>
-    <option value="paused">Pausado</option>
-</x-sampaui::select>
+    :options="[
+        'active' => 'Ativo',
+        'paused' => 'Pausado',
+    ]"
+/>
 BLADE,
             ],
         ];
@@ -1881,7 +1924,7 @@ BLADE,
             ],
             [
                 'title' => 'Livewire e evento',
-                        'description' => '`wire:model` sincroniza o estado por `x-modelable`; o componente tambem dispara `select-search:changed`.',
+                'description' => '`wire:model` sincroniza o estado por `x-modelable`; o componente tambem dispara `select-search:changed`.',
                 'code' => <<<'BLADE'
 <x-sampaui::select-search
     name="customer_id"
@@ -2158,7 +2201,7 @@ BLADE,
             ],
             [
                 'title' => 'Livewire',
-                        'description' => 'Binding via `x-modelable`, sem necessidade da prop `value`.',
+                'description' => 'Binding via `x-modelable`, sem necessidade da prop `value`.',
                 'code' => <<<'BLADE'
 <x-sampaui::date-picker
     name="visit_date"
@@ -2360,15 +2403,15 @@ BLADE,
         ></div>
 
         <section
-            class="relative flex max-h-[calc(100vh-2rem)] w-full flex-col overflow-hidden rounded-default border border-light bg-white"
+            class="relative flex max-h-[calc(100vh-2rem)] w-full origin-top-right flex-col overflow-hidden rounded-default border border-light bg-white"
             x-bind:class="sizes[activeSize]"
             x-show="open"
             x-transition:enter="transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
-            x-transition:enter-start="translate-y-4 scale-95 opacity-0"
+            x-transition:enter-start="translate-x-6 -translate-y-6 scale-75 opacity-0"
             x-transition:enter-end="translate-y-0 scale-100 opacity-100"
             x-transition:leave="transition duration-200 ease-in"
             x-transition:leave-start="translate-y-0 scale-100 opacity-100"
-            x-transition:leave-end="translate-y-3 scale-[0.97] opacity-0"
+            x-transition:leave-end="translate-x-6 -translate-y-6 scale-75 opacity-0"
         >
             <header class="flex items-start justify-between gap-4 px-5 py-5">
                 <div>
@@ -3101,6 +3144,26 @@ BLADE,
         'name' => 'Cliente',
         'status' => 'Status',
         'amount' => ['label' => 'Valor', 'key' => 'amount', 'align' => 'right'],
+    ]"
+    :rows="[
+        ['name' => 'Ana Souza', 'status' => 'Ativo', 'amount' => 'R$ 1.200,00'],
+        ['name' => 'Bruno Lima', 'status' => 'Em analise', 'amount' => 'R$ 850,00'],
+    ]"
+/>
+BLADE,
+            ],
+            [
+                'title' => 'Ordenacao opt-in',
+                'description' => 'Colunas marcadas com `sortable` exibem icone e podem chamar metodo Livewire.',
+                'code' => <<<'BLADE'
+<x-sampaui::table
+    sort-by="name"
+    sort-direction="asc"
+    sort-method="sortBy"
+    :columns="[
+        'name' => ['label' => 'Cliente', 'sortable' => true],
+        'status' => 'Status',
+        'amount' => ['label' => 'Valor', 'key' => 'amount', 'align' => 'right', 'sortable' => true],
     ]"
     :rows="[
         ['name' => 'Ana Souza', 'status' => 'Ativo', 'amount' => 'R$ 1.200,00'],

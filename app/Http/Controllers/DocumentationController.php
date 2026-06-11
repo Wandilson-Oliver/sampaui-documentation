@@ -41,12 +41,6 @@ class DocumentationController extends Controller
         $selectedPage = $pages[$page] ?? abort(404);
         $components = DocumentationComponents::all();
 
-        if ($selectedPage['slug'] === 'dashboard-home') {
-            return view('docs.page-preview', [
-                'page' => $selectedPage,
-            ]);
-        }
-
         return view('docs.page', [
             'page' => $selectedPage,
             'components' => array_values($components),

@@ -1,6 +1,8 @@
 <?php
 
+use App\Livewire\Examples\UsersIndex;
 use App\Support\DocumentationComponents;
+use Livewire\Livewire;
 
 it('renders the overview with installation guidance and component links', function () {
     $response = $this->get(route('documentation'));
@@ -90,7 +92,9 @@ it('documents the new feedback and surface components', function () {
 it('renders the select preview with the real SampaUI select markup', function () {
     $this->get(route('documentation.components.show', 'select'))
         ->assertOk()
-        ->assertSee('appearance-none', false)
+        ->assertSee('x-modelable="value"', false)
+        ->assertSee('role="listbox"', false)
+        ->assertSee('shadow-2xl shadow-secondary/10', false)
         ->assertSee('bi bi-chevron-down', false)
         ->assertSee('name="pipeline"', false);
 });
@@ -150,8 +154,8 @@ it('renders real-world examples in the documentation navigation', function () {
         ->assertSee('Páginas reais com SampaUI')
         ->assertSee('Exemplos')
         ->assertSee('Autenticação')
-        ->assertSee('Dashboard')
-        ->assertSee('Cadastro de usuário')
+        ->assertSee('Form Profile')
+        ->assertSee('Bootstrap Icons')
         ->assertSee('Listagem de usuários');
 });
 
@@ -167,38 +171,42 @@ it('renders the authentication example with SampaUI and Livewire usage', functio
         ->assertSee('bi bi-envelope', false);
 });
 
-it('renders the user create example with upload and validation states', function () {
-    $this->get(route('examples.users.create'))
+it('renders the form profile example with upload contact and password fields', function () {
+    $this->get(route('examples.profile'))
         ->assertOk()
-        ->assertSee('Criar usuário')
-        ->assertSee('Salvar usuário')
-        ->assertSee('Foto')
+        ->assertSee('Form Profile')
+        ->assertSee('Salvar perfil')
+        ->assertSee('Avatar')
+        ->assertSee('WhatsApp')
+        ->assertSee('Confirmação de senha')
         ->assertSee('Trecho de uso')
-        ->assertDontSee('Notas de implementação')
-        ->assertSee('Use pelo menos 8 caracteres.')
-        ->assertSee('wire:submit.prevent=&quot;save&quot;', false)
+        ->assertSee('wire:submit.prevent=&quot;saveProfile&quot;', false)
         ->assertSee('wire:model.live=&quot;name&quot;', false)
         ->assertSee('x-sampaui::avatar-upload', false)
-        ->assertSee('bi bi-camera', false);
+        ->assertSee('x-sampaui::phone', false);
 });
 
-it('renders the dashboard example with copyable Blade code', function () {
-    $this->get(route('examples.dashboard'))
+it('renders the bootstrap icons search example', function () {
+    $this->get(route('examples.icons'))
         ->assertOk()
-        ->assertSee('Código Blade do dashboard')
-        ->assertSee('x-sampaui::sidebar', false)
-        ->assertSee('x-sampaui::card', false)
-        ->assertSee('siteVisitsChart', false)
-        ->assertSee('ApexCharts + AlpineJS')
-        ->assertSee('Preview completo');
+        ->assertSee('Bootstrap Icons')
+        ->assertSee('Buscar classe Bootstrap Icons')
+        ->assertSee('plus')
+        ->assertSee('`bi-${icon}`', false)
+        ->assertSee('`bi bi-${icon}`', false)
+        ->assertSee('x-model="query"', false);
+});
+
+it('does not expose the dashboard example page anymore', function () {
+    $this->get('/examples/dashboard')->assertNotFound();
 });
 
 it('renders the users listing example with filters table actions and pagination', function () {
     $this->get(route('examples.users.index'))
         ->assertOk()
         ->assertSee('Listagem de usuários')
-        ->assertSee('Novo usuário')
-        ->assertSee('Buscar por nome, email ou WhatsApp')
+        ->assertSee('Cadastrar')
+        ->assertSee('Buscar por nome, email, WhatsApp ou cargo')
         ->assertSee('Todos os status')
         ->assertSee('Ana Martins')
         ->assertSee('Ativo')
@@ -206,11 +214,43 @@ it('renders the users listing example with filters table actions and pagination'
         ->assertSee('Inativo')
         ->assertDontSee('Resumo de status')
         ->assertSee('Trecho de uso')
-        ->assertSee('x-sampaui::table', false)
-        ->assertSee('x-sampaui::tooltip', false)
-        ->assertSee('wire:model.live.debounce.300ms=&quot;search&quot;', false)
+        ->assertSee('&lt;livewire:examples.users-index /&gt;', false)
+        ->assertSee('wire:click="sortBy(\'name\')"', false)
+        ->assertSee('bi bi-sort-up', false)
+        ->assertSee('bi bi-arrow-down-up', false)
+        ->assertSee('wire:model.live.debounce.300ms="search"', false)
         ->assertSee('bi bi-eye', false)
-        ->assertSee('bi bi-trash3', false);
+        ->assertSee('bi bi-trash3', false)
+        ->assertDontSee('toggle-on');
+});
+
+it('runs the users listing interactions through Livewire', function () {
+    Livewire::test(UsersIndex::class)
+        ->assertSee('Ana Martins')
+        ->set('search', 'helena')
+        ->assertSee('Helena Prado')
+        ->assertDontSee('Ana Martins')
+        ->set('search', '')
+        ->set('status', 'Pendente')
+        ->assertSee('Bruno Lima')
+        ->assertDontSee('Ana Martins')
+        ->call('sortBy', 'email')
+        ->assertSet('sortBy', 'email')
+        ->call('toggleStatus', 2)
+        ->assertSee('Status atualizado.')
+        ->call('openCreateModal')
+        ->set('formName', 'Patricia Gomes')
+        ->set('formEmail', 'patricia@sampa.dev')
+        ->set('formWhatsapp', '+55 11 99999-1099')
+        ->set('formStatus', 'Ativo')
+        ->call('saveUser')
+        ->assertSee('Usuário cadastrado.')
+        ->set('status', '')
+        ->set('search', 'patricia')
+        ->assertSee('Patricia Gomes')
+        ->call('deleteUser', 13)
+        ->assertSee('Usuário removido.')
+        ->assertDontSee('Patricia Gomes');
 });
 
 it('returns not found for unknown components', function () {

@@ -8,6 +8,7 @@
         <title>{{ $title ?? 'Documentação SampaUI' }}</title>
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @livewireStyles
     </head>
     <body class="doc-shell">
         <div class="min-h-screen overflow-hidden">
@@ -43,20 +44,20 @@
                                 'icon' => 'shield-lock',
                             ],
                             [
-                                'name' => 'Dashboard',
-                                'slug' => 'dashboard',
+                                'name' => 'Form Profile',
+                                'slug' => 'profile',
                                 'tag' => 'Exemplo',
-                                'summary' => 'Código completo de dashboard imobiliário com Sidebar, cards, tabelas e ApexCharts.',
-                                'route' => 'examples.dashboard',
-                                'icon' => 'grid',
+                                'summary' => 'Perfil com avatar upload, contato e troca de senha.',
+                                'route' => 'examples.profile',
+                                'icon' => 'person-badge',
                             ],
                             [
-                                'name' => 'Cadastro de usuário',
-                                'slug' => 'users-create',
+                                'name' => 'Bootstrap Icons',
+                                'slug' => 'icons',
                                 'tag' => 'Exemplo',
-                                'summary' => 'Formulário administrativo com preview de foto e bindings Livewire.',
-                                'route' => 'examples.users.create',
-                                'icon' => 'person-plus',
+                                'summary' => 'Busca dos principais ícones Bootstrap Icons usados nos componentes.',
+                                'route' => 'examples.icons',
+                                'icon' => 'bootstrap',
                             ],
                             [
                                 'name' => 'Listagem de usuários',
@@ -313,5 +314,7 @@
                 </div>
             </div>
         </div>
+
+        @livewireScriptConfig
     </body>
 </html>

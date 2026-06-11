@@ -22,20 +22,17 @@ class ExampleController extends Controller
         ]);
     }
 
-    public function dashboard(): View
+    public function profile(): View
     {
-        $dashboard = DocumentationPages::all()['dashboard-home'];
-
-        return $this->view('pages.examples.dashboard', [
-            'title' => 'Exemplo de dashboard · Documentação SampaUI',
-            'dashboard' => $dashboard,
+        return $this->view('pages.examples.profile', [
+            'title' => 'Form Profile · Documentação SampaUI',
         ]);
     }
 
-    public function usersCreate(): View
+    public function icons(): View
     {
-        return $this->view('pages.examples.users.create', [
-            'title' => 'Exemplo de cadastro de usuário · Documentação SampaUI',
+        return $this->view('pages.examples.icons', [
+            'title' => 'Bootstrap Icons · Documentação SampaUI',
         ]);
     }
 
