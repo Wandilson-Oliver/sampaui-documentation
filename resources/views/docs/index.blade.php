@@ -20,7 +20,7 @@
         ];
     @endphp
 
-    <section class="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(22rem,0.65fr)]">
+    <section class="doc-cover-grid">
         <article class="doc-hero-card doc-home-hero">
             <div class="relative z-[1] flex flex-wrap items-center gap-2">
                 <span class="doc-chip">v{{ $sampaVersion }}</span>
@@ -67,44 +67,79 @@
             </div>
         </article>
 
-        <aside class="space-y-5">
-            <x-sampaui::card title="Pipeline comercial" description="Prévia do padrão imobiliário" padding="lg">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between gap-4">
-                        <div>
-                            <p class="text-sm font-semibold text-primary">Apartamento Vila Mariana</p>
-                            <p class="mt-1 text-xs text-secondary">Lead quente - visita hoje</p>
-                        </div>
-                        <x-sampaui::badge variant="success">Online</x-sampaui::badge>
+        <aside class="doc-component-cloud" aria-label="Exemplos visuais de componentes SampaUI">
+            <div class="doc-float-card doc-float-card-primary">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">Receita</p>
+                        <p class="mt-2 text-3xl font-semibold text-white">R$ 2,4 mi</p>
+                        <p class="mt-1 text-xs font-medium text-white/70">+18% no mês</p>
                     </div>
+                    <span class="inline-flex h-11 w-11 items-center justify-center rounded-default bg-white/18 text-xl text-white">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </span>
+                </div>
+                <div class="mt-5 h-2 rounded-full bg-white/20">
+                    <span class="block h-2 w-[72%] rounded-full bg-white"></span>
+                </div>
+            </div>
 
-                    <div class="grid gap-3 sm:grid-cols-3 xl:grid-cols-1 2xl:grid-cols-3">
-                        <div class="rounded-default border border-light bg-light/60 p-4">
-                            <p class="text-xs text-secondary">Valor</p>
-                            <p class="mt-1 text-lg font-semibold text-primary">R$ 890 mil</p>
-                        </div>
-                        <div class="rounded-default border border-light bg-light/60 p-4">
-                            <p class="text-xs text-secondary">Etapa</p>
-                            <p class="mt-1 text-lg font-semibold text-primary">Proposta</p>
-                        </div>
-                        <div class="rounded-default border border-light bg-light/60 p-4">
-                            <p class="text-xs text-secondary">SLA</p>
-                            <p class="mt-1 text-lg font-semibold text-primary">18 min</p>
-                        </div>
+            <div class="doc-float-card doc-float-card-lead">
+                <div class="flex items-center gap-3">
+                    <x-sampaui::avatar name="Ana Souza" status="online" size="lg" />
+                    <div class="min-w-0">
+                        <p class="truncate text-sm font-semibold text-primary">Ana Souza</p>
+                        <p class="truncate text-xs text-secondary">Lead comprador · quente</p>
                     </div>
+                    <x-sampaui::badge variant="success" size="sm" class="ml-auto">Online</x-sampaui::badge>
+                </div>
+            </div>
 
-                    <x-sampaui::progress value="68" label="Meta mensal" />
+            <div class="doc-float-card doc-float-card-form">
+                <x-sampaui::input
+                    name="cover_search"
+                    label="Buscar imóvel"
+                    icon="search"
+                    placeholder="Bairro, código ou lead"
+                />
+            </div>
 
-                    <div class="flex flex-wrap gap-2">
-                        <x-sampaui::button size="sm" icon="calendar2-check">Agendar</x-sampaui::button>
-                        <x-sampaui::button size="sm" variant="outline" icon="chat-dots">Responder</x-sampaui::button>
+            <div class="doc-float-card doc-float-card-progress">
+                <div class="flex items-center justify-between gap-4">
+                    <div>
+                        <p class="text-sm font-semibold text-primary">Pipeline</p>
+                        <p class="text-xs text-secondary">Propostas ativas</p>
+                    </div>
+                    <x-sampaui::badge variant="accent">68%</x-sampaui::badge>
+                </div>
+                <x-sampaui::progress class="mt-4" value="68" label="Meta mensal" />
+            </div>
+
+            <div class="doc-float-card doc-float-card-chat">
+                <div class="flex items-start gap-3">
+                    <x-sampaui::avatar name="Bruno Lima" status="away" size="md" />
+                    <div class="min-w-0 rounded-default bg-light px-4 py-3">
+                        <p class="text-xs font-semibold text-primary">Bruno Lima</p>
+                        <p class="mt-1 text-xs leading-5 text-secondary">Confirmamos a visita às 10h30.</p>
                     </div>
                 </div>
-            </x-sampaui::card>
+            </div>
 
-            <x-sampaui::alert variant="info" title="Padrão de uso">
-                Primeiro componha com SampaUI. Ajuste espaçamento com `class=""` apenas quando o componente já não resolver o layout.
-            </x-sampaui::alert>
+            <div class="doc-float-card doc-float-card-actions">
+                <div class="flex flex-wrap gap-2">
+                    <x-sampaui::button size="sm" icon="calendar2-check">Agendar</x-sampaui::button>
+                    <x-sampaui::button size="sm" variant="outline" icon="chat-dots">Responder</x-sampaui::button>
+                </div>
+            </div>
+
+            <div class="doc-float-card doc-float-card-status">
+                <div class="grid grid-cols-2 gap-2">
+                    <x-sampaui::badge variant="success">Disponível</x-sampaui::badge>
+                    <x-sampaui::badge variant="warning">Visita</x-sampaui::badge>
+                    <x-sampaui::badge variant="info">Novo lead</x-sampaui::badge>
+                    <x-sampaui::badge variant="danger">Urgente</x-sampaui::badge>
+                </div>
+            </div>
         </aside>
     </section>
 

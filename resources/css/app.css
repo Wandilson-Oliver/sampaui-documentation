@@ -186,6 +186,10 @@
         @apply xl:grid-cols-[22rem_minmax(0,1fr)];
     }
 
+    .doc-cover-grid {
+        @apply grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(30rem,0.72fr)];
+    }
+
     .doc-hero-card {
         @apply relative overflow-hidden rounded-[1.25rem] border border-white bg-white/95 px-5 py-4 shadow-sm md:px-6;
     }
@@ -200,6 +204,101 @@
 
     .doc-home-hero::after {
         @apply -right-10 -top-10 h-44 w-44;
+    }
+
+    .doc-component-cloud {
+        @apply relative grid min-h-[38rem] gap-4 overflow-hidden rounded-[1.5rem] border border-white bg-[linear-gradient(135deg,#fff7ed_0%,#f4f6fa_48%,#eff6ff_100%)] p-5 shadow-[0_24px_70px_rgb(85_116_201_/_0.14)] sm:grid-cols-2 xl:block xl:min-h-[45rem] xl:p-0;
+    }
+
+    .doc-component-cloud::before {
+        @apply pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgb(253_184_46_/_0.20),transparent_26%),radial-gradient(circle_at_86%_22%,rgb(121_200_188_/_0.24),transparent_25%),radial-gradient(circle_at_68%_84%,rgb(232_69_134_/_0.12),transparent_28%)] content-[''];
+    }
+
+    .doc-float-card {
+        @apply relative z-[1] rounded-[1.15rem] border border-white bg-white/94 p-4 shadow-[0_18px_45px_rgb(46_49_74_/_0.10)] backdrop-blur;
+    }
+
+    .doc-float-card-primary {
+        @apply bg-primary p-5 shadow-[0_22px_50px_rgb(85_116_201_/_0.28)];
+    }
+
+    .doc-float-card-lead {
+        @apply bg-white;
+    }
+
+    .doc-float-card-form {
+        @apply bg-white;
+    }
+
+    .doc-float-card-progress {
+        @apply bg-white;
+    }
+
+    .doc-float-card-chat {
+        @apply bg-white;
+    }
+
+    .doc-float-card-actions {
+        @apply bg-white;
+    }
+
+    .doc-float-card-status {
+        @apply bg-white;
+    }
+
+    @media (min-width: 80rem) {
+        .doc-float-card {
+            position: absolute;
+        }
+
+        .doc-float-card-primary {
+            left: 2rem;
+            top: 3.25rem;
+            width: 18rem;
+            transform: rotate(-5deg);
+        }
+
+        .doc-float-card-lead {
+            right: 1.75rem;
+            top: 2.25rem;
+            width: 18.5rem;
+            transform: rotate(4deg);
+        }
+
+        .doc-float-card-form {
+            left: 8.5rem;
+            top: 14.5rem;
+            width: 21rem;
+            transform: rotate(2deg);
+        }
+
+        .doc-float-card-progress {
+            right: 2.25rem;
+            top: 17.75rem;
+            width: 18rem;
+            transform: rotate(-4deg);
+        }
+
+        .doc-float-card-chat {
+            left: 1.75rem;
+            bottom: 8rem;
+            width: 20rem;
+            transform: rotate(3deg);
+        }
+
+        .doc-float-card-actions {
+            right: 3.75rem;
+            bottom: 5.5rem;
+            width: 17rem;
+            transform: rotate(4deg);
+        }
+
+        .doc-float-card-status {
+            left: 12.5rem;
+            bottom: 2.25rem;
+            width: 16rem;
+            transform: rotate(-3deg);
+        }
     }
 
     .doc-preview-column {
