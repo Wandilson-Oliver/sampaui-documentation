@@ -161,8 +161,16 @@
             grid-template-columns: minmax(0, 1fr) 19rem;
         }
 
+        .doc-chat-context-grid[data-context-open="false"] {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
         .doc-chat-context-panel {
             display: flex;
+        }
+
+        .doc-chat-context-grid[data-context-open="false"] .doc-chat-context-panel {
+            display: none;
         }
     }
 

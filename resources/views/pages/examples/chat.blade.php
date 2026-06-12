@@ -19,10 +19,10 @@
 BLADE;
 
     $conversations = [
-        ['id' => 'ana', 'name' => 'Ana Souza', 'role' => 'Lead comprador', 'preview' => 'Pode me enviar as opções?', 'time' => '09:42', 'status' => 'online', 'unread' => 2, 'tag' => 'Quente'],
-        ['id' => 'bruno', 'name' => 'Bruno Lima', 'role' => 'Visita marcada', 'preview' => 'Fechamos a visita para amanhã.', 'time' => '08:17', 'status' => 'away', 'unread' => 0, 'tag' => 'Agenda'],
-        ['id' => 'carla', 'name' => 'Carla Martins', 'role' => 'Financiamento', 'preview' => 'Obrigada pelo retorno.', 'time' => 'Ontem', 'status' => 'offline', 'unread' => 0, 'tag' => 'Follow-up'],
-        ['id' => 'diego', 'name' => 'Diego Ramos', 'role' => 'Proposta enviada', 'preview' => 'Vou revisar com minha sócia.', 'time' => 'Seg', 'status' => 'busy', 'unread' => 1, 'tag' => 'Contrato'],
+        ['id' => 'ana', 'name' => 'Ana Souza', 'role' => 'Lead comprador', 'preview' => 'Pode me enviar as opções?', 'time' => '09:42', 'status' => 'online', 'unread' => 2, 'tag' => 'Quente', 'photo' => 'https://i.pravatar.cc/160?img=47'],
+        ['id' => 'bruno', 'name' => 'Bruno Lima', 'role' => 'Visita marcada', 'preview' => 'Fechamos a visita para amanhã.', 'time' => '08:17', 'status' => 'away', 'unread' => 0, 'tag' => 'Agenda', 'photo' => 'https://i.pravatar.cc/160?img=12'],
+        ['id' => 'carla', 'name' => 'Carla Martins', 'role' => 'Financiamento', 'preview' => 'Obrigada pelo retorno.', 'time' => 'Ontem', 'status' => 'offline', 'unread' => 0, 'tag' => 'Follow-up', 'photo' => 'https://i.pravatar.cc/160?img=32'],
+        ['id' => 'diego', 'name' => 'Diego Ramos', 'role' => 'Proposta enviada', 'preview' => 'Vou revisar com minha sócia.', 'time' => 'Seg', 'status' => 'busy', 'unread' => 1, 'tag' => 'Contrato', 'photo' => 'https://i.pravatar.cc/160?img=68'],
     ];
 @endphp
 
@@ -68,12 +68,14 @@ BLADE;
                                     <button
                                         type="button"
                                         data-chat-target="{{ $conversation['id'] }}"
+                                        data-chat-photo="{{ $conversation['photo'] }}"
+                                        data-chat-status="{{ $conversation['status'] }}"
                                         class="{{ sampaui_classes([
                                             'group flex w-full cursor-pointer items-start gap-3 rounded-default border px-3 py-3 text-left transition focus:outline-none focus:ring-2 focus:ring-primary/20',
                                             $conversation['id'] === 'ana' ? 'border-primary/20 bg-primary text-white shadow-default' : 'border-transparent bg-white hover:border-primary/20 hover:bg-light/70',
                                         ]) }}"
                                     >
-                                        <x-sampaui::avatar :name="$conversation['name']" :status="$conversation['status']" size="lg" />
+                                        <x-sampaui::avatar :src="$conversation['photo']" :name="$conversation['name']" :status="$conversation['status']" size="lg" />
                                         <span class="min-w-0 flex-1">
                                             <span class="flex items-center justify-between gap-3">
                                                 <span class="{{ $conversation['id'] === 'ana' ? 'text-white' : 'text-primary' }} truncate text-sm font-semibold" data-chat-name>{{ $conversation['name'] }}</span>
@@ -97,7 +99,7 @@ BLADE;
                     </x-sampaui::chat-sidebar>
                 </x-slot:sidebar>
 
-                <div class="doc-chat-context-grid">
+                <div class="doc-chat-context-grid" data-chat-context-grid data-context-open="true">
                     <div class="min-h-0 min-w-0 border-r border-light bg-white">
                         <div class="h-full" data-chat-panel="ana">
                             <x-sampaui::chat-conversation name="Ana Souza" subtitle="Online agora · Lead comprador" status="online" class="!bg-white">
@@ -128,6 +130,9 @@ BLADE;
                                 </div>
 
                                 <x-slot:actions>
+                                    <x-sampaui::button type="button" variant="ghost" icon="layout-sidebar-inset-reverse" rounded data-chat-context-toggle>
+                                        <span class="sr-only">Alternar dados do cliente</span>
+                                    </x-sampaui::button>
                                     <x-sampaui::button variant="ghost" icon="telephone" rounded><span class="sr-only">Ligar</span></x-sampaui::button>
                                     <x-sampaui::button variant="ghost" icon="camera-video" rounded><span class="sr-only">Vídeo</span></x-sampaui::button>
                                     <x-sampaui::button variant="ghost" icon="three-dots-vertical" rounded><span class="sr-only">Mais ações</span></x-sampaui::button>
@@ -154,6 +159,14 @@ BLADE;
                                     <x-sampaui::chat-message time="08:17">Perfeito. Vou levar minha esposa.</x-sampaui::chat-message>
                                 </div>
 
+                                <x-slot:actions>
+                                    <x-sampaui::button type="button" variant="ghost" icon="layout-sidebar-inset-reverse" rounded data-chat-context-toggle>
+                                        <span class="sr-only">Alternar dados do cliente</span>
+                                    </x-sampaui::button>
+                                    <x-sampaui::button variant="ghost" icon="telephone" rounded><span class="sr-only">Ligar</span></x-sampaui::button>
+                                    <x-sampaui::button variant="ghost" icon="camera-video" rounded><span class="sr-only">Vídeo</span></x-sampaui::button>
+                                </x-slot:actions>
+
                                 <x-slot:composer>
                                     <x-sampaui::chat-composer data-chat-form placeholder="Mensagem para Bruno">
                                         <x-slot:before>
@@ -172,6 +185,14 @@ BLADE;
                                     <x-sampaui::chat-message time="17:40">Obrigada pelo retorno. Vou analisar com calma.</x-sampaui::chat-message>
                                 </div>
 
+                                <x-slot:actions>
+                                    <x-sampaui::button type="button" variant="ghost" icon="layout-sidebar-inset-reverse" rounded data-chat-context-toggle>
+                                        <span class="sr-only">Alternar dados do cliente</span>
+                                    </x-sampaui::button>
+                                    <x-sampaui::button variant="ghost" icon="telephone" rounded><span class="sr-only">Ligar</span></x-sampaui::button>
+                                    <x-sampaui::button variant="ghost" icon="camera-video" rounded><span class="sr-only">Vídeo</span></x-sampaui::button>
+                                </x-slot:actions>
+
                                 <x-slot:composer>
                                     <x-sampaui::chat-composer data-chat-form placeholder="Mensagem para Carla" />
                                 </x-slot:composer>
@@ -185,6 +206,14 @@ BLADE;
                                     <x-sampaui::chat-message from="me" time="10:14" status="Entregue">Combinado. Deixei a validade da proposta até amanhã às 18h.</x-sampaui::chat-message>
                                 </div>
 
+                                <x-slot:actions>
+                                    <x-sampaui::button type="button" variant="ghost" icon="layout-sidebar-inset-reverse" rounded data-chat-context-toggle>
+                                        <span class="sr-only">Alternar dados do cliente</span>
+                                    </x-sampaui::button>
+                                    <x-sampaui::button variant="ghost" icon="telephone" rounded><span class="sr-only">Ligar</span></x-sampaui::button>
+                                    <x-sampaui::button variant="ghost" icon="camera-video" rounded><span class="sr-only">Vídeo</span></x-sampaui::button>
+                                </x-slot:actions>
+
                                 <x-slot:composer>
                                     <x-sampaui::chat-composer data-chat-form placeholder="Mensagem para Diego" />
                                 </x-slot:composer>
@@ -192,10 +221,15 @@ BLADE;
                         </div>
                     </div>
 
-                    <aside class="doc-chat-context-panel">
+                    <aside class="doc-chat-context-panel" data-chat-context-panel>
                         <div class="border-b border-light p-5 text-center">
+                            <div class="mb-4 flex justify-end">
+                                <x-sampaui::button type="button" size="sm" variant="ghost" icon="x-lg" rounded data-chat-context-toggle>
+                                    <span class="sr-only">Fechar dados do cliente</span>
+                                </x-sampaui::button>
+                            </div>
                             <div class="mx-auto w-max">
-                                <x-sampaui::avatar name="Ana Souza" status="online" size="2xl" />
+                                <x-sampaui::avatar src="https://i.pravatar.cc/160?img=47" name="Ana Souza" status="online" size="2xl" data-chat-detail-avatar />
                             </div>
                             <h3 class="mt-3 text-base font-semibold text-primary" data-chat-detail-name>Ana Souza</h3>
                             <p class="mt-1 text-xs font-medium text-secondary/70" data-chat-detail-role>Lead comprador</p>
@@ -253,6 +287,9 @@ BLADE;
             document.querySelectorAll('[data-chat-example]').forEach((chat) => {
                 const buttons = [...chat.querySelectorAll('[data-chat-target]')];
                 const panels = [...chat.querySelectorAll('[data-chat-panel]')];
+                const contextGrid = chat.querySelector('[data-chat-context-grid]');
+                const contextPanel = chat.querySelector('[data-chat-context-panel]');
+                const contextToggles = [...chat.querySelectorAll('[data-chat-context-toggle]')];
                 const activeButtonClasses = ['border-primary/20', 'bg-primary', 'text-white', 'shadow-default'];
                 const inactiveButtonClasses = ['border-transparent', 'bg-white', 'hover:border-primary/20', 'hover:bg-light/70'];
                 const summaries = {
@@ -290,17 +327,61 @@ BLADE;
                     const detailName = chat.querySelector('[data-chat-detail-name]');
                     const detailRole = chat.querySelector('[data-chat-detail-role]');
                     const detailSummary = chat.querySelector('[data-chat-detail-summary]');
+                    const detailAvatar = chat.querySelector('[data-chat-detail-avatar]');
+                    const detailAvatarImage = detailAvatar?.querySelector('img');
+                    const detailAvatarStatus = detailAvatar?.querySelector('[aria-label]');
 
                     if (activeButton && detailName && detailRole && detailSummary) {
                         detailName.textContent = activeButton.querySelector('[data-chat-name]')?.textContent?.trim() ?? '';
                         detailRole.textContent = activeButton.querySelector('[data-chat-role]')?.textContent?.trim() ?? '';
                         detailSummary.textContent = summaries[target] ?? summaries.ana;
+
+                        if (detailAvatarImage) {
+                            detailAvatarImage.src = activeButton.dataset.chatPhoto ?? detailAvatarImage.src;
+                            detailAvatarImage.alt = detailName.textContent || 'Cliente';
+                        }
+
+                        if (detailAvatarStatus) {
+                            detailAvatarStatus.setAttribute('aria-label', activeButton.dataset.chatStatus ?? 'online');
+                            detailAvatarStatus.classList.remove('bg-success', 'bg-accent', 'bg-danger', 'bg-secondary/40');
+                            detailAvatarStatus.classList.add({
+                                online: 'bg-success',
+                                away: 'bg-accent',
+                                busy: 'bg-danger',
+                                offline: 'bg-secondary/40',
+                            }[activeButton.dataset.chatStatus] ?? 'bg-success');
+                        }
                     }
+                };
+
+                const setContextOpen = (open) => {
+                    if (! contextGrid || ! contextPanel) {
+                        return;
+                    }
+
+                    contextGrid.dataset.contextOpen = open ? 'true' : 'false';
+                    contextPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
+
+                    contextToggles.forEach((toggle) => {
+                        toggle.setAttribute('aria-pressed', open ? 'true' : 'false');
+                        toggle.setAttribute('aria-label', open ? 'Fechar dados do cliente' : 'Abrir dados do cliente');
+                        toggle.querySelector('i')?.classList.toggle('bi-layout-sidebar-inset-reverse', open);
+                        toggle.querySelector('i')?.classList.toggle('bi-layout-sidebar-inset', ! open);
+                    });
                 };
 
                 buttons.forEach((button) => {
                     button.addEventListener('click', () => activate(button.dataset.chatTarget));
                 });
+
+                contextToggles.forEach((toggle) => {
+                    toggle.addEventListener('click', () => {
+                        const isOpen = contextGrid?.dataset.contextOpen !== 'false';
+                        setContextOpen(! isOpen);
+                    });
+                });
+
+                setContextOpen(true);
 
                 chat.querySelectorAll('[data-chat-form]').forEach((form) => {
                     form.addEventListener('submit', (event) => {

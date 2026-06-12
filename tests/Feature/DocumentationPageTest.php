@@ -247,6 +247,21 @@ it('renders the new complete example pages', function () {
     }
 });
 
+it('renders chat customer photos and a toggleable context panel', function () {
+    $this->get(route('examples.chat'))
+        ->assertOk()
+        ->assertSee('data-chat-context-toggle', false)
+        ->assertSee('data-chat-context-panel', false)
+        ->assertSee('data-chat-context-grid', false)
+        ->assertSee('data-context-open="true"', false)
+        ->assertSee('https://i.pravatar.cc/160?img=47', false)
+        ->assertSee('https://i.pravatar.cc/160?img=12', false)
+        ->assertSee('https://i.pravatar.cc/160?img=32', false)
+        ->assertSee('https://i.pravatar.cc/160?img=68', false)
+        ->assertSee('Fechar dados do cliente')
+        ->assertSee('Alternar dados do cliente');
+});
+
 it('renders the users listing example with filters table actions and pagination', function () {
     $this->get(route('examples.users.index'))
         ->assertOk()
