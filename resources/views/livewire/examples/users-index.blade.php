@@ -117,7 +117,7 @@
                         @forelse ($rows as $user)
                             <tr wire:key="user-row-{{ $user['id'] }}" class="transition hover:bg-light/60">
                                 <td class="px-6 py-4">
-                                    <x-sampaui::avatar name="{{ $user['name'] }}" />
+                                    <x-sampaui::avatar :src="$user['photo'] ?? null" name="{{ $user['name'] }}" />
                                 </td>
                                 <td class="px-6 py-4">
                                     <p class="font-semibold text-primary">{{ $user['name'] }}</p>
@@ -222,7 +222,7 @@
         @if ($previewUser)
             <div class="space-y-5">
                 <div class="flex items-center gap-4">
-                    <x-sampaui::avatar name="{{ $previewUser['name'] }}" size="lg" />
+                    <x-sampaui::avatar :src="$previewUser['photo'] ?? null" name="{{ $previewUser['name'] }}" size="lg" />
                     <div>
                         <h3 class="text-lg font-semibold text-primary">{{ $previewUser['name'] }}</h3>
                         <p class="text-sm text-secondary">{{ $previewUser['role'] }}</p>

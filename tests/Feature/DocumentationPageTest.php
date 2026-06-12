@@ -270,6 +270,8 @@ it('renders the users listing example with filters table actions and pagination'
         ->assertSee('Buscar por nome, email, WhatsApp ou cargo')
         ->assertSee('Todos os status')
         ->assertSee('Ana Martins')
+        ->assertSee('https://i.pravatar.cc/160?img=47', false)
+        ->assertSee('https://i.pravatar.cc/160?img=12', false)
         ->assertSee('Ativo')
         ->assertSee('Pendente')
         ->assertSee('Inativo')

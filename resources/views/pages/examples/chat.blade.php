@@ -88,7 +88,7 @@ BLADE;
                                                     <span class="{{ $conversation['id'] === 'ana' ? 'bg-white text-primary' : 'bg-primary text-white' }} inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full px-1.5 text-[0.68rem] font-semibold" data-chat-unread>{{ $conversation['unread'] }}</span>
                                                 @endif
                                             </span>
-                                            <span class="{{ $conversation['id'] === 'ana' ? 'border-white/20 bg-white/10 text-white' : 'border-light bg-light text-secondary' }} mt-3 inline-flex rounded-full border px-2 py-1 text-[0.68rem] font-semibold">
+                                            <span class="{{ $conversation['id'] === 'ana' ? 'border-white/20 bg-white/10 text-white' : 'border-light bg-light text-secondary' }} mt-3 inline-flex rounded-full border px-2 py-1 text-[0.68rem] font-semibold" data-chat-tag>
                                                 {{ $conversation['tag'] }}
                                             </span>
                                         </span>
@@ -102,7 +102,7 @@ BLADE;
                 <div class="doc-chat-context-grid" data-chat-context-grid data-context-open="true">
                     <div class="min-h-0 min-w-0 border-r border-light bg-white">
                         <div class="h-full" data-chat-panel="ana">
-                            <x-sampaui::chat-conversation name="Ana Souza" subtitle="Online agora · Lead comprador" status="online" class="!bg-white">
+                            <x-sampaui::chat-conversation name="Ana Souza" subtitle="Online agora · Lead comprador" avatar="https://i.pravatar.cc/160?img=47" status="online" class="!bg-white">
                                 <div class="contents" data-chat-messages>
                                     <x-sampaui::chat-message from="system">Atendimento iniciado pelo site institucional.</x-sampaui::chat-message>
                                     <x-sampaui::chat-message time="09:36">Oi, vi os apartamentos no Jardim Paulista. Quero algo com varanda e duas vagas.</x-sampaui::chat-message>
@@ -152,7 +152,7 @@ BLADE;
                         </div>
 
                         <div class="hidden h-full" data-chat-panel="bruno">
-                            <x-sampaui::chat-conversation name="Bruno Lima" subtitle="Visto por último às 08:17 · Visita marcada" status="away" class="!bg-white">
+                            <x-sampaui::chat-conversation name="Bruno Lima" subtitle="Visto por último às 08:17 · Visita marcada" avatar="https://i.pravatar.cc/160?img=12" status="away" class="!bg-white">
                                 <div class="contents" data-chat-messages>
                                     <x-sampaui::chat-message time="08:10">Consegue confirmar a visita amanhã?</x-sampaui::chat-message>
                                     <x-sampaui::chat-message from="me" time="08:12" status="Entregue">Sim, deixei reservado às 10h30 e avisei a portaria.</x-sampaui::chat-message>
@@ -178,7 +178,7 @@ BLADE;
                         </div>
 
                         <div class="hidden h-full" data-chat-panel="carla">
-                            <x-sampaui::chat-conversation name="Carla Martins" subtitle="Offline · Financiamento" status="offline" class="!bg-white">
+                            <x-sampaui::chat-conversation name="Carla Martins" subtitle="Offline · Financiamento" avatar="https://i.pravatar.cc/160?img=32" status="offline" class="!bg-white">
                                 <div class="contents" data-chat-messages>
                                     <x-sampaui::chat-message from="system">Conversa marcada como oportunidade fria.</x-sampaui::chat-message>
                                     <x-sampaui::chat-message from="me" time="17:22" status="Lida">Enviei a simulação atualizada por aqui.</x-sampaui::chat-message>
@@ -200,7 +200,7 @@ BLADE;
                         </div>
 
                         <div class="hidden h-full" data-chat-panel="diego">
-                            <x-sampaui::chat-conversation name="Diego Ramos" subtitle="Ocupado · Proposta enviada" status="busy" class="!bg-white">
+                            <x-sampaui::chat-conversation name="Diego Ramos" subtitle="Ocupado · Proposta enviada" avatar="https://i.pravatar.cc/160?img=68" status="busy" class="!bg-white">
                                 <div class="contents" data-chat-messages>
                                     <x-sampaui::chat-message time="10:12">Vou revisar com minha sócia e retorno ainda hoje.</x-sampaui::chat-message>
                                     <x-sampaui::chat-message from="me" time="10:14" status="Entregue">Combinado. Deixei a validade da proposta até amanhã às 18h.</x-sampaui::chat-message>
@@ -308,6 +308,7 @@ BLADE;
                         node.classList.toggle('text-primary', ! active);
                     });
                     button.querySelectorAll('[data-chat-time], [data-chat-role], [data-chat-preview]').forEach((node) => {
+                        node.classList.remove('text-white/80', 'text-secondary', 'text-secondary/60');
                         node.classList.toggle('text-white/75', active);
                         node.classList.toggle('text-secondary/70', ! active);
                     });
@@ -316,6 +317,14 @@ BLADE;
                         node.classList.toggle('text-primary', active);
                         node.classList.toggle('bg-primary', ! active);
                         node.classList.toggle('text-white', ! active);
+                    });
+                    button.querySelectorAll('[data-chat-tag]').forEach((node) => {
+                        node.classList.toggle('border-white/20', active);
+                        node.classList.toggle('bg-white/10', active);
+                        node.classList.toggle('text-white', active);
+                        node.classList.toggle('border-light', ! active);
+                        node.classList.toggle('bg-light', ! active);
+                        node.classList.toggle('text-secondary', ! active);
                     });
                 };
 
