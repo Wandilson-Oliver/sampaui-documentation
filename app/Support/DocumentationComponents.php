@@ -143,7 +143,7 @@ BLADE,
                 'name' => 'Input',
                 'tag' => '<x-sampaui::input />',
                 'summary' => 'Campo textual com label opcional, mensagem de erro, estados desabilitados e passthrough total de atributos HTML/Livewire.',
-                'description' => 'Indicado para formularios operacionais, autenticacao e filtros. A borda padrao usa `border-secondary/40`, e `wire:model` inicializa o campo sem exigir a prop `value`.',
+                'description' => 'Indicado para formularios operacionais, autenticacao e filtros. A borda padrao usa `border-secondary/30`, e `wire:model` inicializa o campo sem exigir a prop `value`.',
                 'preview_title' => 'Formulario de contato',
                 'preview_caption' => 'Exemplos de input simples, erro validado e binding Livewire.',
                 'props' => [
@@ -3400,6 +3400,61 @@ BLADE],
             ];
         }
 
+        $components['stepper']['examples'][] = [
+            'title' => 'Formulario com validacao',
+            'description' => 'Combine o Stepper com componentes de formulario para exibir erros por etapa e avancar somente quando os campos obrigatorios estiverem validos.',
+            'code' => <<<'BLADE'
+@php
+    $currentStep = 2;
+    $steps = [
+        ['label' => 'Dados', 'description' => 'Identificacao do cliente'],
+        ['label' => 'Contato', 'description' => 'Canais obrigatorios'],
+        ['label' => 'Revisao', 'description' => 'Confirmacao final'],
+    ];
+@endphp
+
+<form wire:submit.prevent="save" class="grid gap-6">
+    <x-sampaui::stepper :current="$currentStep" :steps="$steps" />
+
+    <div class="grid gap-4 md:grid-cols-2">
+        <x-sampaui::input
+            name="name"
+            label="Nome"
+            placeholder="Ana Souza"
+            wire:model.live="name"
+            error="Informe o nome completo."
+        />
+
+        <x-sampaui::input
+            name="email"
+            type="email"
+            label="Email"
+            placeholder="ana@empresa.com"
+            wire:model.live="email"
+            error="Use um email valido."
+        />
+    </div>
+
+    <x-sampaui::textarea
+        name="notes"
+        label="Observacoes"
+        placeholder="Contexto do atendimento"
+        wire:model.live="notes"
+    />
+
+    <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+        <x-sampaui::button type="button" variant="light" icon="arrow-left">
+            Voltar
+        </x-sampaui::button>
+
+        <x-sampaui::button type="submit" icon="check2-circle" wire:loading.attr="disabled">
+            Validar e salvar
+        </x-sampaui::button>
+    </div>
+</form>
+BLADE,
+        ];
+
         $components['toggle']['props'] = [
             ['name' => 'label', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Texto exibido ao lado do controle.'],
             ['name' => 'name', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Nome e id fallback do input checkbox.'],
@@ -3671,7 +3726,7 @@ BLADE,
 
         $components['badge']['props'] = [
             ['name' => 'variant', 'type' => 'primary|secondary|accent|danger|success|warning|info|purple|muted|light', 'default' => 'primary', 'notes' => 'Define cor semantica. Variantes invalidas retornam para `primary`.'],
-            ['name' => 'size', 'type' => 'sm|md|lg', 'default' => 'md', 'notes' => 'Controla padding e tipografia.'],
+            ['name' => 'size', 'type' => 'xs|sm|md|lg', 'default' => 'md', 'notes' => 'Controla padding, gap, tipografia e altura de linha.'],
             ['name' => 'icon', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Nome Bootstrap Icons sem o prefixo `bi-`.'],
             ['name' => 'rounded', 'type' => 'bool', 'default' => 'true', 'notes' => 'Usa `rounded-full`; quando false usa `rounded-default`.'],
             ['name' => '$slot', 'type' => 'Blade slot', 'default' => '-', 'notes' => 'Texto curto do marcador.'],
@@ -3694,9 +3749,10 @@ BLADE,
                 'description' => 'Combine variantes, tamanhos e icones para filas operacionais.',
                 'code' => <<<'BLADE'
 <div class="flex flex-wrap gap-3">
-    <x-sampaui::badge variant="danger" size="lg">Alta</x-sampaui::badge>
-    <x-sampaui::badge variant="accent">Media</x-sampaui::badge>
+    <x-sampaui::badge variant="success" size="xs">Novo</x-sampaui::badge>
     <x-sampaui::badge variant="secondary" size="sm">Baixa</x-sampaui::badge>
+    <x-sampaui::badge variant="accent">Media</x-sampaui::badge>
+    <x-sampaui::badge variant="danger" size="lg">Alta</x-sampaui::badge>
     <x-sampaui::badge variant="info" icon="image">12 sem foto</x-sampaui::badge>
 </div>
 BLADE,

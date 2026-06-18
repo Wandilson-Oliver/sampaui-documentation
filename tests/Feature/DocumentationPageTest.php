@@ -143,8 +143,15 @@ it('documents input icons badges skeleton and command palette examples', functio
         ->assertOk()
         ->assertSee('Status de publicacao')
         ->assertSee('Prioridade e contadores')
+        ->assertSee('size=&quot;xs&quot;', false)
         ->assertSee('Classe Livewire')
         ->assertSee('statusVariant');
+
+    $this->get(route('documentation.components.show', 'stepper'))
+        ->assertOk()
+        ->assertSee('Formulario com validacao')
+        ->assertSee('wire:submit.prevent=&quot;save&quot;', false)
+        ->assertSee('Validar e salvar');
 
     $this->get(route('documentation.components.show', 'skeleton'))
         ->assertOk()
