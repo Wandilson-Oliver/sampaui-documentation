@@ -143,7 +143,7 @@ BLADE,
                 'name' => 'Input',
                 'tag' => '<x-sampaui::input />',
                 'summary' => 'Campo textual com label opcional, mensagem de erro, estados desabilitados e passthrough total de atributos HTML/Livewire.',
-                'description' => 'Indicado para formularios operacionais, autenticacao e filtros. A borda padrao usa `border-secondary/15`, e `wire:model` inicializa o campo sem exigir a prop `value`.',
+                'description' => 'Indicado para formularios operacionais, autenticacao e filtros. A borda padrao usa `border-secondary/30`, e `wire:model` inicializa o campo sem exigir a prop `value`.',
                 'preview_title' => 'Formulario de contato',
                 'preview_caption' => 'Exemplos de input simples, erro validado e binding Livewire.',
                 'props' => [
