@@ -180,15 +180,10 @@
             </div>
         </article>
 
-        <article class="doc-code-card">
-<pre><code>composer require sampaui/sampaui
-php artisan package:discover --ansi
-php artisan sampaui:install --force --no-interaction
-npm run build</code></pre>
-        </article>
+        <x-docs.code-block :code="'composer require sampaui/sampaui'.PHP_EOL.'php artisan package:discover --ansi'.PHP_EOL.'php artisan sampaui:install --force --no-interaction'.PHP_EOL.'npm run build'" label="Terminal" />
     </section>
 
-    <section class="doc-component-board">
+    <section id="componentes" class="doc-component-board">
         <div class="doc-section-header">
             <div>
                 <p class="doc-kicker">Exemplos completos</p>

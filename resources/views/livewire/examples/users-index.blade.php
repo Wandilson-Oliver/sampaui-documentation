@@ -193,8 +193,9 @@
         </x-slot:footer>
     </x-sampaui::card>
 
+    @php($livewireUsage = chr(60).'livewire:examples.users-index />')
     <x-sampaui::card title="Trecho de uso" description="A página acima é um componente Livewire real" padding="lg">
-        <pre class="overflow-x-auto rounded-default bg-primary p-5 text-xs leading-6 text-white"><code>&lt;livewire:examples.users-index /&gt;</code></pre>
+        <x-docs.code-block :code="$livewireUsage" label="Livewire" />
     </x-sampaui::card>
 
     <x-sampaui::modal model="showUserModal" title="{{ $editingId ? 'Editar usuário' : 'Cadastrar usuário' }}" subtitle="Os dados ficam em memória para demonstrar o fluxo do componente." size="xl">

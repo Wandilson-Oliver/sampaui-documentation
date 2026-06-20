@@ -19,6 +19,11 @@ it('renders the overview with installation guidance and component links', functi
         ->assertSee('npm run build')
         ->assertSee('bi bi-buildings', false)
         ->assertSee('doc-app-frame', false)
+        ->assertSee('doc-topbar', false)
+        ->assertSee('docs-sidebar', false)
+        ->assertSee('sampaui-docs-theme', false)
+        ->assertSee('Docs v0.2.0')
+        ->assertSee('Voltar ao topo')
         ->assertDontSee('doc-rail', false)
         ->assertDontSee('asset(\'vendor/sampaui/sampaui.css\')', false)
         ->assertSee('Button')
@@ -50,14 +55,14 @@ it('renders a dedicated documentation page for each component', function () {
         $this->get(route('documentation.components.show', $component))
             ->assertOk()
             ->assertSee('Acessibilidade')
-            ->assertSee('Variacoes e implementacao')
-            ->assertSee('Como implementar')
-            ->assertSee('doc-component-layout', false)
-            ->assertSee('doc-examples-column', false)
-            ->assertSee('doc-explanations-column', false)
-            ->assertSee('doc-prop-list', false)
-            ->assertSee('doc-showcase-card', false)
-            ->assertSee('doc-copy-button', false)
+            ->assertSee('Preview e implementação')
+            ->assertSee('Quando este componente faz sentido')
+            ->assertSee('doc-content-with-toc', false)
+            ->assertSee('doc-reading-column', false)
+            ->assertSee('doc-toc', false)
+            ->assertSee('doc-props-table', false)
+            ->assertSee('doc-playground', false)
+            ->assertSee('doc-code-block', false)
             ->assertSee('x-sampaui::'.$component, false);
     }
 });
@@ -105,11 +110,42 @@ it('documents the new feedback and surface components', function () {
 it('renders the select preview with the real SampaUI select markup', function () {
     $this->get(route('documentation.components.show', 'select'))
         ->assertOk()
-        ->assertSee('x-modelable="value"', false)
+        ->assertSee('x-data="SampaUI.select', false)
+        ->assertSee('x-model="value"', false)
         ->assertSee('role="listbox"', false)
         ->assertSee('shadow-2xl shadow-secondary/10', false)
         ->assertSee('bi bi-chevron-down', false)
         ->assertSee('name="pipeline"', false);
+});
+
+it('ships the Alpine controllers required by the documentation shell', function () {
+    $javascript = file_get_contents(resource_path('js/app.js'));
+
+    expect($javascript)
+        ->toContain("Alpine.data('docsShell'")
+        ->toContain("Alpine.data('tableOfContents'")
+        ->toContain("Alpine.data('docSearch'");
+});
+
+it('renders reusable navigation playground and props patterns', function () {
+    $this->get(route('documentation.components.show', 'input'))
+        ->assertOk()
+        ->assertSee('Componentes')
+        ->assertSee('Formulários')
+        ->assertSee('Input')
+        ->assertSee('Nesta página')
+        ->assertSee('Quando usar')
+        ->assertSee('Quando não usar')
+        ->assertSee('Erros comuns')
+        ->assertSee('Playground')
+        ->assertSee('Blade')
+        ->assertSee('Livewire')
+        ->assertSee('Prop')
+        ->assertSee('Tipo')
+        ->assertSee('Default')
+        ->assertSee('Descrição')
+        ->assertSee('Exemplo')
+        ->assertSee('Copiar');
 });
 
 it('documents checkbox SampaUI color variants', function () {

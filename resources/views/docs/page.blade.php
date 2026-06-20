@@ -1,15 +1,13 @@
 @extends('docs.layout', ['title' => $page['name'].' · SampaUI Pages'])
 
 @section('content')
-    <section>
+    <section id="visao-geral">
         <article class="doc-hero-card">
-            <div class="doc-breadcrumb">
-                <a href="{{ route('documentation') }}" class="transition hover:text-primary">Dashboard</a>
-                <i class="bi bi-chevron-right text-xs"></i>
-                <span>Pages</span>
-                <i class="bi bi-chevron-right text-xs"></i>
-                <span>{{ $page['name'] }}</span>
-            </div>
+            <x-docs.breadcrumbs :items="[
+                ['label' => 'Documentação', 'href' => route('documentation')],
+                ['label' => 'Guias', 'href' => route('documentation')],
+                ['label' => $page['name']],
+            ]" />
 
             <p class="mt-8 text-xs font-semibold uppercase tracking-[0.24em] text-primary">{{ $page['tag'] }}</p>
             <h1 class="mt-3 text-4xl font-semibold tracking-tight text-primary md:text-5xl">{{ $page['name'] }}</h1>
@@ -17,7 +15,7 @@
         </article>
     </section>
 
-    <section class="doc-component-board">
+    <section id="preview" class="doc-component-board">
         <div class="doc-section-header">
             <div>
                 <p class="doc-kicker">Preview</p>
@@ -45,7 +43,7 @@
         </div>
     </section>
 
-    <section class="doc-component-board">
+    <section id="implementacao" class="doc-component-board">
         <div class="doc-section-header">
             <div>
                 <p class="doc-kicker">Implementacao</p>
@@ -57,21 +55,8 @@
             <span class="doc-chip">Blade</span>
         </div>
 
-        <div class="doc-showcase-code-wrap mt-6 rounded-[1.35rem] border border-light" x-data="{ copied: false }">
-            <button
-                type="button"
-                class="doc-copy-button"
-                x-bind:aria-label="copied ? 'Codigo copiado' : 'Copiar codigo'"
-                x-on:click="
-                    navigator.clipboard?.writeText($refs.code.innerText);
-                    copied = true;
-                    setTimeout(() => copied = false, 1200);
-                "
-            >
-                <i class="bi" x-bind:class="copied ? 'bi-check2' : 'bi-copy'"></i>
-            </button>
-
-            <pre class="doc-showcase-code"><code x-ref="code">{{ trim($page['code']) }}</code></pre>
+        <div class="mt-6">
+            <x-docs.code-block :code="$page['code']" label="Blade" />
         </div>
     </section>
 @endsection

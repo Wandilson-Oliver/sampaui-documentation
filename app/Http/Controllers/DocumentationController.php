@@ -28,7 +28,7 @@ class DocumentationController extends Controller
         $selectedComponent = $components[$component] ?? abort(404);
 
         return view('docs.show', [
-            'component' => $selectedComponent,
+            'componentDoc' => $selectedComponent,
             'components' => array_values($components),
             'influences' => DocumentationComponents::influences(),
             'navigationComponents' => array_values($components),

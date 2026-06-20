@@ -323,7 +323,7 @@ BLADE,
                 'name' => 'Select',
                 'tag' => '<x-sampaui::select />',
                 'summary' => 'Select com combobox Alpine, dropdown customizado, placeholder, erro e sombra forte na listagem.',
-                'description' => 'Bom para formularios administrativos e filtros curtos. O componente aceita `options` ou `option`s no slot, usa `x-modelable` para Livewire e preserva um `<select>` real oculto para formularios.',
+                'description' => 'Bom para formularios administrativos e filtros curtos. O componente aceita `options` ou `option`s no slot, preserva `wire:model` no `<select>` real oculto e sincroniza o trigger Alpine pelos eventos nativos.',
                 'preview_title' => 'Filtro operacional',
                 'preview_caption' => 'Placeholder inicial, opcoes reais e estado com erro.',
                 'props' => [
@@ -471,7 +471,7 @@ BLADE,
                 'slug' => 'select-multiple',
                 'name' => 'Select múltiplo',
                 'tag' => '<x-sampaui::select-multiple />',
-                'summary' => 'Select multiplo com busca local, tags removiveis, estados visuais e sincronizacao por `x-modelable`.',
+                'summary' => 'Select multiplo com busca local, tags removiveis, estados visuais e sincronizacao pelo `<select multiple>` nativo.',
                 'description' => 'Use quando o usuario precisa escolher varias opcoes de uma lista local. Cada item selecionado aparece como tag com acao de remocao, o dropdown filtra opcoes em tempo real e fecha ao clicar fora ou pressionar `Esc`.',
                 'preview_title' => 'Perfis de acesso',
                 'preview_caption' => 'Multipla selecao com tags, busca interna, erro, disabled e loading.',
@@ -487,7 +487,7 @@ BLADE,
                     ['name' => 'error', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Mensagem manual ou fallback do ErrorBag.'],
                     ['name' => 'disabled', 'type' => 'bool', 'default' => 'false', 'notes' => 'Bloqueia interacao e reduz contraste.'],
                     ['name' => 'loading', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe spinner e bloqueia interacao enquanto carrega.'],
-                    ['name' => 'required', 'type' => 'bool', 'default' => 'false', 'notes' => 'Aplica `required` aos inputs hidden para formularios nativos.'],
+                    ['name' => 'required', 'type' => 'bool', 'default' => 'false', 'notes' => 'Aplica `required` ao `<select multiple>` real.'],
                 ],
                 'attributes' => ['class', 'id', 'wire:model.live', 'wire:model', 'x-on:select-multiple:changed.window', 'aria-*', 'data-*'],
                 'accessibility' => [
@@ -531,7 +531,7 @@ BLADE,
                     ],
                     [
                         'title' => 'Livewire',
-                        'description' => '`wire:model` sincroniza um array por `x-modelable`; nao informe `value` neste uso.',
+                        'description' => '`wire:model` permanece no `<select multiple>` real e sincroniza um array; nao informe `value` neste uso.',
                         'code' => <<<'BLADE'
 <x-sampaui::select-multiple
     name="permissions"
@@ -1528,7 +1528,7 @@ BLADE,
             ],
             'select-multiple' => [
                 'Use para listas locais em que o usuario precisa selecionar varios itens e revisar a selecao antes de salvar.',
-                'Com Livewire, modele a propriedade como array e use somente `wire:model`; `x-modelable` sincroniza as tags selecionadas.',
+                'Com Livewire, modele a propriedade como array e use somente `wire:model`; o `<select multiple>` real sincroniza as tags selecionadas.',
                 'Para listas muito grandes, prefira busca remota para evitar renderizar todas as opcoes no HTML.',
             ],
             'textarea' => [
@@ -1822,7 +1822,7 @@ BLADE,
             ],
             [
                 'title' => 'Livewire',
-                'description' => 'Atributos dinamicos sincronizam o estado pelo `x-modelable`.',
+                'description' => 'Atributos dinamicos permanecem no `<select>` real e sincronizam o estado pelo evento nativo.',
                 'code' => <<<'BLADE'
 <x-sampaui::select
     name="pipeline"
