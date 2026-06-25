@@ -137,64 +137,56 @@ Alpine.data('docSearch', (items = []) => ({
 
 Alpine.data('componentPlayground', (slug) => ({
     slug,
+    modalOpen: false,
     variant: 'primary',
     size: 'md',
     label: slug === 'badge' ? 'Disponível' : (slug === 'modal' ? 'Confirmar proposta' : (slug === 'table' ? 'Clientes' : 'Salvar alterações')),
     loading: false,
     disabled: false,
+    error: false,
+    full: false,
+    icon: slug === 'button' ? 'check2-circle' : '',
     variants: slug === 'badge'
         ? ['primary', 'success', 'warning', 'danger', 'info', 'purple', 'light']
         : ['primary', 'secondary', 'accent', 'danger', 'success', 'info', 'purple', 'outline', 'ghost'],
-    sizes: slug === 'button' || slug === 'badge' ? ['sm', 'md', 'lg'] : [],
-    get buttonClass() {
-        const variants = {
-            primary: 'bg-[#5574c9] text-white hover:bg-[#4663b5]',
-            secondary: 'bg-[#2e314a] text-white',
-            accent: 'bg-[#fdb82e] text-[#2e314a]',
-            danger: 'bg-[#e84586] text-white',
-            success: 'bg-[#79c8bc] text-[#12332d]',
-            info: 'bg-[#43bee3] text-[#12313a]',
-            purple: 'bg-[#895fc4] text-white',
-            outline: 'border border-[#5574c9] bg-transparent text-[#5574c9]',
-            ghost: 'bg-transparent text-[#2e314a] dark:text-slate-100',
-        };
-        const sizes = { sm: 'px-3 py-2 text-xs', md: 'px-4 py-2.5 text-sm', lg: 'px-5 py-3 text-base' };
-
-        return `inline-flex items-center gap-2 rounded-lg font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${variants[this.variant] ?? variants.primary} ${sizes[this.size] ?? sizes.md}`;
+    sizes: ['sm', 'md', 'lg'],
+    get supportsVariant() {
+        return ['button', 'badge'].includes(this.slug);
     },
-    get badgeClass() {
-        const variants = {
-            primary: 'border-[#5574c9]/25 bg-[#5574c9]/10 text-[#5574c9]',
-            success: 'border-[#79c8bc]/40 bg-[#79c8bc]/15 text-emerald-700 dark:text-emerald-200',
-            warning: 'border-[#ff7d3d]/35 bg-[#ff7d3d]/12 text-orange-700 dark:text-orange-200',
-            danger: 'border-[#e84586]/35 bg-[#e84586]/12 text-rose-700 dark:text-rose-200',
-            info: 'border-[#43bee3]/35 bg-[#43bee3]/12 text-cyan-700 dark:text-cyan-200',
-            purple: 'border-[#895fc4]/35 bg-[#895fc4]/12 text-violet-700 dark:text-violet-200',
-            light: 'border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200',
-        };
-        const sizes = { sm: 'px-2 py-1 text-[0.68rem]', md: 'px-2.5 py-1 text-xs', lg: 'px-3 py-1.5 text-sm' };
-
-        return `inline-flex items-center rounded-full border font-bold ${variants[this.variant] ?? variants.primary} ${sizes[this.size] ?? sizes.md}`;
+    get supportsSize() {
+        return ['button', 'badge'].includes(this.slug);
+    },
+    get supportsIcon() {
+        return ['button', 'badge', 'input'].includes(this.slug);
+    },
+    get supportsLoading() {
+        return ['button', 'input', 'select', 'table', 'modal'].includes(this.slug);
+    },
+    get supportsError() {
+        return ['input', 'select'].includes(this.slug);
+    },
+    get supportsFull() {
+        return this.slug === 'button';
     },
     get code() {
         if (this.slug === 'button') {
-            return `<x-sampaui::button variant="${this.variant}" size="${this.size}"${this.loading ? ' loading' : ''}${this.disabled ? ' disabled' : ''}>\n    ${this.label}\n</x-sampaui::button>`;
+            return `<x-sampaui::button variant="${this.variant}" size="${this.size}"${this.icon ? ` icon="${this.icon}"` : ''}${this.loading ? ' loading' : ''}${this.disabled ? ' disabled' : ''}${this.full ? ' full' : ''}>\n    ${this.label}\n</x-sampaui::button>`;
         }
 
         if (this.slug === 'input') {
-            return `<x-sampaui::input name="name" label="${this.label}" icon="person"${this.disabled ? ' disabled' : ''} />`;
+            return `<x-sampaui::input name="name" label="${this.label}" icon="${this.icon || 'person'}"${this.error ? ' error="Informe o nome completo."' : ''}${this.disabled ? ' disabled' : ''}${this.loading ? ' loading' : ''} />`;
         }
 
         if (this.slug === 'select') {
-            return `<x-sampaui::select name="stage" label="${this.label}" :options="$stages"${this.disabled ? ' disabled' : ''} />`;
+            return `<x-sampaui::select name="stage" label="${this.label}" :options="$stages"${this.error ? ' error="Selecione uma etapa."' : ''}${this.disabled ? ' disabled' : ''}${this.loading ? ' loading' : ''} />`;
         }
 
         if (this.slug === 'badge') {
-            return `<x-sampaui::badge variant="${this.variant}" size="${this.size}">\n    ${this.label}\n</x-sampaui::badge>`;
+            return `<x-sampaui::badge variant="${this.variant}" size="${this.size}"${this.icon ? ` icon="${this.icon}"` : ''}>\n    ${this.label}\n</x-sampaui::badge>`;
         }
 
         if (this.slug === 'table') {
-            return `<x-sampaui::table title="${this.label}" searchable selectable per-page="10" :columns="$columns" :rows="$rows" />`;
+            return `<x-sampaui::table title="${this.label}" searchable selectable export-href="/exports/clientes.csv"${this.loading ? ' loading' : ''} per-page="10" :columns="$columns" :rows="$rows" />`;
         }
 
         return `<x-sampaui::modal model="confirming" title="${this.label}">\n    Confirme a ação antes de continuar.\n</x-sampaui::modal>`;

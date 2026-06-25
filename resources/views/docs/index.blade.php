@@ -240,7 +240,7 @@
         <div class="doc-home-section-heading doc-home-section-heading-row">
             <div>
                 <span class="doc-kicker">Todos os componentes</span>
-                <h2 id="components-title">Um catálogo completo para sistemas internos.</h2>
+                <h2 id="components-title">Componentes organizados para acelerar CRMs, ERPs e sistemas internos em Laravel.</h2>
                 <p>Props, estados, snippets Blade/Livewire e boas práticas em uma estrutura filtrável e previsível.</p>
             </div>
             <span class="doc-count-pill">{{ $componentTotal }} componentes</span>
@@ -291,29 +291,23 @@
                 >
                     <div class="doc-catalog-mini-preview" aria-hidden="true">
                         @if ($status === 'Planejado')
-                            <div class="doc-planned-preview">
-                                <span><i class="bi bi-{{ $component['planned_icon'] ?? $componentIcon }}" aria-hidden="true"></i></span>
-                                <small>Planejado</small>
-                            </div>
+                            @include('docs.partials.component-preview', ['slug' => $component['slug']])
                         @else
                             @include('docs.partials.component-preview', ['slug' => $component['slug']])
                         @endif
                     </div>
-                    <div class="doc-catalog-card-top">
-                        <span class="doc-catalog-icon"><i class="bi bi-{{ $componentIcon }}" aria-hidden="true"></i></span>
-                        <div>
-                            @if ($status === 'Planejado')
-                                <span class="doc-status-label doc-status-label-planned">Planejado</span>
-                            @elseif ($isPopular)
-                                <span class="doc-status-label doc-status-label-popular">Popular</span>
-                            @elseif ($isNew)
-                                <span class="doc-status-label doc-status-label-new">Novo</span>
-                            @endif
-                            <span class="doc-props-count">{{ count($component['props']) }} props</span>
-                        </div>
+                    <div class="doc-catalog-meta-row">
+                        @if ($status === 'Planejado')
+                            <span class="doc-status-label doc-status-label-planned">Planejado</span>
+                        @elseif ($isPopular)
+                            <span class="doc-status-label doc-status-label-popular">Popular</span>
+                        @elseif ($isNew)
+                            <span class="doc-status-label doc-status-label-new">Novo</span>
+                        @endif
+                        <span class="doc-props-count">{{ count($component['props']) }} props</span>
+                        <span class="doc-category-pill">{{ $category }}</span>
                     </div>
                     <div class="doc-catalog-card-copy">
-                        <span>{{ $category }}</span>
                         <h3>{{ $component['name'] }}</h3>
                         <p>{{ $component['summary'] }}</p>
                     </div>

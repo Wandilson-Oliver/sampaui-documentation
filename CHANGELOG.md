@@ -2,6 +2,15 @@
 
 Todas as alterações relevantes da documentação SampaUI são registradas neste arquivo.
 
+## [0.1.18] - 2026-06-25
+
+### Melhorado
+
+- Playground das páginas de Button, Input, Select, Badge, Table e Modal passou a priorizar componentes reais do SampaUI com controles para variantes, tamanhos e estados.
+- Cards de “Todos os componentes” ganharam mais respiro, linha de metadados dedicada e hierarquia visual mais premium.
+- Categoria Real Estate recebeu previews conceituais próprios por tipo de componente, status planejado mais claro e páginas individuais com API proposta.
+- Subtítulo do catálogo foi revisado para reforçar o foco em CRMs, ERPs e sistemas internos Laravel.
+
 ## [0.1.17] - 2026-06-25
 
 ### Adicionado

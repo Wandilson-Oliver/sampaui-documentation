@@ -1,33 +1,34 @@
 # Design QA
 
-source visual truth path: user brief in `/Users/wandilsonoliveira/.codex/attachments/fd27e203-333a-4510-9c15-5822c8b300da/pasted-text.txt` plus existing SampaUI documentation design system.
+source visual truth path: current user brief in this Codex thread plus existing SampaUI documentation design system.
 
-implementation screenshot path: `/Users/wandilsonoliveira/APP-SITES/PACOTE-SAMPAUI/sampaui-documentation/storage/app/docs-design-system-qa.png`
+implementation screenshot path: browser DOM/runtime QA on `http://127.0.0.1:8000/`, `http://127.0.0.1:8000/components/button`, `http://127.0.0.1:8000/components/table`, `http://127.0.0.1:8000/components/modal` and `http://127.0.0.1:8000/components/property-card`.
 
-viewport: 1280x720
+viewport: 1280x720 and 390x844
 
-state: documentation app after version/catalog/Real Estate/Design System/search/footer updates.
+state: documentation app after playground, catalog spacing, Real Estate previews and version `0.1.18` updates.
 
 full-view comparison evidence: browser QA inspected home, planned Real Estate page and Design System page. Verified:
 
-- version text is unified as `0.1.17` in sidebar, hero and footer;
-- catalog exposes filters: Todos, Popular, Novos, Formulários, Design de UI, Data, Overlay, Navigation, Feedback, Layout and Real Estate;
-- Real Estate catalog has 14 planned cards;
-- `Property Card` page clearly says the component is planned and does not render a fake package component;
-- Design System page contains Colors, Typography, Spacing, Radius, Shadows, Borders, Elevation, Motion, Grid, Icons, Focus Ring, Dark Mode, Component Anatomy and Tokens semânticos;
-- footer exposes six organized columns.
+- catalog heading is `Componentes organizados para acelerar CRMs, ERPs e sistemas internos em Laravel.`;
+- catalog cards now reserve 140px preview height, 16px between preview/meta and 18px between meta/content in desktop QA;
+- Real Estate cards use four distinct conceptual preview families: property, lead, person and operation;
+- `Property Card` page clearly says the component is planned, shows preview conceitual and exposes API prevista;
+- Button playground renders real SampaUI buttons and shows only the selected variant/size in the visible state;
+- Table playground renders the real SampaUI table and keeps the code snippet synchronized;
+- Modal playground and modal page previews render the real SampaUI modal inside a Livewire preview component to avoid `$wire.entangle` errors in static Blade context;
+- mobile catalog uses one column at 390px width, no horizontal overflow and 120px mini preview height.
 
-focused region comparison evidence: no external static mock was provided. Focused DOM checks were used for the version, filters, Real Estate status, Design System sections and footer structure.
+focused region comparison evidence: no external static mock was provided. Focused DOM/runtime checks were used for catalog spacing, Real Estate preview variety, playground presence, modal Livewire runtime and mobile overflow.
 
 findings: no actionable P0/P1/P2 findings after implementation.
 
 patches made since previous QA pass:
 
-- unified documentation version via `config('docs.version')`;
-- added filterable component catalog and richer cards;
-- added Real Estate planned component pages;
-- added component page badges, planned state, practices, API/events and interactive playground base;
-- expanded Design System reference;
-- improved search discovery and footer structure.
+- replaced fake Button/Badge/Input/Select/Table/Modal playground surfaces with real SampaUI-rendered previews where runtime allows;
+- wrapped Modal previews in a dedicated Livewire component because the package modal requires `$wire.entangle`;
+- increased catalog card padding, preview height, badge/meta gaps and mobile layout rules;
+- added distinct Real Estate conceptual preview partials and planned page preview reuse;
+- bumped package/docs version to `0.1.18` and updated changelogs.
 
 final result: passed

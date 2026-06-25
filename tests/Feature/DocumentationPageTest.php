@@ -19,6 +19,7 @@ it('renders the overview with installation guidance and component links', functi
         ->assertSee('Quatro comandos até o primeiro componente.')
         ->assertSee('Componentes populares')
         ->assertSee('Todos os componentes')
+        ->assertSee('Componentes organizados para acelerar CRMs, ERPs e sistemas internos em Laravel.')
         ->assertSee('Templates e exemplos completos')
         ->assertSee('Roadmap')
         ->assertSee('npm run build')
@@ -32,6 +33,9 @@ it('renders the overview with installation guidance and component links', functi
         ->assertSee('Real Estate')
         ->assertSee('Planejado')
         ->assertSee('Property Card')
+        ->assertSee('doc-catalog-meta-row', false)
+        ->assertSee('doc-category-pill', false)
+        ->assertSee('doc-real-estate-preview', false)
         ->assertSee('Blocks/Templates')
         ->assertSee('Links do rodapé', false)
         ->assertSee('GitHub')
@@ -79,6 +83,7 @@ it('renders a dedicated documentation page for each component', function () {
         if (DocumentationGuidance::status(DocumentationComponents::all()[$component]) === 'Planejado') {
             $response
                 ->assertSee('API prevista')
+                ->assertSee('Preview conceitual')
                 ->assertSee('Componente planejado, ainda não disponível no pacote.')
                 ->assertSee('Planejado');
         } else {
@@ -105,8 +110,8 @@ it('documents the new feedback and surface components', function () {
         ->assertSee('model')
         ->assertSee('persistent')
         ->assertSee('close-event')
-        ->assertSee('Abrir sm')
-        ->assertSee('Abrir full')
+        ->assertSee('Abrir modal')
+        ->assertSee('Preview Livewire real do SampaUI')
         ->assertSee('x-sampaui::modal', false);
 
     $this->get(route('documentation.components.show', 'drawer'))
@@ -144,7 +149,8 @@ it('ships the Alpine controllers required by the documentation shell', function 
     expect($javascript)
         ->toContain("Alpine.data('docsShell'")
         ->toContain("Alpine.data('tableOfContents'")
-        ->toContain("Alpine.data('docSearch'");
+        ->toContain("Alpine.data('docSearch'")
+        ->toContain("Alpine.data('componentPlayground'");
 });
 
 it('renders reusable navigation playground and props patterns', function () {
@@ -158,6 +164,9 @@ it('renders reusable navigation playground and props patterns', function () {
         ->assertSee('Quando não usar')
         ->assertSee('Erros comuns')
         ->assertSee('Playground')
+        ->assertSee('Playground interativo')
+        ->assertSee('Componente real')
+        ->assertSee('componentPlayground', false)
         ->assertSee('Blade')
         ->assertSee('Livewire')
         ->assertSee('Prop')

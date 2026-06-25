@@ -74,7 +74,7 @@
         <div class="doc-section-heading">
             <span>Playground</span>
             <h2>{{ $isPlanned ? 'API prevista' : 'Preview e implementação' }}</h2>
-            <p>{{ $isPlanned ? 'Snippet ilustrativo para guiar a futura implementação. Não representa componente pronto.' : 'Compare o resultado renderizado com o código adequado à stack usada no exemplo.' }}</p>
+            <p>{{ $isPlanned ? 'Preview conceitual e snippet ilustrativo para guiar a futura implementação. Não representa componente pronto.' : 'Compare o resultado renderizado com o código adequado à stack usada no exemplo.' }}</p>
         </div>
 
         @if (! $isPlanned)
@@ -85,9 +85,14 @@
             @foreach ($showcases as $showcase)
                 @php
                     $previewCode = $showcase['preview'] ?? $showcase['code'];
-                    $previewHtml = $isPlanned
-                        ? '<div class="doc-planned-preview-large"><i class="bi bi-'.e($componentDoc['planned_icon'] ?? 'buildings').'" aria-hidden="true"></i><strong>'.e($componentDoc['name']).'</strong><span>Planejado</span></div>'
-                        : \Illuminate\Support\Facades\Blade::render($previewCode);
+                    $previewHtml = match (true) {
+                        $isPlanned => '<div class="doc-planned-preview-large">'.view('docs.partials.component-preview', ['slug' => $componentDoc['slug']])->render().'</div>',
+                        $componentDoc['slug'] === 'modal' => view('docs.partials.modal-livewire-preview', [
+                            'title' => $showcase['title'],
+                            'index' => $loop->index,
+                        ])->render(),
+                        default => \Illuminate\Support\Facades\Blade::render($previewCode),
+                    };
                     $codeExamples = ['Blade' => trim($showcase['code'])];
 
                     if (! $isPlanned && str_contains($showcase['code'], 'wire:')) {
