@@ -12,28 +12,29 @@ final class DocumentationGuidance
     {
         $slug = (string) $component['slug'];
         $summary = rtrim((string) $component['summary'], '.');
-
-        $formComponents = ['input', 'phone', 'currency-br', 'cep', 'pin', 'select', 'select-multiple', 'select-search', 'textarea', 'checkbox', 'radio', 'toggle', 'date-picker', 'file-upload', 'avatar-upload'];
-        $overlayComponents = ['modal', 'drawer', 'dropdown', 'tooltip', 'command-palette'];
-        $feedbackComponents = ['alert', 'toast', 'badge', 'indicator', 'progress', 'skeleton', 'empty-state'];
+        $category = self::category($slug);
 
         return [
             'use' => [
                 $summary.'.',
-                in_array($slug, $formComponents, true)
-                    ? 'Use em formulários Blade ou Livewire que precisam de label, estado e validação consistentes.'
-                    : 'Use quando a interface precisar manter o mesmo padrão visual e comportamental do SampaUI.',
+                match ($category) {
+                    'Formulários' => 'Use em formulários Blade ou Livewire que precisam de label, estado e validação consistentes.',
+                    'Data' => 'Use para leitura, comparação, seleção e operação sobre dados de negócio.',
+                    'Overlay' => 'Use para fluxos temporários que precisam de foco, contexto e retorno claro.',
+                    'Real Estate' => 'Use como referência planejada para padronizar produtos imobiliários sem declarar componente pronto.',
+                    default => 'Use quando a interface precisar manter o mesmo padrão visual e comportamental do SampaUI.',
+                },
             ],
             'avoid' => [
-                in_array($slug, $overlayComponents, true)
+                in_array($category, ['Overlay'], true)
                     ? 'Evite para conteúdo essencial que deve permanecer visível durante toda a tarefa.'
                     : 'Evite quando um elemento semântico nativo mais simples resolver a tarefa sem perder consistência.',
-                in_array($slug, $feedbackComponents, true)
+                in_array($category, ['Feedback'], true)
                     ? 'Não use como única forma de comunicar uma informação crítica ou persistente.'
                     : 'Não duplique o componente com HTML solto apenas para pequenas diferenças de espaçamento.',
             ],
             'errors' => [
-                in_array($slug, $formComponents, true)
+                $category === 'Formulários'
                     ? 'Omitir name, label ou vínculo de erro e depender apenas do placeholder.'
                     : 'Alterar cores e estados sem respeitar as variantes semânticas do pacote.',
                 'Sobrescrever classes estruturais quando class="" seria suficiente para ajustar somente layout e espaçamento.',
@@ -43,8 +44,105 @@ final class DocumentationGuidance
 
     public static function category(string $slug): string
     {
-        return in_array($slug, ['input', 'phone', 'currency-br', 'cep', 'pin', 'select', 'select-multiple', 'select-search', 'textarea', 'checkbox', 'radio', 'toggle', 'date-picker', 'file-upload', 'avatar-upload'], true)
-            ? 'Formulários'
-            : 'Design de UI';
+        return match (true) {
+            in_array($slug, self::realEstateSlugs(), true) => 'Real Estate',
+            in_array($slug, ['input', 'phone', 'currency-br', 'cep', 'pin', 'select', 'select-multiple', 'select-search', 'textarea', 'checkbox', 'radio', 'toggle', 'date-picker', 'file-upload', 'avatar-upload'], true) => 'Formulários',
+            in_array($slug, ['table', 'pagination'], true) => 'Data',
+            in_array($slug, ['modal', 'drawer', 'dropdown', 'tooltip', 'command-palette'], true) => 'Overlay',
+            in_array($slug, ['breadcrumb', 'sidebar', 'header', 'tabs', 'tab-panel', 'accordion', 'stepper'], true) => 'Navigation',
+            in_array($slug, ['alert', 'toast', 'badge', 'indicator', 'progress', 'skeleton', 'empty-state'], true) => 'Feedback',
+            in_array($slug, ['card', 'avatar', 'brand-mark'], true) => 'Layout',
+            default => 'Design de UI',
+        };
+    }
+
+    public static function filter(string $slug): string
+    {
+        return match (self::category($slug)) {
+            'Formulários' => 'forms',
+            'Data' => 'data',
+            'Overlay' => 'overlay',
+            'Navigation' => 'navigation',
+            'Feedback' => 'feedback',
+            'Layout' => 'layout',
+            'Real Estate' => 'real-estate',
+            default => 'ui',
+        };
+    }
+
+    public static function icon(string $slug): string
+    {
+        return match ($slug) {
+            'button' => 'cursor',
+            'input' => 'input-cursor-text',
+            'pin' => 'key',
+            'select', 'select-multiple', 'select-search' => 'menu-button-wide',
+            'textarea' => 'textarea-t',
+            'checkbox' => 'check2-square',
+            'radio' => 'ui-radios',
+            'date-picker' => 'calendar3',
+            'avatar', 'avatar-upload' => 'person-circle',
+            'modal' => 'window-stack',
+            'drawer' => 'layout-sidebar-inset-reverse',
+            'dropdown' => 'menu-button',
+            'table' => 'table',
+            'card' => 'window',
+            'progress' => 'bar-chart-steps',
+            'command-palette' => 'command',
+            'property-card', 'property-gallery', 'property-features', 'property-status', 'property-price' => 'houses',
+            'lead-card', 'lead-pipeline', 'lead-status' => 'funnel',
+            'client-card', 'broker-card' => 'person-badge',
+            'proposal-card' => 'file-earmark-check',
+            'visit-timeline' => 'calendar2-check',
+            'commission-card' => 'cash-coin',
+            'real-estate-dashboard-widgets' => 'speedometer2',
+            default => self::category($slug) === 'Formulários' ? 'ui-checks' : 'grid-1x2',
+        };
+    }
+
+    public static function status(array $component): string
+    {
+        return (string) ($component['status'] ?? (in_array($component['slug'] ?? '', self::newSlugs(), true) ? 'Novo' : 'Pronto'));
+    }
+
+    public static function isPopular(string $slug): bool
+    {
+        return in_array($slug, ['button', 'input', 'select', 'badge', 'table', 'modal'], true);
+    }
+
+    public static function isNew(string $slug): bool
+    {
+        return in_array($slug, self::newSlugs(), true);
+    }
+
+    /**
+     * @return list<string>
+     */
+    public static function realEstateSlugs(): array
+    {
+        return [
+            'property-card',
+            'property-gallery',
+            'property-features',
+            'property-status',
+            'property-price',
+            'lead-card',
+            'lead-pipeline',
+            'lead-status',
+            'client-card',
+            'broker-card',
+            'proposal-card',
+            'visit-timeline',
+            'commission-card',
+            'real-estate-dashboard-widgets',
+        ];
+    }
+
+    /**
+     * @return list<string>
+     */
+    private static function newSlugs(): array
+    {
+        return ['brand-mark', 'command-palette'];
     }
 }

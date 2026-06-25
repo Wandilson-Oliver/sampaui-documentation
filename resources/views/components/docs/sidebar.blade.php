@@ -5,11 +5,25 @@
 ])
 
 @php
-    $formComponentSlugs = ['input', 'phone', 'currency-br', 'cep', 'pin', 'select', 'select-multiple', 'select-search', 'textarea', 'checkbox', 'radio', 'toggle', 'date-picker', 'file-upload', 'avatar-upload'];
-    $uiComponentSlugs = ['button', 'badge', 'avatar', 'indicator', 'alert', 'card', 'header', 'sidebar', 'modal', 'drawer', 'toast', 'dropdown', 'tabs', 'tooltip', 'breadcrumb', 'table', 'pagination', 'skeleton', 'empty-state', 'progress', 'stepper', 'accordion', 'command-palette'];
+    $groupIcons = [
+        'Formulários' => 'ui-checks-grid',
+        'Design de UI' => 'grid-1x2',
+        'Data' => 'table',
+        'Overlay' => 'window-stack',
+        'Navigation' => 'signpost-split',
+        'Feedback' => 'chat-square-heart',
+        'Layout' => 'layout-three-columns',
+        'Real Estate' => 'buildings',
+    ];
     $componentGroups = [
-        'Formulários' => collect($navigationComponents)->whereIn('slug', $formComponentSlugs)->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
-        'Design de UI' => collect($navigationComponents)->whereIn('slug', $uiComponentSlugs)->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
+        'Formulários' => collect($navigationComponents)->filter(fn (array $component): bool => \App\Support\DocumentationGuidance::category($component['slug']) === 'Formulários')->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
+        'Design de UI' => collect($navigationComponents)->filter(fn (array $component): bool => \App\Support\DocumentationGuidance::category($component['slug']) === 'Design de UI')->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
+        'Data' => collect($navigationComponents)->filter(fn (array $component): bool => \App\Support\DocumentationGuidance::category($component['slug']) === 'Data')->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
+        'Overlay' => collect($navigationComponents)->filter(fn (array $component): bool => \App\Support\DocumentationGuidance::category($component['slug']) === 'Overlay')->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
+        'Navigation' => collect($navigationComponents)->filter(fn (array $component): bool => \App\Support\DocumentationGuidance::category($component['slug']) === 'Navigation')->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
+        'Feedback' => collect($navigationComponents)->filter(fn (array $component): bool => \App\Support\DocumentationGuidance::category($component['slug']) === 'Feedback')->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
+        'Layout' => collect($navigationComponents)->filter(fn (array $component): bool => \App\Support\DocumentationGuidance::category($component['slug']) === 'Layout')->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
+        'Real Estate' => collect($navigationComponents)->filter(fn (array $component): bool => \App\Support\DocumentationGuidance::category($component['slug']) === 'Real Estate')->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
     ];
     $designSystemPage = collect($navigationPages)->firstWhere('slug', 'design-system');
     $sideNavigationPages = collect($navigationPages)
@@ -63,7 +77,7 @@
             @if ($groupComponents->isNotEmpty())
                 <section class="doc-menu-section" aria-labelledby="sidebar-{{ str($groupName)->slug() }}">
                     <h2 id="sidebar-{{ str($groupName)->slug() }}" class="doc-menu-section-title">
-                        <span><i class="bi bi-{{ $groupName === 'Formulários' ? 'ui-checks-grid' : 'grid-1x2' }}" aria-hidden="true"></i>{{ $groupName }}</span>
+                        <span><i class="bi bi-{{ $groupIcons[$groupName] ?? 'grid-1x2' }}" aria-hidden="true"></i>{{ $groupName }}</span>
                         <small>{{ $groupComponents->count() }}</small>
                     </h2>
 
@@ -77,9 +91,11 @@
                                 ])
                             >
                                 <span>{{ $navigationComponent['name'] }}</span>
-                                @if (in_array($navigationComponent['slug'], ['button', 'input', 'table'], true))
+                                @if ((\App\Support\DocumentationGuidance::status($navigationComponent)) === 'Planejado')
+                                    <small class="doc-menu-badge doc-menu-badge-planned">Planejado</small>
+                                @elseif (\App\Support\DocumentationGuidance::isPopular($navigationComponent['slug']))
                                     <small class="doc-menu-badge">Popular</small>
-                                @elseif (in_array($navigationComponent['slug'], ['brand-mark', 'command-palette'], true))
+                                @elseif (\App\Support\DocumentationGuidance::isNew($navigationComponent['slug']))
                                     <small class="doc-menu-badge doc-menu-badge-new">Novo</small>
                                 @endif
                             </a>
@@ -92,7 +108,7 @@
         @if ($navigationExamples->isNotEmpty())
             <section class="doc-menu-section" aria-labelledby="sidebar-exemplos">
                 <h2 id="sidebar-exemplos" class="doc-menu-section-title">
-                    <span><i class="bi bi-window-stack" aria-hidden="true"></i>Exemplos</span>
+                    <span><i class="bi bi-window-stack" aria-hidden="true"></i>Blocks/Templates</span>
                     <small>{{ $navigationExamples->count() }}</small>
                 </h2>
                 <div class="doc-menu-items">

@@ -2,7 +2,7 @@
 
 @section('content')
     @php
-        $sampaVersion = \SampaUI\SampaUI::VERSION;
+        $sampaVersion = config('docs.version');
         $componentTotal = count($components);
         $popularSlugs = ['button', 'input', 'select', 'badge', 'table', 'modal'];
         $popularComponents = collect($components)->whereIn('slug', $popularSlugs)->sortBy(fn (array $component): int => array_search($component['slug'], $popularSlugs, true))->values();
@@ -18,6 +18,19 @@
             ['title' => 'Mais padrões de CRM', 'copy' => 'Receitas para carteira, visitas, propostas e pós-venda.', 'icon' => 'buildings', 'status' => 'Em evolução'],
             ['title' => 'Playgrounds avançados', 'copy' => 'Mais estados interativos e exemplos Livewire copiáveis.', 'icon' => 'sliders2', 'status' => 'Planejado'],
             ['title' => 'Catálogo para IA', 'copy' => 'Registry e contexto estruturado para agentes de código.', 'icon' => 'stars', 'status' => 'Contínuo'],
+        ];
+        $catalogFilters = [
+            ['key' => 'all', 'label' => 'Todos'],
+            ['key' => 'popular', 'label' => 'Popular'],
+            ['key' => 'new', 'label' => 'Novos'],
+            ['key' => 'forms', 'label' => 'Formulários'],
+            ['key' => 'ui', 'label' => 'Design de UI'],
+            ['key' => 'data', 'label' => 'Data'],
+            ['key' => 'overlay', 'label' => 'Overlay'],
+            ['key' => 'navigation', 'label' => 'Navigation'],
+            ['key' => 'feedback', 'label' => 'Feedback'],
+            ['key' => 'layout', 'label' => 'Layout'],
+            ['key' => 'real-estate', 'label' => 'Real Estate'],
         ];
     @endphp
 
@@ -218,39 +231,82 @@
         </div>
     </section>
 
-    <section id="componentes" class="doc-home-section" aria-labelledby="components-title">
+    <section
+        id="componentes"
+        class="doc-home-section"
+        aria-labelledby="components-title"
+        x-data="{ activeFilter: 'all' }"
+    >
         <div class="doc-home-section-heading doc-home-section-heading-row">
             <div>
                 <span class="doc-kicker">Todos os componentes</span>
                 <h2 id="components-title">Um catálogo completo para sistemas internos.</h2>
-                <p>Props, estados, snippets Blade/Livewire e boas práticas em uma estrutura previsível.</p>
+                <p>Props, estados, snippets Blade/Livewire e boas práticas em uma estrutura filtrável e previsível.</p>
             </div>
             <span class="doc-count-pill">{{ $componentTotal }} componentes</span>
+        </div>
+
+        <div class="doc-catalog-filters" role="tablist" aria-label="Filtrar componentes">
+            @foreach ($catalogFilters as $filter)
+                <button
+                    type="button"
+                    role="tab"
+                    x-on:click="activeFilter = @js($filter['key'])"
+                    x-bind:aria-selected="(activeFilter === @js($filter['key'])).toString()"
+                    x-bind:class="activeFilter === @js($filter['key']) ? 'doc-catalog-filter-active' : ''"
+                >
+                    {{ $filter['label'] }}
+                </button>
+            @endforeach
         </div>
 
         <div class="doc-catalog-grid">
             @foreach ($components as $component)
                 @php
                     $category = \App\Support\DocumentationGuidance::category($component['slug']);
+                    $filter = \App\Support\DocumentationGuidance::filter($component['slug']);
+                    $status = \App\Support\DocumentationGuidance::status($component);
+                    $isPopular = \App\Support\DocumentationGuidance::isPopular($component['slug']);
+                    $isNew = \App\Support\DocumentationGuidance::isNew($component['slug']);
                     $isForm = $category === 'Formulários';
-                    $componentIcon = match ($component['slug']) {
-                        'button' => 'cursor', 'input' => 'input-cursor-text', 'pin' => 'key',
-                        'select', 'select-multiple', 'select-search' => 'menu-button-wide',
-                        'textarea' => 'textarea-t', 'checkbox' => 'check2-square', 'radio' => 'ui-radios',
-                        'date-picker' => 'calendar3', 'avatar', 'avatar-upload' => 'person-circle',
-                        'modal' => 'window-stack', 'drawer' => 'layout-sidebar-inset-reverse',
-                        'dropdown' => 'menu-button', 'table' => 'table', 'card' => 'window',
-                        'progress' => 'bar-chart-steps', 'command-palette' => 'command',
-                        default => $isForm ? 'ui-checks' : 'grid-1x2',
-                    };
+                    $componentIcon = \App\Support\DocumentationGuidance::icon($component['slug']);
+                    $filters = collect(['all', $filter])
+                        ->when($isPopular, fn ($items) => $items->push('popular'))
+                        ->when($isNew, fn ($items) => $items->push('new'))
+                        ->when($status === 'Planejado', fn ($items) => $items->push('real-estate'))
+                        ->unique()
+                        ->values()
+                        ->all();
                 @endphp
-                <a href="{{ route('documentation.components.show', $component['slug']) }}" @class(['doc-catalog-card', 'doc-catalog-card-form' => $isForm, 'doc-catalog-card-ui' => ! $isForm])>
+                <a
+                    href="{{ route('documentation.components.show', $component['slug']) }}"
+                    x-show="@js($filters).includes(activeFilter)"
+                    x-transition.opacity.duration.150ms
+                    @class([
+                        'doc-catalog-card',
+                        'doc-catalog-card-form' => $isForm,
+                        'doc-catalog-card-real-estate' => $category === 'Real Estate',
+                        'doc-catalog-card-ui' => ! $isForm && $category !== 'Real Estate',
+                    ])
+                >
+                    <div class="doc-catalog-mini-preview" aria-hidden="true">
+                        @if ($status === 'Planejado')
+                            <div class="doc-planned-preview">
+                                <span><i class="bi bi-{{ $component['planned_icon'] ?? $componentIcon }}" aria-hidden="true"></i></span>
+                                <small>Planejado</small>
+                            </div>
+                        @else
+                            @include('docs.partials.component-preview', ['slug' => $component['slug']])
+                        @endif
+                    </div>
                     <div class="doc-catalog-card-top">
                         <span class="doc-catalog-icon"><i class="bi bi-{{ $componentIcon }}" aria-hidden="true"></i></span>
                         <div>
-                            @if (in_array($component['slug'], ['button', 'input', 'table'], true))
+                            @if ($status === 'Planejado')
+                                <span class="doc-status-label doc-status-label-planned">Planejado</span>
+                            @elseif ($isPopular)
                                 <span class="doc-status-label doc-status-label-popular">Popular</span>
-                            @elseif (in_array($component['slug'], ['brand-mark', 'command-palette'], true))
+                            @elseif ($isNew)
                                 <span class="doc-status-label doc-status-label-new">Novo</span>
                             @endif
                             <span class="doc-props-count">{{ count($component['props']) }} props</span>
@@ -261,12 +317,13 @@
                         <h3>{{ $component['name'] }}</h3>
                         <p>{{ $component['summary'] }}</p>
                     </div>
+                    <span class="doc-card-link">Abrir documentação <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
                 </a>
             @endforeach
         </div>
     </section>
 
-    <section class="doc-home-section" aria-labelledby="templates-title">
+    <section id="blocks" class="doc-home-section" aria-labelledby="templates-title">
         <div class="doc-home-section-heading doc-home-section-heading-row">
             <div>
                 <span class="doc-kicker">Templates e exemplos completos</span>

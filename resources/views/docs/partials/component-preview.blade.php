@@ -32,4 +32,9 @@
             <div><strong>Proposta aprovada</strong><small>O cliente será notificado.</small></div>
         </div>
         @break
+    @default
+        <div class="doc-fallback-preview">
+            <i class="bi bi-{{ \App\Support\DocumentationGuidance::icon($slug) }}" aria-hidden="true"></i>
+            <span>{{ \App\Support\DocumentationGuidance::category($slug) }}</span>
+        </div>
 @endswitch

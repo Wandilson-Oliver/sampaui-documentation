@@ -2,19 +2,18 @@
 
 @php
     $snippet = <<<'BLADE'
-<x-sampaui::table compact>
-    <x-slot:head>...</x-slot:head>
-    <x-slot:body>
-        @forelse ($rows as $row)
-            <tr>
-                <td><x-sampaui::avatar :name="$row['name']" /></td>
-                <td><x-sampaui::badge :variant="$row['variant']">{{ $row['status'] }}</x-sampaui::badge></td>
-                <td><x-sampaui::dropdown align="right">...</x-sampaui::dropdown></td>
-            </tr>
-        @empty
-            <tr><td colspan="5"><x-sampaui::empty-state title="Nada encontrado" /></td></tr>
-        @endforelse
-    </x-slot:body>
+<x-sampaui::table
+    title="Clientes"
+    description="Base comercial"
+    searchable
+    selectable
+    export-href="/exports/clientes.csv"
+    per-page="10"
+    :columns="$columns"
+    :rows="$rows"
+>
+    <x-slot:filters>...</x-slot:filters>
+    <x-slot:actions>...</x-slot:actions>
 </x-sampaui::table>
 BLADE;
 
@@ -32,34 +31,44 @@ BLADE;
                 <p class="doc-kicker">Exemplo</p>
                 <h1 class="mt-3 text-3xl font-semibold tracking-tight text-primary md:text-4xl">Tabela avançada</h1>
                 <p class="mt-4 max-w-3xl text-sm leading-6 text-secondary">
-                    Listagem administrativa com filtros, avatar, badges, dropdown de ações, paginação e estados de loading/vazio.
+                    DataTable premium com busca, filtros, seleção múltipla, ações por linha, ações em massa, paginação, exportação CSV, loading/skeleton, estado vazio e layout responsivo.
                 </p>
             </div>
         </article>
     </section>
 
     <section class="space-y-7">
-        <x-sampaui::card title="Clientes" description="Exemplo de tabela rica para áreas internas" padding="lg" class="shadow-default">
-            <x-slot:actions>
-                <x-sampaui::button icon="download" variant="outline">Exportar</x-sampaui::button>
-                <x-sampaui::button icon="plus">Novo</x-sampaui::button>
-            </x-slot:actions>
+        <x-sampaui::card title="Clientes" description="Exemplo de DataTable rica para áreas internas" padding="lg" class="shadow-default">
+            <x-sampaui::table
+                title="Base comercial"
+                description="42 registros encontrados"
+                searchable
+                search-placeholder="Buscar cliente, email ou valor"
+                selectable
+                export-href="/exports/clientes.csv"
+                export-label="Exportar CSV"
+                per-page="5"
+                page="2"
+                total="42"
+                class="min-w-[58rem]"
+                compact
+            >
+                <x-slot:filters>
+                    <x-sampaui::select name="table_status" :options="[
+                        ['label' => 'Todos', 'value' => ''],
+                        ['label' => 'Ativo', 'value' => 'active'],
+                        ['label' => 'Pendente', 'value' => 'pending'],
+                    ]" />
+                </x-slot:filters>
 
-            <div class="mb-6 grid gap-4 lg:grid-cols-[minmax(0,1fr)_13rem_12rem]">
-                <x-sampaui::input name="table_search" icon="search" placeholder="Buscar cliente, email ou valor" />
-                <x-sampaui::select name="table_status" :options="[
-                    ['label' => 'Todos', 'value' => ''],
-                    ['label' => 'Ativo', 'value' => 'active'],
-                    ['label' => 'Pendente', 'value' => 'pending'],
-                ]" />
-                <x-sampaui::button variant="outline" icon="arrow-counterclockwise">Limpar</x-sampaui::button>
-            </div>
+                <x-slot:actions>
+                    <x-sampaui::button icon="plus" size="sm">Novo</x-sampaui::button>
+                </x-slot:actions>
 
-            <div class="-mx-6 overflow-x-auto">
-                <x-sampaui::table class="min-w-[58rem] !rounded-none !border-x-0" compact>
                     <x-slot:head>
                         <thead class="bg-light/70 text-left text-xs font-semibold uppercase tracking-[0.18em] text-secondary">
                             <tr>
+                                <th class="px-6 py-3"><input type="checkbox" class="rounded border-secondary/40 text-primary focus:ring-primary/20" aria-label="Selecionar todos"></th>
                                 <th class="px-6 py-3">Cliente</th>
                                 <th class="px-6 py-3">Email</th>
                                 <th class="px-6 py-3">Status</th>
@@ -72,6 +81,7 @@ BLADE;
                         <tbody class="divide-y divide-light">
                             @foreach ($rows as $row)
                                 <tr class="transition hover:bg-light/60">
+                                    <td class="px-6 py-4"><input type="checkbox" class="rounded border-secondary/40 text-primary focus:ring-primary/20" aria-label="Selecionar {{ $row['name'] }}"></td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
                                             <x-sampaui::avatar name="{{ $row['name'] }}" />
@@ -92,15 +102,7 @@ BLADE;
                             @endforeach
                         </tbody>
                     </x-slot:body>
-                </x-sampaui::table>
-            </div>
-
-            <x-slot:footer>
-                <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                    <p class="text-sm text-secondary"><strong class="text-primary">42 registros</strong> encontrados</p>
-                    <x-sampaui::pagination :current-page="2" :last-page="8" :total="42" :per-page="5" />
-                </div>
-            </x-slot:footer>
+            </x-sampaui::table>
         </x-sampaui::card>
 
         <div class="grid gap-5 lg:grid-cols-2">

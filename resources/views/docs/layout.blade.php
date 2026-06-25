@@ -37,6 +37,8 @@
                         'subtitle' => $component['summary'] ?? $component['description'] ?? '',
                         'tag' => $component['tag'] ?? '',
                         'url' => route('documentation.components.show', $component['slug']),
+                        'popular' => \App\Support\DocumentationGuidance::isPopular($component['slug'] ?? ''),
+                        'recent' => \App\Support\DocumentationGuidance::isNew($component['slug'] ?? ''),
                         'search' => implode(' ', [$component['name'] ?? '', $component['slug'] ?? '', $component['tag'] ?? '', $component['summary'] ?? '', $component['description'] ?? '', $props, $examples]),
                     ];
                 })
@@ -46,6 +48,8 @@
                     'subtitle' => $page['summary'] ?? $page['description'] ?? '',
                     'tag' => $page['tag'] ?? 'Página',
                     'url' => route('documentation.pages.show', $page['slug']),
+                    'popular' => false,
+                    'recent' => ($page['slug'] ?? '') === 'real-estate-patterns',
                     'search' => implode(' ', [$page['name'] ?? '', $page['slug'] ?? '', $page['tag'] ?? '', $page['summary'] ?? '', $page['description'] ?? '', $page['code'] ?? '']),
                 ]))
                 ->merge($navigationExamples->map(fn (array $example): array => [
@@ -54,6 +58,8 @@
                     'subtitle' => $example['summary'] ?? '',
                     'tag' => $example['tag'] ?? 'Exemplo',
                     'url' => route($example['route']),
+                    'popular' => in_array($example['route'] ?? '', ['examples.dashboard', 'examples.advanced-table', 'examples.authentication'], true),
+                    'recent' => in_array($example['route'] ?? '', ['examples.chat', 'examples.command-palette'], true),
                     'search' => implode(' ', [$example['name'] ?? '', $example['slug'] ?? '', $example['tag'] ?? '', $example['summary'] ?? '']),
                 ]))
                 ->values();
@@ -63,7 +69,9 @@
                     ['id' => 'visao-geral', 'label' => 'Visão geral'],
                     ['id' => 'orientacoes', 'label' => 'Quando usar'],
                     ['id' => 'playground', 'label' => 'Playground'],
+                    ['id' => 'boas-praticas', 'label' => 'Boas práticas'],
                     ['id' => 'props', 'label' => 'Props e atributos'],
+                    ['id' => 'api-eventos', 'label' => 'API e eventos'],
                     ['id' => 'acessibilidade', 'label' => 'Acessibilidade'],
                 ],
                 request()->routeIs('documentation.pages.show') => [

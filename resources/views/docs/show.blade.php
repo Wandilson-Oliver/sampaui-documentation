@@ -5,6 +5,8 @@
         $showcases = $componentDoc['showcases'] ?? $componentDoc['examples'];
         $category = \App\Support\DocumentationGuidance::category($componentDoc['slug']);
         $guidance = \App\Support\DocumentationGuidance::for($componentDoc);
+        $status = \App\Support\DocumentationGuidance::status($componentDoc);
+        $isPlanned = $status === 'Planejado';
         $relatedLivewireExample = collect($componentDoc['examples'] ?? [])->first(
             fn (array $example): bool => str_contains($example['code'] ?? '', 'wire:')
         );
@@ -31,14 +33,32 @@
             <h1>{{ $componentDoc['name'] }}</h1>
             <p>{{ $componentDoc['summary'] }}</p>
             <p>{{ $componentDoc['description'] }}</p>
+            <div class="doc-component-badges" aria-label="Metadados do componente">
+                <span><i class="bi bi-folder" aria-hidden="true"></i>{{ $category }}</span>
+                <span><i class="bi bi-sliders" aria-hidden="true"></i>{{ count($componentDoc['props']) }} props</span>
+                <span><i class="bi bi-{{ $isPlanned ? 'clock-history' : 'check2-circle' }}" aria-hidden="true"></i>{{ $status }}</span>
+                @if (\App\Support\DocumentationGuidance::isPopular($componentDoc['slug']))
+                    <span><i class="bi bi-star-fill" aria-hidden="true"></i>Popular</span>
+                @endif
+            </div>
         </div>
 
         <dl class="doc-page-facts">
             <div><dt>Categoria</dt><dd>{{ $category }}</dd></div>
             <div><dt>Props</dt><dd>{{ count($componentDoc['props']) }}</dd></div>
-            <div><dt>Stack</dt><dd>Blade + Livewire</dd></div>
+            <div><dt>Status</dt><dd>{{ $status }}</dd></div>
         </dl>
     </section>
+
+    @if ($isPlanned)
+        <section class="doc-planned-callout" aria-labelledby="planned-title">
+            <span><i class="bi bi-{{ $componentDoc['planned_icon'] ?? 'buildings' }}" aria-hidden="true"></i></span>
+            <div>
+                <h2 id="planned-title">Componente planejado, ainda não disponível no pacote.</h2>
+                <p>Esta página documenta direção de produto e intenção de API para Real Estate. Não copie a tag como implementação final até o componente existir no pacote SampaUI.</p>
+            </div>
+        </section>
+    @endif
 
     <section id="orientacoes" class="doc-section">
         <div class="doc-section-heading">
@@ -53,24 +73,30 @@
     <section id="playground" class="doc-section">
         <div class="doc-section-heading">
             <span>Playground</span>
-            <h2>Preview e implementação</h2>
-            <p>Compare o resultado renderizado com o código adequado à stack usada no exemplo.</p>
+            <h2>{{ $isPlanned ? 'API prevista' : 'Preview e implementação' }}</h2>
+            <p>{{ $isPlanned ? 'Snippet ilustrativo para guiar a futura implementação. Não representa componente pronto.' : 'Compare o resultado renderizado com o código adequado à stack usada no exemplo.' }}</p>
         </div>
+
+        @if (! $isPlanned)
+            <x-docs.interactive-playground :slug="$componentDoc['slug']" />
+        @endif
 
         <div class="doc-playground-list">
             @foreach ($showcases as $showcase)
                 @php
                     $previewCode = $showcase['preview'] ?? $showcase['code'];
-                    $previewHtml = \Illuminate\Support\Facades\Blade::render($previewCode);
+                    $previewHtml = $isPlanned
+                        ? '<div class="doc-planned-preview-large"><i class="bi bi-'.e($componentDoc['planned_icon'] ?? 'buildings').'" aria-hidden="true"></i><strong>'.e($componentDoc['name']).'</strong><span>Planejado</span></div>'
+                        : \Illuminate\Support\Facades\Blade::render($previewCode);
                     $codeExamples = ['Blade' => trim($showcase['code'])];
 
-                    if (str_contains($showcase['code'], 'wire:')) {
+                    if (! $isPlanned && str_contains($showcase['code'], 'wire:')) {
                         $codeExamples = ['Livewire' => trim($showcase['code'])];
-                    } elseif ($relatedLivewireExample) {
+                    } elseif (! $isPlanned && $relatedLivewireExample) {
                         $codeExamples['Livewire'] = trim($relatedLivewireExample['code']);
                     }
 
-                    if ($relatedPhpExample) {
+                    if (! $isPlanned && $relatedPhpExample) {
                         $codeExamples['PHP'] = trim($relatedPhpExample['code']);
                     }
                 @endphp
@@ -107,6 +133,41 @@
         @endif
     </section>
 
+    <section id="boas-praticas" class="doc-section">
+        <div class="doc-section-heading">
+            <span>Boas práticas</span>
+            <h2>Como usar sem perder consistência</h2>
+            <p>Decisões rápidas para manter API, acessibilidade e visual alinhados ao framework.</p>
+        </div>
+
+        <div class="doc-practice-grid">
+            <article>
+                <h3>Use quando</h3>
+                <ul>
+                    @foreach ($guidance['use'] as $item)
+                        <li>{{ $item }}</li>
+                    @endforeach
+                </ul>
+            </article>
+            <article>
+                <h3>Evite</h3>
+                <ul>
+                    @foreach ($guidance['avoid'] as $item)
+                        <li>{{ $item }}</li>
+                    @endforeach
+                </ul>
+            </article>
+            <article>
+                <h3>Erros comuns</h3>
+                <ul>
+                    @foreach ($guidance['errors'] as $item)
+                        <li>{{ $item }}</li>
+                    @endforeach
+                </ul>
+            </article>
+        </div>
+    </section>
+
     <section id="props" class="doc-section">
         <div class="doc-section-heading">
             <span>API</span>
@@ -126,6 +187,29 @@
         @endif
 
         <x-docs.props-table :props="$componentDoc['props']" />
+    </section>
+
+    <section id="api-eventos" class="doc-section">
+        <div class="doc-section-heading">
+            <span>API e eventos</span>
+            <h2>Integração com Blade, Livewire e Alpine</h2>
+            <p>Resumo dos pontos de extensão que devem continuar estáveis no consumo do pacote.</p>
+        </div>
+
+        <div class="doc-api-grid">
+            <div>
+                <strong>Atributos</strong>
+                <p>{{ implode(', ', $componentDoc['attributes'] ?? ['class', 'wire:*', 'x-*']) }}</p>
+            </div>
+            <div>
+                <strong>Variantes</strong>
+                <p>{{ collect($componentDoc['props'])->firstWhere('name', 'variant')['type'] ?? ($isPlanned ? 'Planejado' : 'Consulte props') }}</p>
+            </div>
+            <div>
+                <strong>Eventos</strong>
+                <p>{{ str_contains(collect($componentDoc['examples'])->pluck('code')->implode(' '), '$dispatch') || str_contains(collect($componentDoc['examples'])->pluck('code')->implode(' '), 'dispatch') ? 'Possui exemplos com eventos Alpine/Livewire.' : 'Sem evento público obrigatório documentado.' }}</p>
+            </div>
+        </div>
     </section>
 
     <section id="acessibilidade" class="doc-section">

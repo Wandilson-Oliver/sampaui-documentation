@@ -1332,22 +1332,34 @@ BLADE,
                 'slug' => 'table',
                 'name' => 'Table',
                 'tag' => '<x-sampaui::table />',
-                'summary' => 'Tabela responsiva para dados operacionais com colunas via array, linhas via array, slots e estado vazio.',
-                'description' => 'Use para listagens simples, tabelas administrativas e blocos de resumo. O componente aceita renderizacao automatica por arrays ou slots `head` e `body` para markup customizado.',
-                'preview_title' => 'Listagem operacional',
-                'preview_caption' => 'Colunas, linhas, alinhamento e estado vazio.',
+                'summary' => 'DataTable premium para dados operacionais com busca, ordenação, paginação, seleção, export link, loading e empty state.',
+                'description' => 'Use para listagens administrativas, CRMs e ERPs. O componente continua aceitando `columns` e `rows`, mas agora documenta recursos de DataTable como busca, filtros por slot, ações, seleção múltipla, paginação, skeleton e responsividade.',
+                'preview_title' => 'DataTable operacional',
+                'preview_caption' => 'Busca, seleção, paginação, loading, empty state e exportação por link.',
                 'props' => [
                     ['name' => 'columns', 'type' => 'array', 'default' => '[]', 'notes' => 'Mapa `chave => label` ou arrays com `label`, `key` e `align`.'],
                     ['name' => 'rows', 'type' => 'array', 'default' => '[]', 'notes' => 'Linhas em array ou objeto lidas por `data_get`.'],
+                    ['name' => 'title', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Título opcional da toolbar.'],
+                    ['name' => 'description', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Descrição curta abaixo do título.'],
                     ['name' => 'empty', 'type' => 'string', 'default' => 'Nenhum registro encontrado.', 'notes' => 'Mensagem exibida quando nao ha linhas.'],
+                    ['name' => 'emptyTitle', 'type' => 'string', 'default' => 'Nenhum registro encontrado', 'notes' => 'Título do estado vazio premium.'],
+                    ['name' => 'emptyDescription', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Descrição do estado vazio.'],
                     ['name' => 'striped', 'type' => 'bool', 'default' => 'false', 'notes' => 'Alterna fundo discreto em linhas pares.'],
                     ['name' => 'hover', 'type' => 'bool', 'default' => 'true', 'notes' => 'Ativa destaque ao passar o mouse nas linhas.'],
                     ['name' => 'bordered', 'type' => 'bool', 'default' => 'true', 'notes' => 'Controla borda externa da tabela.'],
                     ['name' => 'compact', 'type' => 'bool', 'default' => 'false', 'notes' => 'Reduz padding das celulas.'],
+                    ['name' => 'searchable', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe busca na toolbar.'],
+                    ['name' => 'searchModel', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Quando informado, aplica `wire:model.live.debounce.300ms` ao campo de busca.'],
+                    ['name' => 'selectable', 'type' => 'bool', 'default' => 'false', 'notes' => 'Ativa seleção múltipla local com Alpine.'],
+                    ['name' => 'selectedRows', 'type' => 'array', 'default' => '[]', 'notes' => 'IDs selecionados inicialmente.'],
+                    ['name' => 'rowKey', 'type' => 'string', 'default' => 'id', 'notes' => 'Chave usada como value dos checkboxes.'],
+                    ['name' => 'exportHref', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Link para exportação CSV ou endpoint próprio. Export Excel segue planejado no roadmap.'],
+                    ['name' => 'perPage/page/total', 'type' => 'int|null', 'default' => 'null', 'notes' => 'Controlam paginação local ou externa.'],
+                    ['name' => 'loading', 'type' => 'bool', 'default' => 'false', 'notes' => 'Renderiza skeletons e marca `aria-busy`.'],
                     ['name' => 'sortBy', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Chave da coluna ordenada quando a coluna tem `sortable => true`.'],
                     ['name' => 'sortDirection', 'type' => 'asc|desc', 'default' => 'asc', 'notes' => 'Direcao ativa da ordenacao.'],
                     ['name' => 'sortMethod', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Metodo Livewire chamado nos botoes de ordenacao.'],
-                    ['name' => '$head/$body', 'type' => 'Named slots', 'default' => '-', 'notes' => 'Substituem renderizacao automatica quando precisar de markup completo.'],
+                    ['name' => '$toolbar/$filters/$actions/$head/$body/$pagination', 'type' => 'Named slots', 'default' => '-', 'notes' => 'Substituem regiões específicas quando precisar de markup customizado.'],
                 ],
                 'attributes' => ['class', 'id', 'wire:key', 'x-data', 'aria-*', 'data-*'],
                 'accessibility' => [
@@ -1357,18 +1369,24 @@ BLADE,
                 ],
                 'examples' => [
                     [
-                        'title' => 'Basico',
-                        'description' => 'Tabela a partir de arrays simples.',
+                        'title' => 'DataTable premium',
+                        'description' => 'Tabela com toolbar, busca, seleção e exportação CSV por link.',
                         'code' => <<<'BLADE'
 <x-sampaui::table
+    title="Clientes"
+    description="Base comercial"
+    searchable
+    selectable
+    export-href="/exports/clientes.csv"
+    per-page="10"
     :columns="[
         'name' => 'Cliente',
         'status' => 'Status',
         'amount' => ['label' => 'Valor', 'key' => 'amount', 'align' => 'right'],
     ]"
     :rows="[
-        ['name' => 'Ana Souza', 'status' => 'Ativo', 'amount' => 'R$ 1.200,00'],
-        ['name' => 'Bruno Lima', 'status' => 'Em analise', 'amount' => 'R$ 850,00'],
+        ['id' => 1, 'name' => 'Ana Souza', 'status' => 'Ativo', 'amount' => 'R$ 1.200,00'],
+        ['id' => 2, 'name' => 'Bruno Lima', 'status' => 'Em analise', 'amount' => 'R$ 850,00'],
     ]"
 />
 BLADE,
@@ -1405,6 +1423,19 @@ BLADE,
         ['code' => '#1024', 'owner' => 'Comercial'],
         ['code' => '#1025', 'owner' => 'Suporte'],
     ]"
+/>
+BLADE,
+                    ],
+                    [
+                        'title' => 'Loading e empty state',
+                        'description' => 'Skeleton e estado vazio refinado para buscas sem resultado.',
+                        'code' => <<<'BLADE'
+<x-sampaui::table
+    loading
+    empty-title="Nenhum cliente encontrado"
+    empty-description="Ajuste filtros ou cadastre um novo cliente."
+    :columns="['name' => 'Cliente', 'status' => 'Status']"
+    :rows="[]"
 />
 BLADE,
                     ],
@@ -3984,6 +4015,65 @@ BLADE,
             ],
         ];
 
-        return $components;
+        return array_merge($components, $this->plannedRealEstateComponents());
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    private function plannedRealEstateComponents(): array
+    {
+        $items = [
+            'property-card' => ['Property Card', 'Card de imóvel com imagem, preço, endereço, status e CTA principal.', 'houses'],
+            'property-gallery' => ['Property Gallery', 'Galeria responsiva para fotos, plantas, vídeos e tour virtual.', 'images'],
+            'property-features' => ['Property Features', 'Lista padronizada de dormitórios, vagas, área, condomínio e diferenciais.', 'list-check'],
+            'property-status' => ['Property Status', 'Marcador semântico para disponível, reservado, vendido, alugado ou em análise.', 'bookmark-check'],
+            'property-price' => ['Property Price', 'Exibição monetária com preço, condomínio, IPTU e variação por negociação.', 'cash-stack'],
+            'lead-card' => ['Lead Card', 'Resumo de lead com origem, prioridade, orçamento e próxima ação.', 'person-plus'],
+            'lead-pipeline' => ['Lead Pipeline', 'Funil comercial visual para captação, qualificação, visita, proposta e fechamento.', 'kanban'],
+            'lead-status' => ['Lead Status', 'Status semântico de lead para frio, morno, quente, perdido ou convertido.', 'thermometer-half'],
+            'client-card' => ['Client Card', 'Ficha compacta de cliente com contato, interesse, corretor e histórico recente.', 'person-vcard'],
+            'broker-card' => ['Broker Card', 'Perfil de corretor com carteira, metas, conversão e disponibilidade.', 'person-badge'],
+            'proposal-card' => ['Proposal Card', 'Resumo de proposta com valor, validade, responsável, etapa e ações.', 'file-earmark-check'],
+            'visit-timeline' => ['Visit Timeline', 'Linha do tempo para visitas, follow-ups, retornos e observações.', 'calendar2-check'],
+            'commission-card' => ['Commission Card', 'Resumo de comissão, split, previsão de pagamento e status financeiro.', 'cash-coin'],
+            'real-estate-dashboard-widgets' => ['Real Estate Dashboard Widgets', 'Widgets planejados para receita, leads, funil, agenda e performance comercial.', 'speedometer2'],
+        ];
+
+        return collect($items)
+            ->mapWithKeys(function (array $item, string $slug): array {
+                [$name, $summary, $icon] = $item;
+
+                return [$slug => [
+                    'slug' => $slug,
+                    'name' => $name,
+                    'tag' => '<x-sampaui::'.$slug.' />',
+                    'status' => 'Planejado',
+                    'summary' => $summary,
+                    'description' => 'Este componente ainda não faz parte do pacote SampaUI. A página existe para documentar intenção de API, critérios de uso e prioridade do roadmap Real Estate sem apresentar o recurso como pronto.',
+                    'preview_title' => 'Componente planejado',
+                    'preview_caption' => 'Placeholder oficial para orientar implementação futura.',
+                    'props' => [
+                        ['name' => 'variant', 'type' => 'string', 'default' => 'default', 'notes' => 'Planejado. Variante visual conforme tokens SampaUI.'],
+                        ['name' => 'status', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Planejado. Estado de negócio quando aplicável.'],
+                        ['name' => 'class', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Planejado. Customização local sem quebrar estrutura.'],
+                    ],
+                    'attributes' => ['class', 'id', 'wire:*', 'x-*', 'aria-*', 'data-*'],
+                    'accessibility' => [
+                        'Planejar estados sem depender apenas de cor.',
+                        'Garantir labels, headings e regiões semânticas quando o componente sair do roadmap.',
+                        'Manter foco visível, contraste e compatibilidade com navegação por teclado.',
+                    ],
+                    'examples' => [
+                        [
+                            'title' => 'API prevista',
+                            'description' => 'Exemplo ilustrativo. Não use em produção até o componente existir no pacote.',
+                            'code' => '<x-sampaui::'.$slug.' status="planned" />',
+                        ],
+                    ],
+                    'planned_icon' => $icon,
+                ]];
+            })
+            ->all();
     }
 }

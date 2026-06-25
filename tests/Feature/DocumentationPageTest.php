@@ -2,6 +2,7 @@
 
 use App\Livewire\Examples\UsersIndex;
 use App\Support\DocumentationComponents;
+use App\Support\DocumentationGuidance;
 use Livewire\Livewire;
 
 it('renders the overview with installation guidance and component links', function () {
@@ -26,7 +27,12 @@ it('renders the overview with installation guidance and component links', functi
         ->assertSee('doc-topbar', false)
         ->assertSee('docs-sidebar', false)
         ->assertSee('sampaui-docs-theme', false)
-        ->assertSee('Docs v0.3.0')
+        ->assertSee('Docs v'.config('docs.version'))
+        ->assertSee('Todos')
+        ->assertSee('Real Estate')
+        ->assertSee('Planejado')
+        ->assertSee('Property Card')
+        ->assertSee('Blocks/Templates')
         ->assertSee('Links do rodapé', false)
         ->assertSee('GitHub')
         ->assertSee('Voltar ao topo')
@@ -58,10 +64,9 @@ it('renders a dedicated documentation page for each component', function () {
     $components = array_keys(DocumentationComponents::all());
 
     foreach ($components as $component) {
-        $this->get(route('documentation.components.show', $component))
+        $response = $this->get(route('documentation.components.show', $component))
             ->assertOk()
             ->assertSee('Acessibilidade')
-            ->assertSee('Preview e implementação')
             ->assertSee('Quando este componente faz sentido')
             ->assertSee('doc-content-with-toc', false)
             ->assertSee('doc-reading-column', false)
@@ -70,6 +75,15 @@ it('renders a dedicated documentation page for each component', function () {
             ->assertSee('doc-playground', false)
             ->assertSee('doc-code-block', false)
             ->assertSee('x-sampaui::'.$component, false);
+
+        if (DocumentationGuidance::status(DocumentationComponents::all()[$component]) === 'Planejado') {
+            $response
+                ->assertSee('API prevista')
+                ->assertSee('Componente planejado, ainda não disponível no pacote.')
+                ->assertSee('Planejado');
+        } else {
+            $response->assertSee('Preview e implementação');
+        }
     }
 });
 

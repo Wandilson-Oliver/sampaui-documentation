@@ -1,5 +1,7 @@
 <?php
 
+use SampaUI\SampaUI;
+
 return [
-    'version' => '0.3.0',
+    'version' => SampaUI::VERSION,
 ];

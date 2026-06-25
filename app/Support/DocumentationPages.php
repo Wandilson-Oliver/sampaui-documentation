@@ -15,8 +15,8 @@ class DocumentationPages
                 'name' => 'Design system',
                 'icon' => 'palette2',
                 'tag' => 'Foundations',
-                'summary' => 'Paleta personalizada, tokens semanticos e orientacao para manter o visual consistente.',
-                'description' => 'Guia rapido para ajustar as cores personalizadas do SampaUI usando os tokens do pacote.',
+                'summary' => 'Referência oficial de tokens semânticos, anatomia, dark mode e decisões visuais do SampaUI.',
+                'description' => 'Guia de Design System para manter cores, tipografia, spacing, radius, shadows, borders, motion, grid, icons, focus ring e componentes consistentes.',
                 'preview' => <<<'BLADE'
 <div class="space-y-6">
     <x-sampaui::card padding="lg">
@@ -62,6 +62,52 @@ class DocumentationPages
                 </div>
             </x-sampaui::card>
         @endforeach
+    </div>
+
+    <x-sampaui::card title="Fundamentos do framework" description="Referência rápida para revisar antes de criar ou ajustar componentes" padding="lg">
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            @foreach ([
+                ['title' => 'Colors', 'copy' => 'Tokens semânticos: primary, secondary, accent, danger, light, success, warning, info, purple e muted.'],
+                ['title' => 'Typography', 'copy' => 'Hierarquia objetiva, pesos fortes em títulos, texto operacional legível e labels compactos.'],
+                ['title' => 'Spacing', 'copy' => 'Espaçamento generoso, mas funcional: grids densos em dashboards e respiro em páginas institucionais.'],
+                ['title' => 'Radius', 'copy' => 'Use rounded-default como base e aumente raio apenas em superfícies editoriais ou hero cards.'],
+                ['title' => 'Shadows', 'copy' => 'Sombras discretas para elevação; nunca usar sombra pesada como substituta de hierarquia.'],
+                ['title' => 'Borders', 'copy' => 'Campos e triggers usam border-secondary/20; divisores e cards usam border-light.'],
+                ['title' => 'Elevation', 'copy' => 'Elevação deve indicar sobreposição, foco ou agrupamento de tarefas.'],
+                ['title' => 'Motion', 'copy' => 'Transições curtas, úteis e previsíveis. Evite animações decorativas em fluxos operacionais.'],
+                ['title' => 'Grid', 'copy' => 'Priorize layouts responsivos com colunas claras e fallback mobile em uma coluna.'],
+                ['title' => 'Icons', 'copy' => 'Bootstrap Icons é a biblioteca oficial. Use sempre classes bi bi-*.'],
+                ['title' => 'Focus Ring', 'copy' => 'Foco visível com focus:ring-primary/20 e contraste suficiente em light/dark.'],
+                ['title' => 'Dark Mode', 'copy' => 'Superfícies, bordas, textos e estados precisam manter contraste sem criar tema paralelo.'],
+            ] as $foundation)
+                <div class="rounded-[1rem] border border-light bg-white p-4">
+                    <p class="font-semibold text-primary">{{ $foundation['title'] }}</p>
+                    <p class="mt-2 text-sm leading-6 text-secondary">{{ $foundation['copy'] }}</p>
+                </div>
+            @endforeach
+        </div>
+    </x-sampaui::card>
+
+    <div class="grid gap-5 lg:grid-cols-2">
+        <x-sampaui::card title="Component Anatomy" description="Estrutura recomendada para novos componentes" padding="lg">
+            <div class="space-y-3 text-sm leading-6 text-secondary">
+                <p><strong class="text-primary">Wrapper:</strong> controla layout, surface, radius, border e slots.</p>
+                <p><strong class="text-primary">Control real:</strong> recebe name, id, wire:*, x-*, disabled, readonly, required e aria-*.</p>
+                <p><strong class="text-primary">Feedback:</strong> hint, error, loading, success e empty state devem ser explícitos.</p>
+                <p><strong class="text-primary">Slots:</strong> prefix, suffix, actions, footer e body devem evitar HTML duplicado no consumo.</p>
+            </div>
+        </x-sampaui::card>
+
+        <x-sampaui::card title="Tokens semânticos" description="Não crie paleta paralela dentro de componentes" padding="lg">
+            <div class="flex flex-wrap gap-2">
+                @foreach (['primary', 'secondary', 'accent', 'danger', 'light', 'success', 'warning', 'info', 'purple', 'muted'] as $token)
+                    <x-sampaui::badge variant="light">{{ $token }}</x-sampaui::badge>
+                @endforeach
+            </div>
+            <x-sampaui::alert class="mt-5" title="Regra" variant="warning">
+                Se um ajuste visual precisa de cor, primeiro verifique se já existe token semântico SampaUI.
+            </x-sampaui::alert>
+        </x-sampaui::card>
     </div>
 
     <div class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_24rem]">
