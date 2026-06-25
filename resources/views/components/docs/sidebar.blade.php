@@ -62,7 +62,10 @@
         @foreach ($componentGroups as $groupName => $groupComponents)
             @if ($groupComponents->isNotEmpty())
                 <section class="doc-menu-section" aria-labelledby="sidebar-{{ str($groupName)->slug() }}">
-                    <h2 id="sidebar-{{ str($groupName)->slug() }}" class="doc-menu-section-title">{{ $groupName }}</h2>
+                    <h2 id="sidebar-{{ str($groupName)->slug() }}" class="doc-menu-section-title">
+                        <span><i class="bi bi-{{ $groupName === 'Formulários' ? 'ui-checks-grid' : 'grid-1x2' }}" aria-hidden="true"></i>{{ $groupName }}</span>
+                        <small>{{ $groupComponents->count() }}</small>
+                    </h2>
 
                     <div class="doc-menu-items">
                         @foreach ($groupComponents as $navigationComponent)
@@ -74,6 +77,11 @@
                                 ])
                             >
                                 <span>{{ $navigationComponent['name'] }}</span>
+                                @if (in_array($navigationComponent['slug'], ['button', 'input', 'table'], true))
+                                    <small class="doc-menu-badge">Popular</small>
+                                @elseif (in_array($navigationComponent['slug'], ['brand-mark', 'command-palette'], true))
+                                    <small class="doc-menu-badge doc-menu-badge-new">Novo</small>
+                                @endif
                             </a>
                         @endforeach
                     </div>
@@ -83,7 +91,10 @@
 
         @if ($navigationExamples->isNotEmpty())
             <section class="doc-menu-section" aria-labelledby="sidebar-exemplos">
-                <h2 id="sidebar-exemplos" class="doc-menu-section-title">Exemplos</h2>
+                <h2 id="sidebar-exemplos" class="doc-menu-section-title">
+                    <span><i class="bi bi-window-stack" aria-hidden="true"></i>Exemplos</span>
+                    <small>{{ $navigationExamples->count() }}</small>
+                </h2>
                 <div class="doc-menu-items">
                     <a href="{{ route('examples.index') }}" @class(['doc-menu-item', 'doc-menu-item-active' => request()->routeIs('examples.index')])>Visão geral</a>
                     @foreach ($navigationExamples as $navigationExample)
@@ -97,7 +108,10 @@
 
         @if ($sideNavigationPages->isNotEmpty())
             <section class="doc-menu-section" aria-labelledby="sidebar-guias">
-                <h2 id="sidebar-guias" class="doc-menu-section-title">Guias</h2>
+                <h2 id="sidebar-guias" class="doc-menu-section-title">
+                    <span><i class="bi bi-journal-text" aria-hidden="true"></i>Guias</span>
+                    <small>{{ $sideNavigationPages->count() }}</small>
+                </h2>
                 <div class="doc-menu-items">
                     @foreach ($sideNavigationPages as $navigationPage)
                         <a

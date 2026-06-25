@@ -4,254 +4,330 @@
     @php
         $sampaVersion = \SampaUI\SampaUI::VERSION;
         $componentTotal = count($components);
-        $workflowCards = [
-            ['title' => 'Captar lead', 'icon' => 'person-plus', 'copy' => 'Inputs, telefone, orçamento, origem, corretor e preferências do comprador.', 'route' => route('examples.admin-form')],
-            ['title' => 'Gerir carteira', 'icon' => 'buildings', 'copy' => 'Cards, badges, progresso, tabelas e filtros para imóveis, clientes e propostas.', 'route' => route('examples.dashboard')],
-            ['title' => 'Atender rápido', 'icon' => 'chat-dots', 'copy' => 'Chat estilo WhatsApp Web com lista de conversas, histórico, anexos e painel do cliente.', 'route' => route('examples.chat')],
-            ['title' => 'Converter proposta', 'icon' => 'file-earmark-check', 'copy' => 'Drawer, modal, etapas, validação e feedback para negociação e contrato.', 'route' => route('examples.advanced-table')],
+        $popularSlugs = ['button', 'input', 'select', 'badge', 'table', 'modal'];
+        $popularComponents = collect($components)->whereIn('slug', $popularSlugs)->sortBy(fn (array $component): int => array_search($component['slug'], $popularSlugs, true))->values();
+        $exampleCards = [
+            ['title' => 'Dashboard operacional', 'copy' => 'Métricas, funil, atividades e decisões rápidas para a operação comercial.', 'route' => route('examples.dashboard'), 'icon' => 'speedometer2', 'tag' => 'Dashboard', 'tone' => 'primary'],
+            ['title' => 'Chat atendimento', 'copy' => 'Conversas, histórico e contexto do cliente em uma experiência inspirada no WhatsApp Web.', 'route' => route('examples.chat'), 'icon' => 'chat-dots', 'tag' => 'Atendimento', 'tone' => 'success'],
+            ['title' => 'Tabela avançada', 'copy' => 'Filtros, status, ações por linha, loading, vazio e paginação para dados operacionais.', 'route' => route('examples.advanced-table'), 'icon' => 'table', 'tag' => 'Dados', 'tone' => 'info'],
+            ['title' => 'Formulário administrativo', 'copy' => 'Cadastro extenso com validação, contato, endereço, valores e preferências.', 'route' => route('examples.admin-form'), 'icon' => 'ui-checks-grid', 'tag' => 'Forms', 'tone' => 'accent'],
+            ['title' => 'Login completo', 'copy' => 'Autenticação pronta para Livewire com feedback, loading e recuperação de acesso.', 'route' => route('examples.authentication'), 'icon' => 'shield-lock', 'tag' => 'Auth', 'tone' => 'purple'],
+            ['title' => 'Perfil e upload', 'copy' => 'Avatar, arquivos, dados pessoais e segurança reunidos em uma tela real.', 'route' => route('examples.profile'), 'icon' => 'person-badge', 'tag' => 'Upload', 'tone' => 'danger'],
         ];
-        $exampleLinks = [
-            ['label' => 'Dashboard operacional', 'route' => route('examples.dashboard'), 'icon' => 'speedometer2'],
-            ['label' => 'Chat atendimento', 'route' => route('examples.chat'), 'icon' => 'chat-left-text'],
-            ['label' => 'Tabela avançada', 'route' => route('examples.advanced-table'), 'icon' => 'table'],
-            ['label' => 'Formulário administrativo', 'route' => route('examples.admin-form'), 'icon' => 'ui-checks-grid'],
-            ['label' => 'Login completo', 'route' => route('examples.authentication'), 'icon' => 'shield-lock'],
-            ['label' => 'Perfil e upload', 'route' => route('examples.profile'), 'icon' => 'person-badge'],
+        $roadmap = [
+            ['title' => 'Mais padrões de CRM', 'copy' => 'Receitas para carteira, visitas, propostas e pós-venda.', 'icon' => 'buildings', 'status' => 'Em evolução'],
+            ['title' => 'Playgrounds avançados', 'copy' => 'Mais estados interativos e exemplos Livewire copiáveis.', 'icon' => 'sliders2', 'status' => 'Planejado'],
+            ['title' => 'Catálogo para IA', 'copy' => 'Registry e contexto estruturado para agentes de código.', 'icon' => 'stars', 'status' => 'Contínuo'],
         ];
     @endphp
 
-    <section class="doc-cover-grid">
-        <article class="doc-hero-card doc-home-hero">
-            <div class="relative z-[1] flex flex-wrap items-center gap-2">
-                <span class="doc-chip">v{{ $sampaVersion }}</span>
-                <span class="doc-chip">CRM imobiliário</span>
-                <span class="doc-chip">Laravel 13 + Livewire 4</span>
-                <span class="doc-chip">Tailwind 4</span>
+    <section class="doc-home-hero" aria-labelledby="home-title">
+        <div class="doc-home-hero-copy">
+            <div class="doc-home-eyebrow">
+                <span class="doc-version-pill"><i class="bi bi-stars" aria-hidden="true"></i> v{{ $sampaVersion }}</span>
+                <span>Documentação SampaUI</span>
             </div>
 
-            <div class="relative z-[1] mt-8">
-                <p class="text-sm font-semibold uppercase tracking-[0.24em] text-primary">Documentação SampaUI</p>
-                <h2 class="mt-3 max-w-4xl text-4xl font-semibold leading-tight text-primary xl:text-[3.25rem]">
-                    Componentes Blade para produtos imobiliários profissionais.
-                </h2>
-                <p class="mt-5 max-w-3xl text-base leading-7 text-secondary">
-                    Use o SampaUI para montar CRM, captação, funil comercial, atendimento, propostas, dashboards e auth com o mesmo padrão visual. Os exemplos abaixo são renderizados com o pacote real instalado por Composer.
-                </p>
+            <h1 id="home-title">Componentes Blade para produtos imobiliários <span>profissionais.</span></h1>
+            <p>
+                Um kit completo para acelerar CRMs, portais e sistemas internos com Laravel, Livewire e Tailwind — mantendo cada tela consistente, acessível e pronta para produção.
+            </p>
 
-                <div class="mt-8 flex flex-wrap gap-3">
-                    <x-sampaui::button icon="buildings" onclick="window.location='{{ route('documentation.pages.show', 'real-estate-patterns') }}'">
-                        Ver padrões imobiliários
-                    </x-sampaui::button>
-                    <x-sampaui::button variant="outline" icon="window-sidebar" onclick="window.location='{{ route('examples.index') }}'">
-                        Abrir exemplos
-                    </x-sampaui::button>
-                    <x-sampaui::button variant="ghost" icon="box-arrow-in-down" onclick="window.location='#instalacao'">
-                        Instalação
-                    </x-sampaui::button>
-                </div>
-
-                <div class="doc-hero-facts">
-                    <div>
-                        <strong>{{ $componentTotal }}</strong>
-                        <span>componentes</span>
-                    </div>
-                    <div>
-                        <strong>12+</strong>
-                        <span>exemplos reais</span>
-                    </div>
-                    <div>
-                        <strong>IA</strong>
-                        <span>registry e llms.txt</span>
-                    </div>
-                </div>
-            </div>
-        </article>
-
-        <aside class="doc-component-cloud" aria-label="Exemplos visuais de componentes SampaUI">
-            <div class="doc-float-card doc-float-card-primary">
-                <div class="flex items-start justify-between gap-4">
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">Receita</p>
-                        <p class="mt-2 text-3xl font-semibold text-white">R$ 2,4 mi</p>
-                        <p class="mt-1 text-xs font-medium text-white/70">+18% no mês</p>
-                    </div>
-                    <span class="inline-flex h-11 w-11 items-center justify-center rounded-default bg-white/18 text-xl text-white">
-                        <i class="bi bi-graph-up-arrow"></i>
-                    </span>
-                </div>
-                <div class="mt-5 h-2 rounded-full bg-white/20">
-                    <span class="block h-2 w-[72%] rounded-full bg-white"></span>
-                </div>
+            <div class="doc-home-actions">
+                <x-sampaui::button size="sm" icon="grid" onclick="window.location='#componentes'">
+                    Ver componentes
+                </x-sampaui::button>
+                <x-sampaui::button size="sm" variant="outline" icon="window-sidebar" onclick="window.location='{{ route('examples.index') }}'">
+                    Explorar exemplos
+                </x-sampaui::button>
             </div>
 
-            <div class="doc-float-card doc-float-card-lead">
-                <div class="flex items-center gap-3">
-                    <x-sampaui::avatar name="Ana Souza" status="online" size="lg" />
-                    <div class="min-w-0">
-                        <p class="truncate text-sm font-semibold text-primary">Ana Souza</p>
-                        <p class="truncate text-xs text-secondary">Lead comprador · quente</p>
-                    </div>
-                    <x-sampaui::badge variant="success" size="sm" class="ml-auto">Online</x-sampaui::badge>
-                </div>
+            <div class="doc-stack-badges" aria-label="Tecnologias compatíveis">
+                @foreach ([
+                    ['label' => 'Composer', 'icon' => 'box-seam'],
+                    ['label' => 'Laravel 13', 'icon' => 'braces-asterisk'],
+                    ['label' => 'Livewire 4', 'icon' => 'lightning-charge'],
+                    ['label' => 'Tailwind 4', 'icon' => 'wind'],
+                ] as $technology)
+                    <span><i class="bi bi-{{ $technology['icon'] }}" aria-hidden="true"></i>{{ $technology['label'] }}</span>
+                @endforeach
             </div>
-
-            <div class="doc-float-card doc-float-card-form">
-                <x-sampaui::input
-                    name="cover_search"
-                    label="Buscar imóvel"
-                    icon="search"
-                    placeholder="Bairro, código ou lead"
-                />
-            </div>
-
-            <div class="doc-float-card doc-float-card-progress">
-                <div class="flex items-center justify-between gap-4">
-                    <div>
-                        <p class="text-sm font-semibold text-primary">Pipeline</p>
-                        <p class="text-xs text-secondary">Propostas ativas</p>
-                    </div>
-                    <x-sampaui::badge variant="accent">68%</x-sampaui::badge>
-                </div>
-                <x-sampaui::progress class="mt-4" value="68" label="Meta mensal" />
-            </div>
-
-            <div class="doc-float-card doc-float-card-chat">
-                <div class="flex items-start gap-3">
-                    <x-sampaui::avatar name="Bruno Lima" status="away" size="md" />
-                    <div class="min-w-0 rounded-default bg-light px-4 py-3">
-                        <p class="text-xs font-semibold text-primary">Bruno Lima</p>
-                        <p class="mt-1 text-xs leading-5 text-secondary">Confirmamos a visita às 10h30.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="doc-float-card doc-float-card-actions">
-                <div class="flex flex-wrap gap-2">
-                    <x-sampaui::button size="sm" icon="calendar2-check">Agendar</x-sampaui::button>
-                    <x-sampaui::button size="sm" variant="outline" icon="chat-dots">Responder</x-sampaui::button>
-                </div>
-            </div>
-
-            <div class="doc-float-card doc-float-card-status">
-                <div class="grid grid-cols-2 gap-2">
-                    <x-sampaui::badge variant="success">Disponível</x-sampaui::badge>
-                    <x-sampaui::badge variant="warning">Visita</x-sampaui::badge>
-                    <x-sampaui::badge variant="info">Novo lead</x-sampaui::badge>
-                    <x-sampaui::badge variant="danger">Urgente</x-sampaui::badge>
-                </div>
-            </div>
-        </aside>
-    </section>
-
-    <section class="doc-component-board">
-        <div class="doc-section-header">
-            <div>
-                <p class="doc-kicker">Fluxos imobiliários</p>
-                <h2 class="doc-heading">Comece pelo resultado da tela</h2>
-                <p class="doc-copy">
-                    A documentação agora organiza os componentes por casos reais: lead, imóvel, atendimento, proposta e operação.
-                </p>
-            </div>
-            <x-sampaui::badge variant="primary" icon="diagram-3">Receitas</x-sampaui::badge>
         </div>
 
-        <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            @foreach ($workflowCards as $workflow)
-                <a href="{{ $workflow['route'] }}" class="doc-component-tile">
-                    <span class="doc-tile-icon"><i class="bi bi-{{ $workflow['icon'] }}"></i></span>
-                    <h3 class="mt-5 text-xl font-semibold text-primary">{{ $workflow['title'] }}</h3>
-                    <p class="mt-2 text-sm leading-6 text-secondary">{{ $workflow['copy'] }}</p>
-                </a>
+        <div class="doc-crm-preview" aria-label="Prévia de dashboard CRM imobiliário">
+            <div class="doc-crm-toolbar">
+                <div class="doc-crm-brand"><span>S</span><strong>SampaCRM</strong></div>
+                <div class="doc-crm-search"><i class="bi bi-search" aria-hidden="true"></i><span>Buscar no CRM...</span></div>
+                <div class="doc-crm-toolbar-actions">
+                    <button type="button" aria-label="Notificações"><i class="bi bi-bell" aria-hidden="true"></i><span></span></button>
+                    <button type="button" aria-label="Adicionar"><i class="bi bi-plus-lg" aria-hidden="true"></i></button>
+                    <x-sampaui::avatar name="Ana Souza" size="sm" status="online" />
+                </div>
+            </div>
+
+            <div class="doc-crm-body">
+                <nav class="doc-crm-rail" aria-label="Navegação da prévia CRM">
+                    @foreach (['house-door', 'person', 'buildings', 'bar-chart', 'calendar3', 'chat-square-text'] as $icon)
+                        <span @class(['active' => $loop->first])><i class="bi bi-{{ $icon }}" aria-hidden="true"></i></span>
+                    @endforeach
+                </nav>
+
+                <div class="doc-crm-workspace">
+                    <div class="doc-crm-metrics">
+                        @foreach ([
+                            ['label' => 'Receita total', 'value' => 'R$ 2,4 mi', 'delta' => '+18%', 'variant' => 'success', 'icon' => 'graph-up-arrow'],
+                            ['label' => 'Novos leads', 'value' => '1.248', 'delta' => '+24%', 'variant' => 'info', 'icon' => 'person-plus'],
+                            ['label' => 'Negociações', 'value' => '347', 'delta' => '+12%', 'variant' => 'accent', 'icon' => 'briefcase'],
+                            ['label' => 'Conversão', 'value' => '28,6%', 'delta' => '+5,2 p.p.', 'variant' => 'purple', 'icon' => 'bullseye'],
+                        ] as $metric)
+                            <article>
+                                <div><span>{{ $metric['label'] }}</span><i class="bi bi-{{ $metric['icon'] }}" aria-hidden="true"></i></div>
+                                <strong>{{ $metric['value'] }}</strong>
+                                <small class="doc-tone-{{ $metric['variant'] }}">{{ $metric['delta'] }} no mês</small>
+                            </article>
+                        @endforeach
+                    </div>
+
+                    <div class="doc-crm-grid">
+                        <article class="doc-crm-panel doc-crm-pipeline">
+                            <header><strong>Pipeline de vendas</strong><span>Este mês <i class="bi bi-chevron-down" aria-hidden="true"></i></span></header>
+                            @foreach ([
+                                ['label' => 'Prospecção', 'value' => 82, 'leads' => 256, 'amount' => 'R$ 680 mil'],
+                                ['label' => 'Qualificação', 'value' => 64, 'leads' => 132, 'amount' => 'R$ 420 mil'],
+                                ['label' => 'Visita', 'value' => 46, 'leads' => 64, 'amount' => 'R$ 310 mil'],
+                                ['label' => 'Proposta', 'value' => 31, 'leads' => 38, 'amount' => 'R$ 210 mil'],
+                                ['label' => 'Fechamento', 'value' => 18, 'leads' => 21, 'amount' => 'R$ 140 mil'],
+                            ] as $stage)
+                                <div class="doc-pipeline-row">
+                                    <div><strong>{{ $stage['label'] }}</strong><span>{{ $stage['leads'] }} leads · {{ $stage['amount'] }}</span></div>
+                                    <x-sampaui::progress :value="$stage['value']" />
+                                </div>
+                            @endforeach
+                        </article>
+
+                        <article class="doc-crm-panel doc-crm-activity">
+                            <header><strong>Atividade recente</strong><a href="{{ route('examples.dashboard') }}">Ver todas</a></header>
+                            @foreach ([
+                                ['name' => 'Ana Souza', 'action' => 'Novo lead cadastrado', 'time' => '10 min', 'status' => 'online'],
+                                ['name' => 'Bruno Lima', 'action' => 'Proposta enviada', 'time' => '35 min', 'status' => 'away'],
+                                ['name' => 'Mariana Costa', 'action' => 'Visita agendada', 'time' => '1 h', 'status' => 'online'],
+                                ['name' => 'Diego Ramos', 'action' => 'Negociação atualizada', 'time' => '2 h', 'status' => 'offline'],
+                            ] as $activity)
+                                <div class="doc-activity-row">
+                                    <x-sampaui::avatar :name="$activity['name']" :status="$activity['status']" size="sm" />
+                                    <div><strong>{{ $activity['name'] }}</strong><span>{{ $activity['action'] }}</span></div>
+                                    <time>{{ $activity['time'] }}</time>
+                                </div>
+                            @endforeach
+                        </article>
+
+                        <article class="doc-crm-panel doc-crm-agenda">
+                            <header><div><strong>Agenda do dia</strong><span>24 de junho</span></div><i class="bi bi-calendar3" aria-hidden="true"></i></header>
+                            @foreach ([
+                                ['time' => '09:00', 'title' => 'Visita', 'copy' => 'Apartamento · Jardim Europa'],
+                                ['time' => '11:00', 'title' => 'Reunião', 'copy' => 'Alinhamento com corretor'],
+                                ['time' => '14:00', 'title' => 'Ligação', 'copy' => 'Follow-up proposta #1287'],
+                            ] as $event)
+                                <div class="doc-agenda-row"><time>{{ $event['time'] }}</time><span></span><div><strong>{{ $event['title'] }}</strong><small>{{ $event['copy'] }}</small></div></div>
+                            @endforeach
+                        </article>
+                    </div>
+
+                    <article class="doc-crm-panel doc-crm-proposals">
+                        <header><strong>Propostas recentes</strong><x-sampaui::badge size="sm" variant="light">3 atualizações</x-sampaui::badge></header>
+                        <div class="doc-crm-table" role="table" aria-label="Propostas recentes">
+                            <div role="row"><span>#</span><span>Imóvel</span><span>Cliente</span><span>Valor</span><span>Estágio</span></div>
+                            @foreach ([
+                                ['id' => '#1287', 'property' => 'Apartamento · Itaim Bibi', 'client' => 'Bruno Lima', 'value' => 'R$ 850.000', 'status' => 'Proposta', 'variant' => 'primary'],
+                                ['id' => '#1286', 'property' => 'Casa · Alphaville', 'client' => 'Ana Souza', 'value' => 'R$ 1.250.000', 'status' => 'Visita', 'variant' => 'success'],
+                            ] as $proposal)
+                                <div role="row"><strong>{{ $proposal['id'] }}</strong><span>{{ $proposal['property'] }}</span><span>{{ $proposal['client'] }}</span><span>{{ $proposal['value'] }}</span><x-sampaui::badge size="sm" :variant="$proposal['variant']">{{ $proposal['status'] }}</x-sampaui::badge></div>
+                            @endforeach
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="doc-home-overview" aria-label="Resumo da documentação">
+        <div><strong>{{ $componentTotal }}</strong><span>componentes documentados</span></div>
+        <div><strong>14</strong><span>exemplos completos</span></div>
+        <div><strong>4</strong><span>tecnologias integradas</span></div>
+        <div><strong>IA</strong><span>registry e llms.txt</span></div>
+    </section>
+
+    <section class="doc-home-section" aria-labelledby="why-title">
+        <div class="doc-home-section-heading">
+            <span class="doc-kicker">Por que usar SampaUI</span>
+            <h2 id="why-title">Da primeira tela ao CRM completo, sem perder consistência.</h2>
+            <p>Componentes, exemplos e decisões de interface foram pensados para acelerar produtos Laravel reais.</p>
+        </div>
+
+        <div class="doc-benefit-grid">
+            @foreach ([
+                ['title' => 'Feito para Laravel', 'copy' => 'Blade e Livewire como primeira classe, sem adaptar uma biblioteca React para o seu fluxo.', 'icon' => 'braces-asterisk'],
+                ['title' => 'Pronto para produção', 'copy' => 'Estados, acessibilidade, dark mode e atributos preservados desde o primeiro componente.', 'icon' => 'shield-check'],
+                ['title' => 'Foco imobiliário', 'copy' => 'Padrões para leads, imóveis, funil, atendimento, propostas e operação comercial.', 'icon' => 'buildings'],
+                ['title' => 'Customização segura', 'copy' => 'Tokens semânticos e class="" permitem evoluir o produto sem quebrar o pacote.', 'icon' => 'sliders2'],
+            ] as $benefit)
+                <article>
+                    <span><i class="bi bi-{{ $benefit['icon'] }}" aria-hidden="true"></i></span>
+                    <h3>{{ $benefit['title'] }}</h3>
+                    <p>{{ $benefit['copy'] }}</p>
+                </article>
             @endforeach
         </div>
     </section>
 
-    <section id="instalacao" class="doc-dashboard-grid doc-dashboard-grid-install">
-        <article class="doc-stat-card">
-            <div class="doc-stat-icon bg-primary">
-                <i class="bi bi-box-seam"></i>
-            </div>
-            <div>
-                <p class="doc-kicker">Instalação</p>
-                <h2 class="doc-heading">Composer, install e build</h2>
-                <p class="doc-copy">
-                    Instale o pacote, publique config/assets e compile o app consumidor. O instalador registra os imports do CSS e JS no Vite.
-                </p>
-            </div>
-        </article>
-
+    <section id="instalacao" class="doc-install-section" aria-labelledby="install-title">
+        <div>
+            <span class="doc-kicker">Instalação</span>
+            <h2 id="install-title">Quatro comandos até o primeiro componente.</h2>
+            <p>Instale o pacote, publique configuração e assets, depois compile o app consumidor. Sem dependências adicionais no projeto.</p>
+            <a href="{{ route('documentation.pages.show', 'design-system') }}">Ver guia de configuração <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        </div>
         <x-docs.code-block :code="'composer require sampaui/sampaui'.PHP_EOL.'php artisan package:discover --ansi'.PHP_EOL.'php artisan sampaui:install --force --no-interaction'.PHP_EOL.'npm run build'" label="Terminal" />
     </section>
 
-    <section id="componentes" class="doc-component-board">
-        <div class="doc-section-header">
+    <section class="doc-home-section" aria-labelledby="popular-title">
+        <div class="doc-home-section-heading doc-home-section-heading-row">
             <div>
-                <p class="doc-kicker">Exemplos completos</p>
-                <h2 class="doc-heading">Páginas para copiar e adaptar</h2>
-                <p class="doc-copy">
-                    Cada exemplo mostra uma tela funcional com Blade, Livewire, Alpine, Bootstrap Icons e componentes reais do pacote.
-                </p>
+                <span class="doc-kicker">Componentes populares</span>
+                <h2 id="popular-title">Os blocos mais usados, renderizados de verdade.</h2>
+                <p>Veja o comportamento antes de abrir a documentação completa de cada componente.</p>
             </div>
-            <x-sampaui::button variant="outline" icon="arrow-right" icon-position="right" onclick="window.location='{{ route('examples.index') }}'">
-                Ver todos
-            </x-sampaui::button>
+            <a href="#componentes" class="doc-inline-link">Ver catálogo completo <i class="bi bi-arrow-down" aria-hidden="true"></i></a>
         </div>
 
-        <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            @foreach ($exampleLinks as $example)
-                <a href="{{ $example['route'] }}" class="group flex items-center gap-4 rounded-default border border-light bg-white p-5 shadow-default transition hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-2xl">
-                    <span class="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-default bg-light text-xl text-primary transition group-hover:bg-primary group-hover:text-white">
-                        <i class="bi bi-{{ $example['icon'] }}"></i>
-                    </span>
-                    <span class="font-semibold text-primary">{{ $example['label'] }}</span>
-                    <i class="bi bi-arrow-right ml-auto text-secondary transition group-hover:text-primary"></i>
+        <div class="doc-popular-grid">
+            @foreach ($popularComponents as $component)
+                <a href="{{ route('documentation.components.show', $component['slug']) }}" class="doc-popular-card">
+                    <div class="doc-popular-preview">
+                        @include('docs.partials.component-preview', ['slug' => $component['slug']])
+                    </div>
+                    <div class="doc-popular-meta">
+                        <span>{{ \App\Support\DocumentationGuidance::category($component['slug']) }}</span>
+                        <span>{{ count($component['props']) }} props</span>
+                    </div>
+                    <h3>{{ $component['name'] }}</h3>
+                    <p>{{ $component['summary'] }}</p>
+                    <span class="doc-card-link">Abrir documentação <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
                 </a>
             @endforeach
         </div>
     </section>
 
-    <section class="doc-component-board">
-        <div class="doc-section-header">
+    <section id="componentes" class="doc-home-section" aria-labelledby="components-title">
+        <div class="doc-home-section-heading doc-home-section-heading-row">
             <div>
-                <p class="doc-kicker">Componentes</p>
-                <h2 class="doc-heading">Catálogo objetivo</h2>
-                <p class="doc-copy">
-                    Consulte props, estados e snippets. Para IA, prefira os nomes abaixo e os exemplos versionados no registry.
-                </p>
+                <span class="doc-kicker">Todos os componentes</span>
+                <h2 id="components-title">Um catálogo completo para sistemas internos.</h2>
+                <p>Props, estados, snippets Blade/Livewire e boas práticas em uma estrutura previsível.</p>
             </div>
-            <span class="doc-chip">{{ $componentTotal }} componentes</span>
+            <span class="doc-count-pill">{{ $componentTotal }} componentes</span>
         </div>
 
-        <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div class="doc-catalog-grid">
             @foreach ($components as $component)
-                <a href="{{ route('documentation.components.show', $component['slug']) }}" class="doc-component-tile">
-                    <div class="flex items-start justify-between gap-4">
-                        <span class="doc-tile-icon">
-                            <i @class([
-                                'bi',
-                                'bi-cursor' => $component['slug'] === 'button',
-                                'bi-input-cursor-text' => $component['slug'] === 'input',
-                                'bi-key' => $component['slug'] === 'pin',
-                                'bi-menu-button-wide' => $component['slug'] === 'select',
-                                'bi-search' => $component['slug'] === 'select-search',
-                                'bi-textarea-t' => $component['slug'] === 'textarea',
-                                'bi-check2-square' => $component['slug'] === 'checkbox',
-                                'bi-calendar3' => $component['slug'] === 'date-picker',
-                                'bi-person-bounding-box' => $component['slug'] === 'avatar-upload',
-                                'bi-chat-dots' => str_starts_with($component['slug'], 'chat-'),
-                                'bi-window-stack' => $component['slug'] === 'modal',
-                                'bi-layout-sidebar-inset-reverse' => $component['slug'] === 'drawer',
-                                'bi-menu-button' => $component['slug'] === 'dropdown',
-                                'bi-table' => $component['slug'] === 'table',
-                                'bi-window' => $component['slug'] === 'card',
-                                'bi-ui-radios' => ! in_array($component['slug'], ['button', 'input', 'pin', 'select', 'select-search', 'textarea', 'checkbox', 'date-picker', 'avatar-upload', 'modal', 'drawer', 'dropdown', 'table', 'card']) && ! str_starts_with($component['slug'], 'chat-'),
-                            ])></i>
-                        </span>
-                        <span class="doc-chip">{{ count($component['props']) }} props</span>
+                @php
+                    $category = \App\Support\DocumentationGuidance::category($component['slug']);
+                    $isForm = $category === 'Formulários';
+                    $componentIcon = match ($component['slug']) {
+                        'button' => 'cursor', 'input' => 'input-cursor-text', 'pin' => 'key',
+                        'select', 'select-multiple', 'select-search' => 'menu-button-wide',
+                        'textarea' => 'textarea-t', 'checkbox' => 'check2-square', 'radio' => 'ui-radios',
+                        'date-picker' => 'calendar3', 'avatar', 'avatar-upload' => 'person-circle',
+                        'modal' => 'window-stack', 'drawer' => 'layout-sidebar-inset-reverse',
+                        'dropdown' => 'menu-button', 'table' => 'table', 'card' => 'window',
+                        'progress' => 'bar-chart-steps', 'command-palette' => 'command',
+                        default => $isForm ? 'ui-checks' : 'grid-1x2',
+                    };
+                @endphp
+                <a href="{{ route('documentation.components.show', $component['slug']) }}" @class(['doc-catalog-card', 'doc-catalog-card-form' => $isForm, 'doc-catalog-card-ui' => ! $isForm])>
+                    <div class="doc-catalog-card-top">
+                        <span class="doc-catalog-icon"><i class="bi bi-{{ $componentIcon }}" aria-hidden="true"></i></span>
+                        <div>
+                            @if (in_array($component['slug'], ['button', 'input', 'table'], true))
+                                <span class="doc-status-label doc-status-label-popular">Popular</span>
+                            @elseif (in_array($component['slug'], ['brand-mark', 'command-palette'], true))
+                                <span class="doc-status-label doc-status-label-new">Novo</span>
+                            @endif
+                            <span class="doc-props-count">{{ count($component['props']) }} props</span>
+                        </div>
                     </div>
-                    <h3 class="mt-5 text-xl font-semibold text-primary">{{ $component['name'] }}</h3>
-                    <p class="mt-2 text-sm leading-6 text-secondary">{{ $component['summary'] }}</p>
+                    <div class="doc-catalog-card-copy">
+                        <span>{{ $category }}</span>
+                        <h3>{{ $component['name'] }}</h3>
+                        <p>{{ $component['summary'] }}</p>
+                    </div>
                 </a>
+            @endforeach
+        </div>
+    </section>
+
+    <section class="doc-home-section" aria-labelledby="templates-title">
+        <div class="doc-home-section-heading doc-home-section-heading-row">
+            <div>
+                <span class="doc-kicker">Templates e exemplos completos</span>
+                <h2 id="templates-title">Páginas que parecem o seu produto.</h2>
+                <p>Telas funcionais com dados realistas, interações e código pronto para adaptar.</p>
+            </div>
+            <x-sampaui::button variant="outline" icon="arrow-right" icon-position="right" onclick="window.location='{{ route('examples.index') }}'">Ver todos</x-sampaui::button>
+        </div>
+
+        <div class="doc-template-grid">
+            @foreach ($exampleCards as $example)
+                <a href="{{ $example['route'] }}" class="doc-template-card">
+                    <div class="doc-template-preview doc-template-preview-{{ $example['tone'] }}">
+                        <div class="doc-template-window">
+                            <span></span><span></span><span></span>
+                            <i class="bi bi-{{ $example['icon'] }}" aria-hidden="true"></i>
+                            <div><b></b><b></b><b></b></div>
+                        </div>
+                    </div>
+                    <div class="doc-template-copy">
+                        <x-sampaui::badge variant="light" size="sm">{{ $example['tag'] }}</x-sampaui::badge>
+                        <h3>{{ $example['title'] }}</h3>
+                        <p>{{ $example['copy'] }}</p>
+                        <span>Explorar template <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+                    </div>
+                </a>
+            @endforeach
+        </div>
+    </section>
+
+    <section class="doc-real-estate-section" aria-labelledby="patterns-title">
+        <div>
+            <span class="doc-kicker">Padrões imobiliários</span>
+            <h2 id="patterns-title">Componha jornadas completas para captar, atender e converter.</h2>
+            <p>Receitas de interface para lead comprador, carteira de imóveis, funil comercial, agenda de visitas e propostas.</p>
+            <x-sampaui::button icon="buildings" onclick="window.location='{{ route('documentation.pages.show', 'real-estate-patterns') }}'">Ver padrões imobiliários</x-sampaui::button>
+        </div>
+        <div class="doc-pattern-flow" aria-label="Jornada imobiliária">
+            @foreach ([
+                ['label' => 'Captar', 'icon' => 'person-plus'],
+                ['label' => 'Qualificar', 'icon' => 'funnel'],
+                ['label' => 'Atender', 'icon' => 'chat-dots'],
+                ['label' => 'Converter', 'icon' => 'file-earmark-check'],
+            ] as $step)
+                <div><span><i class="bi bi-{{ $step['icon'] }}" aria-hidden="true"></i></span><strong>{{ $step['label'] }}</strong></div>
+            @endforeach
+        </div>
+    </section>
+
+    <section class="doc-home-section" aria-labelledby="roadmap-title">
+        <div class="doc-home-section-heading">
+            <span class="doc-kicker">Roadmap</span>
+            <h2 id="roadmap-title">O pacote continua evoluindo com o ecossistema.</h2>
+            <p>Prioridades públicas para tornar o SampaUI mais útil em produtos reais.</p>
+        </div>
+        <div class="doc-roadmap-grid">
+            @foreach ($roadmap as $item)
+                <article>
+                    <span><i class="bi bi-{{ $item['icon'] }}" aria-hidden="true"></i></span>
+                    <div><small>{{ $item['status'] }}</small><h3>{{ $item['title'] }}</h3><p>{{ $item['copy'] }}</p></div>
+                </article>
             @endforeach
         </div>
     </section>

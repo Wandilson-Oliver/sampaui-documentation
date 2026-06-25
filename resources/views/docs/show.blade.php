@@ -13,6 +13,10 @@
                 || str_contains($example['code'] ?? '', 'public string')
                 || str_contains($example['title'] ?? '', 'Classe Livewire')
         );
+        $componentNavigation = collect($components)->values();
+        $currentComponentIndex = $componentNavigation->search(fn (array $component): bool => $component['slug'] === $componentDoc['slug']);
+        $previousComponent = $currentComponentIndex !== false && $currentComponentIndex > 0 ? $componentNavigation->get($currentComponentIndex - 1) : null;
+        $nextComponent = $currentComponentIndex !== false ? $componentNavigation->get($currentComponentIndex + 1) : null;
     @endphp
 
     <section id="visao-geral" class="doc-page-hero">
@@ -140,4 +144,9 @@
             @endforeach
         </div>
     </section>
+
+    <x-docs.page-navigation
+        :previous="$previousComponent ? ['label' => $previousComponent['name'], 'url' => route('documentation.components.show', $previousComponent['slug'])] : null"
+        :next="$nextComponent ? ['label' => $nextComponent['name'], 'url' => route('documentation.components.show', $nextComponent['slug'])] : null"
+    />
 @endsection

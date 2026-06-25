@@ -107,6 +107,8 @@
                         <x-docs.table-of-contents :items="$tableOfContents" />
                     @endif
                 </main>
+
+                <x-docs.footer />
             </div>
         </div>
 

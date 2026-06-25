@@ -1,6 +1,13 @@
 @extends('docs.layout', ['title' => $page['name'].' · SampaUI Pages'])
 
 @section('content')
+    @php
+        $pageNavigation = collect($navigationPages)->values();
+        $currentPageIndex = $pageNavigation->search(fn (array $navigationPage): bool => $navigationPage['slug'] === $page['slug']);
+        $previousPage = $currentPageIndex !== false && $currentPageIndex > 0 ? $pageNavigation->get($currentPageIndex - 1) : null;
+        $nextPage = $currentPageIndex !== false ? $pageNavigation->get($currentPageIndex + 1) : null;
+    @endphp
+
     <section id="visao-geral">
         <article class="doc-hero-card">
             <x-docs.breadcrumbs :items="[
@@ -59,4 +66,9 @@
             <x-docs.code-block :code="$page['code']" label="Blade" />
         </div>
     </section>
+
+    <x-docs.page-navigation
+        :previous="$previousPage ? ['label' => $previousPage['name'], 'url' => route('documentation.pages.show', $previousPage['slug'])] : null"
+        :next="$nextPage ? ['label' => $nextPage['name'], 'url' => route('documentation.pages.show', $nextPage['slug'])] : null"
+    />
 @endsection
