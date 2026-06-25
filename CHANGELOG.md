@@ -2,6 +2,22 @@
 
 Todas as alterações relevantes da documentação SampaUI são registradas neste arquivo.
 
+## [0.3.0] - 2026-06-24
+
+### Adicionado
+
+- Hero premium com prévia completa de CRM imobiliário, métricas, pipeline, atividades, agenda e propostas.
+- Cards com previews renderizados para componentes populares e catálogo completo por categoria.
+- Seções de benefícios, templates, padrões imobiliários, roadmap e footer global.
+- Navegação anterior/próxima nas páginas de componentes e guias.
+- Contadores e badges de estado na sidebar da documentação.
+
+### Melhorado
+
+- Hierarquia, densidade, responsividade e microinterações da home em desktop, tablet e mobile.
+- Contraste e profundidade das superfícies em light e dark mode.
+- Busca global, navegação lateral e organização dos exemplos completos.
+
 ## [0.2.0] - 2026-06-20
 
 ### Adicionado
