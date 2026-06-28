@@ -31,7 +31,7 @@ BLADE;
     </section>
 
     <section class="space-y-7">
-        <div class="rounded-[2rem] border border-light bg-light p-4 md:p-8">
+        <div class="rounded-[2rem] border border-border bg-light p-4 md:p-8">
             <div class="mx-auto flex min-h-[42rem] max-w-lg items-center justify-center">
                 <x-sampaui::card padding="lg" class="w-full shadow-default">
                     <div class="mb-8 text-center">
@@ -40,7 +40,7 @@ BLADE;
                         </div>
                         <p class="mt-5 text-sm font-semibold uppercase tracking-[0.24em] text-primary">SampaUI</p>
                         <h2 class="mt-3 text-3xl font-semibold tracking-tight text-primary">Acesse sua conta</h2>
-                        <p class="mt-2 text-sm text-secondary">Entre no painel operacional imobiliário.</p>
+                        <p class="mt-2 text-sm text-secondary">Entre no painel operacional.</p>
                     </div>
 
                     <form class="space-y-5" wire:submit.prevent="authenticate">

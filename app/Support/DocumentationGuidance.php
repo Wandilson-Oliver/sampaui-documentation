@@ -21,7 +21,7 @@ final class DocumentationGuidance
                     'Formulários' => 'Use em formulários Blade ou Livewire que precisam de label, estado e validação consistentes.',
                     'Data' => 'Use para leitura, comparação, seleção e operação sobre dados de negócio.',
                     'Overlay' => 'Use para fluxos temporários que precisam de foco, contexto e retorno claro.',
-                    'Real Estate' => 'Use como referência planejada para padronizar produtos imobiliários sem declarar componente pronto.',
+                    'Comunicação' => 'Use para conversas, inbox, atendimento e composição de mensagens com consistência visual.',
                     default => 'Use quando a interface precisar manter o mesmo padrão visual e comportamental do SampaUI.',
                 },
             ],
@@ -45,13 +45,13 @@ final class DocumentationGuidance
     public static function category(string $slug): string
     {
         return match (true) {
-            in_array($slug, self::realEstateSlugs(), true) => 'Real Estate',
             in_array($slug, ['input', 'phone', 'currency-br', 'cep', 'pin', 'select', 'select-multiple', 'select-search', 'textarea', 'checkbox', 'radio', 'toggle', 'date-picker', 'file-upload', 'avatar-upload'], true) => 'Formulários',
-            in_array($slug, ['table', 'pagination'], true) => 'Data',
+            in_array($slug, ['table', 'table-search', 'pagination'], true) => 'Data',
             in_array($slug, ['modal', 'drawer', 'dropdown', 'tooltip', 'command-palette'], true) => 'Overlay',
             in_array($slug, ['breadcrumb', 'sidebar', 'header', 'tabs', 'tab-panel', 'accordion', 'stepper'], true) => 'Navigation',
             in_array($slug, ['alert', 'toast', 'badge', 'indicator', 'progress', 'skeleton', 'empty-state'], true) => 'Feedback',
-            in_array($slug, ['card', 'avatar', 'brand-mark'], true) => 'Layout',
+            in_array($slug, ['card', 'avatar', 'brand-mark', 'field'], true) => 'Layout',
+            in_array($slug, ['chat-layout', 'chat-sidebar', 'chat-conversation', 'chat-message', 'chat-composer'], true) => 'Comunicação',
             default => 'Design de UI',
         };
     }
@@ -65,7 +65,7 @@ final class DocumentationGuidance
             'Navigation' => 'navigation',
             'Feedback' => 'feedback',
             'Layout' => 'layout',
-            'Real Estate' => 'real-estate',
+            'Comunicação' => 'communication',
             default => 'ui',
         };
     }
@@ -86,16 +86,12 @@ final class DocumentationGuidance
             'drawer' => 'layout-sidebar-inset-reverse',
             'dropdown' => 'menu-button',
             'table' => 'table',
+            'table-search' => 'search',
             'card' => 'window',
+            'field' => 'input-cursor',
+            'chat-layout', 'chat-sidebar', 'chat-conversation', 'chat-message', 'chat-composer' => 'chat-dots',
             'progress' => 'bar-chart-steps',
             'command-palette' => 'command',
-            'property-card', 'property-gallery', 'property-features', 'property-status', 'property-price' => 'houses',
-            'lead-card', 'lead-pipeline', 'lead-status' => 'funnel',
-            'client-card', 'broker-card' => 'person-badge',
-            'proposal-card' => 'file-earmark-check',
-            'visit-timeline' => 'calendar2-check',
-            'commission-card' => 'cash-coin',
-            'real-estate-dashboard-widgets' => 'speedometer2',
             default => self::category($slug) === 'Formulários' ? 'ui-checks' : 'grid-1x2',
         };
     }
@@ -107,35 +103,12 @@ final class DocumentationGuidance
 
     public static function isPopular(string $slug): bool
     {
-        return in_array($slug, ['button', 'input', 'select', 'badge', 'table', 'modal'], true);
+        return in_array($slug, ['button', 'input', 'select', 'badge', 'table', 'table-search', 'modal'], true);
     }
 
     public static function isNew(string $slug): bool
     {
         return in_array($slug, self::newSlugs(), true);
-    }
-
-    /**
-     * @return list<string>
-     */
-    public static function realEstateSlugs(): array
-    {
-        return [
-            'property-card',
-            'property-gallery',
-            'property-features',
-            'property-status',
-            'property-price',
-            'lead-card',
-            'lead-pipeline',
-            'lead-status',
-            'client-card',
-            'broker-card',
-            'proposal-card',
-            'visit-timeline',
-            'commission-card',
-            'real-estate-dashboard-widgets',
-        ];
     }
 
     /**

@@ -113,7 +113,7 @@
                 </x-slot:head>
 
                 <x-slot:body>
-                    <tbody class="divide-y divide-light">
+                    <tbody class="divide-y divide-border">
                         @forelse ($rows as $user)
                             <tr wire:key="user-row-{{ $user['id'] }}" class="transition hover:bg-light/60">
                                 <td class="px-6 py-4">

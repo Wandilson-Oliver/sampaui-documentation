@@ -7,14 +7,10 @@
         $guidance = \App\Support\DocumentationGuidance::for($componentDoc);
         $status = \App\Support\DocumentationGuidance::status($componentDoc);
         $isPlanned = $status === 'Planejado';
-        $relatedLivewireExample = collect($componentDoc['examples'] ?? [])->first(
-            fn (array $example): bool => str_contains($example['code'] ?? '', 'wire:')
-        );
-        $relatedPhpExample = collect($componentDoc['examples'] ?? [])->first(
-            fn (array $example): bool => str_contains($example['code'] ?? '', 'public function')
-                || str_contains($example['code'] ?? '', 'public string')
-                || str_contains($example['title'] ?? '', 'Classe Livewire')
-        );
+        $showcaseCodes = collect($showcases)->pluck('code')->filter();
+        $recipes = collect($componentDoc['examples'] ?? [])
+            ->reject(fn (array $example): bool => $showcaseCodes->contains($example['code'] ?? null))
+            ->unique('code');
         $componentNavigation = collect($components)->values();
         $currentComponentIndex = $componentNavigation->search(fn (array $component): bool => $component['slug'] === $componentDoc['slug']);
         $previousComponent = $currentComponentIndex !== false && $currentComponentIndex > 0 ? $componentNavigation->get($currentComponentIndex - 1) : null;
@@ -55,33 +51,19 @@
             <span><i class="bi bi-{{ $componentDoc['planned_icon'] ?? 'buildings' }}" aria-hidden="true"></i></span>
             <div>
                 <h2 id="planned-title">Componente planejado, ainda não disponível no pacote.</h2>
-                <p>Esta página documenta direção de produto e intenção de API para Real Estate. Não copie a tag como implementação final até o componente existir no pacote SampaUI.</p>
+                <p>Esta página documenta direção de produto e intenção de API. Não copie a tag como implementação final até o componente existir no pacote SampaUI.</p>
             </div>
         </section>
     @endif
 
-    <section id="orientacoes" class="doc-section">
+    <section id="exemplos" class="doc-section">
         <div class="doc-section-heading">
-            <span>Decisão de uso</span>
-            <h2>Quando este componente faz sentido</h2>
-            <p>Critérios curtos para manter a interface consistente e evitar implementações redundantes.</p>
+            <span>Exemplos</span>
+            <h2>{{ $isPlanned ? 'API prevista' : 'Exemplos de uso' }}</h2>
+            <p>{{ $isPlanned ? 'Preview conceitual e snippet ilustrativo para guiar a futura implementação. Não representa componente pronto.' : 'Implementações objetivas com o componente renderizado e o código correspondente.' }}</p>
         </div>
 
-        <x-docs.guidance :guidance="$guidance" />
-    </section>
-
-    <section id="playground" class="doc-section">
-        <div class="doc-section-heading">
-            <span>Playground</span>
-            <h2>{{ $isPlanned ? 'API prevista' : 'Preview e implementação' }}</h2>
-            <p>{{ $isPlanned ? 'Preview conceitual e snippet ilustrativo para guiar a futura implementação. Não representa componente pronto.' : 'Compare o resultado renderizado com o código adequado à stack usada no exemplo.' }}</p>
-        </div>
-
-        @if (! $isPlanned)
-            <x-docs.interactive-playground :slug="$componentDoc['slug']" />
-        @endif
-
-        <div class="doc-playground-list">
+        <div class="doc-example-list">
             @foreach ($showcases as $showcase)
                 @php
                     $previewCode = $showcase['preview'] ?? $showcase['code'];
@@ -97,16 +79,10 @@
 
                     if (! $isPlanned && str_contains($showcase['code'], 'wire:')) {
                         $codeExamples = ['Livewire' => trim($showcase['code'])];
-                    } elseif (! $isPlanned && $relatedLivewireExample) {
-                        $codeExamples['Livewire'] = trim($relatedLivewireExample['code']);
-                    }
-
-                    if (! $isPlanned && $relatedPhpExample) {
-                        $codeExamples['PHP'] = trim($relatedPhpExample['code']);
                     }
                 @endphp
 
-                <x-docs.playground
+                <x-docs.example
                     :title="$showcase['title']"
                     :description="$showcase['description']"
                     :preview-html="$previewHtml"
@@ -115,14 +91,14 @@
             @endforeach
         </div>
 
-        @if (! empty($componentDoc['examples']))
+        @if ($recipes->isNotEmpty())
             <div class="doc-recipes">
                 <div class="doc-section-heading doc-section-heading-compact">
                     <span>Receitas rápidas</span>
                     <h2>Copiar, colar e adaptar</h2>
                 </div>
 
-                @foreach ($componentDoc['examples'] as $example)
+                @foreach ($recipes as $example)
                     @php
                         $language = str_contains($example['code'], 'public function') || str_contains($example['title'], 'Classe Livewire') ? 'PHP' : (str_contains($example['code'], 'wire:') ? 'Livewire' : 'Blade');
                     @endphp

@@ -13,7 +13,7 @@
         'Navigation' => 'signpost-split',
         'Feedback' => 'chat-square-heart',
         'Layout' => 'layout-three-columns',
-        'Real Estate' => 'buildings',
+        'Comunicação' => 'chat-dots',
     ];
     $componentGroups = [
         'Formulários' => collect($navigationComponents)->filter(fn (array $component): bool => \App\Support\DocumentationGuidance::category($component['slug']) === 'Formulários')->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
@@ -23,7 +23,7 @@
         'Navigation' => collect($navigationComponents)->filter(fn (array $component): bool => \App\Support\DocumentationGuidance::category($component['slug']) === 'Navigation')->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
         'Feedback' => collect($navigationComponents)->filter(fn (array $component): bool => \App\Support\DocumentationGuidance::category($component['slug']) === 'Feedback')->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
         'Layout' => collect($navigationComponents)->filter(fn (array $component): bool => \App\Support\DocumentationGuidance::category($component['slug']) === 'Layout')->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
-        'Real Estate' => collect($navigationComponents)->filter(fn (array $component): bool => \App\Support\DocumentationGuidance::category($component['slug']) === 'Real Estate')->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
+        'Comunicação' => collect($navigationComponents)->filter(fn (array $component): bool => \App\Support\DocumentationGuidance::category($component['slug']) === 'Comunicação')->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
     ];
     $designSystemPage = collect($navigationPages)->firstWhere('slug', 'design-system');
     $sideNavigationPages = collect($navigationPages)
@@ -31,6 +31,7 @@
         ->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)
         ->values();
     $navigationExamples = collect($navigationExamples)->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)->values();
+    $activeComponent = (string) request()->route('component');
 @endphp
 
 <aside
@@ -42,9 +43,10 @@
 >
     <div class="doc-sidebar-header">
         <a href="{{ route('documentation') }}" class="doc-brand" aria-label="SampaUI - início da documentação">
-            <span class="doc-brand-mark">S</span>
+            <span class="doc-brand-logo-frame">
+                <img src="{{ asset('images/logo_sampaui.png') }}" alt="SampaUI">
+            </span>
             <span>
-                <strong>SampaUI</strong>
                 <small>Documentação</small>
             </span>
         </a>
@@ -75,11 +77,13 @@
 
         @foreach ($componentGroups as $groupName => $groupComponents)
             @if ($groupComponents->isNotEmpty())
-                <section class="doc-menu-section" aria-labelledby="sidebar-{{ str($groupName)->slug() }}">
-                    <h2 id="sidebar-{{ str($groupName)->slug() }}" class="doc-menu-section-title">
+                @php($groupIsActive = $groupComponents->contains(fn (array $component): bool => $component['slug'] === $activeComponent))
+                <details class="doc-menu-section" @if ($groupIsActive) open @endif>
+                    <summary id="sidebar-{{ str($groupName)->slug() }}" class="doc-menu-section-title">
                         <span><i class="bi bi-{{ $groupIcons[$groupName] ?? 'grid-1x2' }}" aria-hidden="true"></i>{{ $groupName }}</span>
                         <small>{{ $groupComponents->count() }}</small>
-                    </h2>
+                        <i class="bi bi-chevron-down doc-menu-chevron" aria-hidden="true"></i>
+                    </summary>
 
                     <div class="doc-menu-items">
                         @foreach ($groupComponents as $navigationComponent)
@@ -101,16 +105,17 @@
                             </a>
                         @endforeach
                     </div>
-                </section>
+                </details>
             @endif
         @endforeach
 
         @if ($navigationExamples->isNotEmpty())
-            <section class="doc-menu-section" aria-labelledby="sidebar-exemplos">
-                <h2 id="sidebar-exemplos" class="doc-menu-section-title">
+            <details class="doc-menu-section" @if (request()->routeIs('examples.*')) open @endif>
+                <summary id="sidebar-exemplos" class="doc-menu-section-title">
                     <span><i class="bi bi-window-stack" aria-hidden="true"></i>Blocks/Templates</span>
                     <small>{{ $navigationExamples->count() }}</small>
-                </h2>
+                    <i class="bi bi-chevron-down doc-menu-chevron" aria-hidden="true"></i>
+                </summary>
                 <div class="doc-menu-items">
                     <a href="{{ route('examples.index') }}" @class(['doc-menu-item', 'doc-menu-item-active' => request()->routeIs('examples.index')])>Visão geral</a>
                     @foreach ($navigationExamples as $navigationExample)
@@ -119,15 +124,16 @@
                         </a>
                     @endforeach
                 </div>
-            </section>
+            </details>
         @endif
 
         @if ($sideNavigationPages->isNotEmpty())
-            <section class="doc-menu-section" aria-labelledby="sidebar-guias">
-                <h2 id="sidebar-guias" class="doc-menu-section-title">
+            <details class="doc-menu-section" @if (request()->routeIs('documentation.pages.*')) open @endif>
+                <summary id="sidebar-guias" class="doc-menu-section-title">
                     <span><i class="bi bi-journal-text" aria-hidden="true"></i>Guias</span>
                     <small>{{ $sideNavigationPages->count() }}</small>
-                </h2>
+                    <i class="bi bi-chevron-down doc-menu-chevron" aria-hidden="true"></i>
+                </summary>
                 <div class="doc-menu-items">
                     @foreach ($sideNavigationPages as $navigationPage)
                         <a
@@ -141,7 +147,7 @@
                         </a>
                     @endforeach
                 </div>
-            </section>
+            </details>
         @endif
     </nav>
 
