@@ -8,30 +8,30 @@
         $nextPage = $currentPageIndex !== false ? $pageNavigation->get($currentPageIndex + 1) : null;
     @endphp
 
-    <section id="visao-geral">
-        <article class="doc-hero-card">
-            <x-docs.breadcrumbs :items="[
-                ['label' => 'Documentação', 'href' => route('documentation')],
-                ['label' => 'Guias', 'href' => route('documentation')],
-                ['label' => $page['name']],
-            ]" />
+    <section id="visao-geral" class="doc-page-hero">
+        <x-docs.breadcrumbs :items="[
+            ['label' => 'Documentação', 'href' => route('documentation')],
+            ['label' => 'Guias', 'href' => route('documentation')],
+            ['label' => $page['name']],
+        ]" />
 
-            <p class="mt-8 text-xs font-semibold uppercase tracking-[0.24em] text-primary">{{ $page['tag'] }}</p>
-            <h1 class="mt-3 text-4xl font-semibold tracking-tight text-primary md:text-5xl">{{ $page['name'] }}</h1>
-            <p class="mt-5 max-w-3xl text-base leading-7 text-secondary">{{ $page['description'] }}</p>
-        </article>
+        <div class="doc-page-hero-copy">
+            <span class="doc-component-tag">{{ $page['tag'] }}</span>
+            <h1>{{ $page['name'] }}</h1>
+            <p>{{ $page['summary'] }}</p>
+            <p>{{ $page['description'] }}</p>
+        </div>
     </section>
 
-    <section id="preview" class="doc-component-board">
-        <div class="doc-section-header">
-            <div>
-                <p class="doc-kicker">Preview</p>
-                <h2 class="doc-heading">Pagina composta com SampaUI</h2>
-                <p class="doc-copy">
-                    O exemplo abaixo usa somente componentes do pacote e classes utilitarias do layout consumidor.
-                </p>
-            </div>
-            <div class="flex flex-wrap items-center gap-3">
+    <section id="preview" class="doc-section">
+        <div class="doc-section-heading">
+            <span>Preview</span>
+            <h2>Página composta com SampaUI</h2>
+            <p>Conteúdo renderizado com componentes oficiais e classes utilitárias do layout consumidor.</p>
+        </div>
+
+        <div class="doc-page-board">
+            <div class="doc-section-header">
                 <span class="doc-chip">{{ $page['tag'] }}</span>
                 <x-sampaui::button
                     variant="outline"
@@ -43,26 +43,24 @@
                     Abrir página completa
                 </x-sampaui::button>
             </div>
-        </div>
 
-        <div class="doc-page-preview">
-            {!! \Illuminate\Support\Facades\Blade::render($page['preview']) !!}
+            <div class="doc-page-preview">
+                {!! \Illuminate\Support\Facades\Blade::render($page['preview']) !!}
+            </div>
         </div>
     </section>
 
-    <section id="implementacao" class="doc-component-board">
-        <div class="doc-section-header">
-            <div>
-                <p class="doc-kicker">Implementacao</p>
-                <h2 class="doc-heading">Codigo base</h2>
-                <p class="doc-copy">
-                    Adapte rotas, propriedades Livewire, validacoes e dados reais conforme a aplicacao.
-                </p>
-            </div>
-            <span class="doc-chip">Blade</span>
+    <section id="implementacao" class="doc-section">
+        <div class="doc-section-heading">
+            <span>Implementação</span>
+            <h2>Código base</h2>
+            <p>Adapte rotas, propriedades Livewire, validações e dados reais conforme a aplicação.</p>
         </div>
 
-        <div class="mt-6">
+        <div class="doc-page-board">
+            <div class="doc-section-header">
+                <span class="doc-chip">Blade</span>
+            </div>
             <x-docs.code-block :code="$page['code']" label="Blade" />
         </div>
     </section>

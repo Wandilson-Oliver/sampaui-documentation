@@ -25,14 +25,14 @@ BLADE;
 
     $menu = [
         ['label' => 'Dashboard', 'href' => '#', 'icon' => 'speedometer2', 'active' => true],
-        ['label' => 'Leads', 'href' => '#', 'icon' => 'people'],
-        ['label' => 'Imoveis', 'href' => '#', 'icon' => 'buildings'],
+        ['label' => 'Clientes', 'href' => '#', 'icon' => 'people'],
+        ['label' => 'Projetos', 'href' => '#', 'icon' => 'briefcase'],
         ['label' => 'Relatorios', 'href' => '#', 'icon' => 'bar-chart'],
     ];
     $rows = [
-        ['lead' => 'Ana Costa', 'stage' => 'Visita marcada', 'value' => 'R$ 820.000', 'status' => 'Quente'],
-        ['lead' => 'Bruno Lima', 'stage' => 'Analise de credito', 'value' => 'R$ 540.000', 'status' => 'Morno'],
-        ['lead' => 'Carla Souza', 'stage' => 'Proposta enviada', 'value' => 'R$ 1.120.000', 'status' => 'Quente'],
+        ['lead' => 'Ana Costa', 'stage' => 'Demonstração marcada', 'value' => 'R$ 82.000', 'status' => 'Quente'],
+        ['lead' => 'Bruno Lima', 'stage' => 'Análise técnica', 'value' => 'R$ 54.000', 'status' => 'Morno'],
+        ['lead' => 'Carla Souza', 'stage' => 'Proposta enviada', 'value' => 'R$ 112.000', 'status' => 'Quente'],
     ];
 @endphp
 
@@ -53,56 +53,31 @@ BLADE;
     </section>
 
     <section class="space-y-7">
-        <div class="overflow-x-auto rounded-[1.35rem] border border-light bg-light/60 p-4 shadow-default">
-            <div class="grid min-h-[42rem] min-w-[76rem] overflow-hidden rounded-[1.15rem] border border-light bg-white shadow-sm" style="grid-template-columns: 16rem minmax(0, 1fr);">
-                <aside class="flex min-h-0 flex-col border-r border-light bg-white">
-                    <div class="border-b border-light p-5">
-                        <div class="flex items-center gap-3">
-                            <span class="flex h-11 w-11 items-center justify-center rounded-default bg-light">
-                                <x-sampaui::brand-mark />
-                            </span>
-                            <div class="min-w-0">
-                                <p class="font-semibold text-primary">Sampa CRM</p>
-                                <p class="truncate text-xs text-secondary">Operação comercial</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <nav class="min-h-0 flex-1 space-y-1 overflow-y-auto p-4">
-                        @foreach ($menu as $item)
-                            <a href="{{ $item['href'] }}" class="flex items-center gap-3 rounded-default px-3 py-2.5 text-sm font-medium transition {{ $item['active'] ?? false ? 'bg-primary text-white' : 'text-secondary hover:bg-light hover:text-primary' }}">
-                                <i class="bi bi-{{ $item['icon'] }}" aria-hidden="true"></i>
-                                {{ $item['label'] }}
-                            </a>
-                        @endforeach
-                    </nav>
-
-                    <div class="border-t border-light p-4">
-                        <div class="flex items-center gap-3 rounded-default bg-light p-3">
-                            <x-sampaui::avatar name="Sampa Admin" status="online" />
-                            <div class="min-w-0">
-                                <p class="truncate text-sm font-semibold text-primary">Sampa Admin</p>
-                                <p class="truncate text-xs text-secondary">admin@sampa.dev</p>
-                            </div>
-                        </div>
-                    </div>
-                </aside>
+        <div class="overflow-x-auto rounded-[1.35rem] border border-border bg-light/60 p-4 shadow-default">
+            <div class="grid min-h-[42rem] min-w-[82rem] overflow-hidden rounded-[1.15rem] border border-border bg-white shadow-sm" style="grid-template-columns: 20rem minmax(0, 1fr);">
+                <x-sampaui::sidebar
+                    position="static"
+                    brand="Sampa CRM"
+                    :collapsible="false"
+                    :items="$menu"
+                    :user="['name' => 'Sampa Admin', 'email' => 'admin@sampa.dev']"
+                    logout-href="#"
+                />
 
                 <main class="min-w-0 bg-light/60">
-                    <div class="border-b border-light bg-white px-6 py-5">
-                        <div class="flex items-center justify-between gap-5">
-                            <div class="min-w-0">
-                                <p class="doc-kicker">Hoje</p>
-                                <h2 class="mt-1 text-2xl font-semibold text-primary">Painel comercial</h2>
-                            </div>
-
-                            <div class="flex shrink-0 items-center gap-3">
-                                <x-sampaui::input name="dashboard_search" icon="search" placeholder="Buscar lead ou imóvel" class="w-72" />
-                                <x-sampaui::button variant="outline" icon="bell" class="whitespace-nowrap">Alertas</x-sampaui::button>
-                                <x-sampaui::button icon="plus" class="whitespace-nowrap">Novo lead</x-sampaui::button>
-                            </div>
-                        </div>
-                    </div>
+                    <x-sampaui::header
+                        title="Painel comercial"
+                        subtitle="Resumo operacional de hoje"
+                        search
+                        search-placeholder="Buscar cliente ou conta"
+                        notifications
+                        notification-count="3"
+                        class="rounded-none border-x-0 border-t-0"
+                    >
+                        <x-slot:actions>
+                            <x-sampaui::button icon="plus" class="whitespace-nowrap">Novo cliente</x-sampaui::button>
+                        </x-slot:actions>
+                    </x-sampaui::header>
 
                     <div class="space-y-5 p-6">
                         <div class="grid grid-cols-4 gap-4">
@@ -134,7 +109,7 @@ BLADE;
                                             </thead>
                                         </x-slot:head>
                                         <x-slot:body>
-                                            <tbody class="divide-y divide-light">
+                                            <tbody class="divide-y divide-border">
                                                 @foreach ($rows as $row)
                                                     <tr>
                                                         <td class="px-6 py-4 font-semibold text-primary">{{ $row['lead'] }}</td>
@@ -154,8 +129,8 @@ BLADE;
                             <x-sampaui::card title="Meta mensal" description="Fechamento projetado" padding="lg">
                                 <x-sampaui::progress label="Receita" :value="68" show-value variant="success" />
                                 <div class="mt-6 space-y-4">
-                                    @foreach (['Revisar propostas pendentes', 'Confirmar visitas de amanhã', 'Atualizar funil de crédito'] as $task)
-                                        <div class="flex items-center gap-3 rounded-default border border-light p-3">
+                                    @foreach (['Revisar propostas pendentes', 'Confirmar demonstrações de amanhã', 'Atualizar prioridades do funil'] as $task)
+                                        <div class="flex items-center gap-3 rounded-default border border-border p-3">
                                             <x-sampaui::indicator variant="accent" />
                                             <span class="text-sm text-secondary">{{ $task }}</span>
                                         </div>

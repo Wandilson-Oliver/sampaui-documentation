@@ -14,8 +14,8 @@
         </button>
 
         <a href="{{ route('documentation') }}" class="doc-topbar-brand lg:hidden" aria-label="SampaUI">
-            <span class="doc-brand-mark">S</span>
-            <strong>SampaUI</strong>
+            <img src="{{ asset('images/icon_favicon_sampaui.png') }}" alt="" class="doc-brand-icon">
+            <strong>Documentação</strong>
         </a>
     </div>
 

@@ -3,9 +3,11 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="Documentação SampaUI para produtos imobiliários em Laravel 13, Livewire 4 e Tailwind 4.">
+        <meta name="description" content="Documentação SampaUI para produtos digitais em Laravel 13, Livewire 4 e Tailwind 4.">
 
         <title>{{ $title ?? 'Documentação SampaUI' }}</title>
+        <link rel="icon" type="image/png" href="{{ asset('images/icon_favicon_sampaui.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('images/icon_favicon_sampaui.png') }}">
 
         <script>
             (() => {
@@ -49,7 +51,7 @@
                     'tag' => $page['tag'] ?? 'Página',
                     'url' => route('documentation.pages.show', $page['slug']),
                     'popular' => false,
-                    'recent' => ($page['slug'] ?? '') === 'real-estate-patterns',
+                    'recent' => false,
                     'search' => implode(' ', [$page['name'] ?? '', $page['slug'] ?? '', $page['tag'] ?? '', $page['summary'] ?? '', $page['description'] ?? '', $page['code'] ?? '']),
                 ]))
                 ->merge($navigationExamples->map(fn (array $example): array => [
@@ -59,7 +61,7 @@
                     'tag' => $example['tag'] ?? 'Exemplo',
                     'url' => route($example['route']),
                     'popular' => in_array($example['route'] ?? '', ['examples.dashboard', 'examples.advanced-table', 'examples.authentication'], true),
-                    'recent' => in_array($example['route'] ?? '', ['examples.chat', 'examples.command-palette'], true),
+                    'recent' => in_array($example['route'] ?? '', ['examples.chat', 'examples.users.index'], true),
                     'search' => implode(' ', [$example['name'] ?? '', $example['slug'] ?? '', $example['tag'] ?? '', $example['summary'] ?? '']),
                 ]))
                 ->values();
@@ -67,8 +69,7 @@
             $tableOfContents = $tableOfContents ?? match (true) {
                 request()->routeIs('documentation.components.show') => [
                     ['id' => 'visao-geral', 'label' => 'Visão geral'],
-                    ['id' => 'orientacoes', 'label' => 'Quando usar'],
-                    ['id' => 'playground', 'label' => 'Playground'],
+                    ['id' => 'exemplos', 'label' => 'Exemplos'],
                     ['id' => 'boas-praticas', 'label' => 'Boas práticas'],
                     ['id' => 'props', 'label' => 'Props e atributos'],
                     ['id' => 'api-eventos', 'label' => 'API e eventos'],

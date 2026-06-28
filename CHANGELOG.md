@@ -2,24 +2,42 @@
 
 Todas as alterações relevantes da documentação SampaUI são registradas neste arquivo.
 
+## [0.1.19] - 2026-06-28
+
+### Adicionado
+
+- Documentação oficial de `Table Search`, separada da tabela simples.
+- Exemplos atualizados para Header, Sidebar, Brand Mark e componentes de comunicação.
+- Logo, ícone e paleta oficiais integrados ao site.
+
+### Melhorado
+
+- Home ganhou uma capa mais objetiva, responsiva e alinhada ao padrão visual do pacote.
+- Catálogo, páginas de componentes e exemplos de Blocks/Templates foram revisados para reduzir redundância.
+- Modal e Drawer agora abrem na viewport do navegador e permanecem ativos até uma ação explícita de fechamento.
+
+### Removido
+
+- Playgrounds interativos das páginas de componentes.
+- Seção “Decisão de uso” e seus links no índice.
+- Seções promocionais redundantes da Home.
+
 ## [0.1.18] - 2026-06-25
 
 ### Melhorado
 
 - Playground das páginas de Button, Input, Select, Badge, Table e Modal passou a priorizar componentes reais do SampaUI com controles para variantes, tamanhos e estados.
 - Cards de “Todos os componentes” ganharam mais respiro, linha de metadados dedicada e hierarquia visual mais premium.
-- Categoria Real Estate recebeu previews conceituais próprios por tipo de componente, status planejado mais claro e páginas individuais com API proposta.
 - Subtítulo do catálogo foi revisado para reforçar o foco em CRMs, ERPs e sistemas internos Laravel.
 
 ## [0.1.17] - 2026-06-25
 
 ### Adicionado
 
-- Catálogo filtrável com Alpine para Todos, Popular, Novos, Formulários, Design de UI, Data, Overlay, Navigation, Feedback, Layout e Real Estate.
-- Categoria Real Estate com páginas placeholder planejadas para Property Card, Lead Pipeline, Proposal Card, Visit Timeline e demais componentes imobiliários.
+- Catálogo filtrável com Alpine para Todos, Popular, Novos, Formulários, Design de UI, Data, Overlay, Navigation, Feedback e Layout.
 - Playground interativo inicial para Button, Input, Select, Badge, Table e Modal.
 - Busca com recentes, componentes populares, exemplos, estado vazio refinado e instrução de atalho `⌘K`.
-- Footer organizado em colunas de Produto, Documentação, Componentes, Templates, Real Estate e Projeto.
+- Footer organizado em colunas de Produto, Documentação, Componentes, Templates e Projeto.
 
 ### Melhorado
 
@@ -33,9 +51,9 @@ Todas as alterações relevantes da documentação SampaUI são registradas nest
 
 ### Adicionado
 
-- Hero premium com prévia completa de CRM imobiliário, métricas, pipeline, atividades, agenda e propostas.
+- Hero premium com prévia completa de CRM, métricas, pipeline, atividades, agenda e propostas.
 - Cards com previews renderizados para componentes populares e catálogo completo por categoria.
-- Seções de benefícios, templates, padrões imobiliários, roadmap e footer global.
+- Seções de benefícios, templates, roadmap e footer global.
 - Navegação anterior/próxima nas páginas de componentes e guias.
 - Contadores e badges de estado na sidebar da documentação.
 

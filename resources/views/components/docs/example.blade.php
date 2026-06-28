@@ -7,8 +7,8 @@
 
 @php($tabs = array_keys($codeExamples))
 
-<article class="doc-playground" x-data="{ activeTab: @js($tabs[0] ?? 'Blade') }">
-    <header class="doc-playground-header">
+<article class="doc-example" x-data="{ activeTab: @js($tabs[0] ?? 'Blade') }">
+    <header class="doc-example-header">
         <div>
             <h3>{{ $title }}</h3>
             <p>{{ $description }}</p>
@@ -29,7 +29,7 @@
         </div>
     </header>
 
-    <div class="doc-playground-preview">
+    <div class="doc-example-preview">
         {!! $previewHtml !!}
     </div>
 

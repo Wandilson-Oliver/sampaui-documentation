@@ -1,10 +1,11 @@
 <footer class="doc-footer">
     <div class="doc-footer-intro">
         <a href="{{ route('documentation') }}" class="doc-footer-brand" aria-label="SampaUI - início da documentação">
-            <span class="doc-brand-mark">S</span>
-            <span><strong>SampaUI</strong><small>Componentes premium para Laravel</small></span>
+            <span class="doc-footer-logo-frame">
+                <img src="{{ asset('images/logo_sampaui.png') }}" alt="SampaUI">
+            </span>
         </a>
-        <p>Documentação para criar CRMs, dashboards, autenticação e sistemas internos consistentes, com foco real em produtos imobiliários.</p>
+        <p>Documentação para criar CRMs, dashboards, autenticação e sistemas internos consistentes, com foco em produtos digitais profissionais.</p>
         <span class="doc-footer-version">Versão {{ config('docs.version') }}</span>
     </div>
 
@@ -12,7 +13,7 @@
         <div>
             <strong>Produto</strong>
             <a href="{{ route('documentation') }}#componentes">Catálogo</a>
-            <a href="{{ route('documentation') }}#blocks">Blocks/Templates</a>
+            <a href="{{ route('examples.index') }}">Blocks/Templates</a>
             <a href="{{ route('documentation') }}#roadmap">Roadmap</a>
         </div>
         <div>
@@ -29,15 +30,9 @@
         </div>
         <div>
             <strong>Templates</strong>
-            <a href="{{ route('examples.dashboard') }}">CRM Dashboard</a>
-            <a href="{{ route('examples.authentication') }}">Login completo</a>
-            <a href="{{ route('examples.chat') }}">Atendimento/Chat</a>
-        </div>
-        <div>
-            <strong>Real Estate</strong>
-            <a href="{{ route('documentation.pages.show', 'real-estate-patterns') }}">Padrões imobiliários</a>
-            <a href="{{ route('documentation.components.show', 'property-card') }}">Property Card</a>
-            <a href="{{ route('documentation.components.show', 'lead-pipeline') }}">Lead Pipeline</a>
+            <a href="{{ route('examples.dashboard') }}">Dashboard</a>
+            <a href="{{ route('examples.users.index') }}">CRUD Livewire</a>
+            <a href="{{ route('examples.chat') }}">Atendimento</a>
         </div>
         <div>
             <strong>Projeto</strong>

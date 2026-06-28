@@ -28,7 +28,7 @@ BLADE;
             <x-sampaui::tabs :tabs="['profile' => 'Perfil', 'security' => 'Segurança', 'notifications' => 'Notificações']" active="profile">
                 <x-sampaui::tab-panel name="profile">
                     <div class="grid gap-5 lg:grid-cols-[16rem_minmax(0,1fr)]">
-                        <div class="rounded-default border border-light bg-light p-5">
+                        <div class="rounded-default border border-border bg-light p-5">
                             <x-sampaui::avatar-upload name="settings_avatar" label="Foto" help="Imagem quadrada até 2MB." />
                         </div>
                         <div class="grid gap-5 md:grid-cols-2">
@@ -63,7 +63,7 @@ BLADE;
                 </x-sampaui::tab-panel>
             </x-sampaui::tabs>
 
-            <div class="mt-7 flex flex-col-reverse gap-3 border-t border-light pt-6 sm:flex-row sm:justify-end">
+            <div class="mt-7 flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:justify-end">
                 <x-sampaui::button variant="outline">Cancelar</x-sampaui::button>
                 <x-sampaui::button icon="check2-circle">Salvar alterações</x-sampaui::button>
             </div>
