@@ -8,6 +8,7 @@
     selectable
     export-href="/exports/clientes.csv"
     per-page="10"
+    pagination-type="numbers"
     :columns="$columns"
     :rows="$rows"
 >
@@ -17,9 +18,9 @@
 BLADE;
 
     $rows = [
-        ['name' => 'Ana Martins', 'email' => 'ana@sampa.dev', 'status' => 'Ativo', 'variant' => 'success', 'value' => 'R$ 12.400'],
-        ['name' => 'Bruno Lima', 'email' => 'bruno@sampa.dev', 'status' => 'Pendente', 'variant' => 'accent', 'value' => 'R$ 8.900'],
-        ['name' => 'Carla Souza', 'email' => 'carla@sampa.dev', 'status' => 'Bloqueado', 'variant' => 'danger', 'value' => 'R$ 3.200'],
+        ['id' => 1, 'name' => 'Ana Martins', 'email' => 'ana@sampa.dev', 'status' => 'Ativo', 'variant' => 'success', 'value' => 'R$ 12.400'],
+        ['id' => 2, 'name' => 'Bruno Lima', 'email' => 'bruno@sampa.dev', 'status' => 'Pendente', 'variant' => 'accent', 'value' => 'R$ 8.900'],
+        ['id' => 3, 'name' => 'Carla Souza', 'email' => 'carla@sampa.dev', 'status' => 'Bloqueado', 'variant' => 'danger', 'value' => 'R$ 3.200'],
     ];
 @endphp
 
@@ -48,6 +49,9 @@ BLADE;
                 per-page="5"
                 page="2"
                 total="42"
+                pagination-type="numbers"
+                row-key="id"
+                :rows="$rows"
                 class="min-w-[58rem]"
                 compact
             >
@@ -57,6 +61,13 @@ BLADE;
                         ['label' => 'Ativo', 'value' => 'active'],
                         ['label' => 'Pendente', 'value' => 'pending'],
                     ]" />
+
+                    <x-sampaui::input
+                        type="search"
+                        name="table_search"
+                        icon="search"
+                        placeholder="Buscar cliente, email ou valor"
+                    />
                 </x-slot:filters>
 
                 <x-slot:actions>
@@ -66,7 +77,14 @@ BLADE;
                     <x-slot:head>
                         <thead class="bg-light/70 text-left text-xs font-semibold uppercase tracking-[0.18em] text-secondary">
                             <tr>
-                                <th class="px-6 py-3"><input type="checkbox" class="rounded border-secondary/40 text-primary focus:ring-primary/20" aria-label="Selecionar todos"></th>
+                                <th class="px-6 py-3">
+                                    <x-sampaui::checkbox
+                                        value="all"
+                                        x-bind:checked="allVisibleSelected()"
+                                        x-on:change="toggleAll($event.target.checked)"
+                                        aria-label="Selecionar todos"
+                                    />
+                                </th>
                                 <th class="px-6 py-3">Cliente</th>
                                 <th class="px-6 py-3">Email</th>
                                 <th class="px-6 py-3">Status</th>
@@ -79,7 +97,14 @@ BLADE;
                         <tbody class="divide-y divide-border">
                             @foreach ($rows as $row)
                                 <tr class="transition hover:bg-light/60">
-                                    <td class="px-6 py-4"><input type="checkbox" class="rounded border-secondary/40 text-primary focus:ring-primary/20" aria-label="Selecionar {{ $row['name'] }}"></td>
+                                    <td class="px-6 py-4">
+                                        <x-sampaui::checkbox
+                                            :value="$row['id']"
+                                            x-bind:checked="isSelected($el.value)"
+                                            x-on:change="toggleRow($el.value, $event.target.checked)"
+                                            aria-label="Selecionar {{ $row['name'] }}"
+                                        />
+                                    </td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
                                             <x-sampaui::avatar name="{{ $row['name'] }}" />

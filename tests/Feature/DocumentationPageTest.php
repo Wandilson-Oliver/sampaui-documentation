@@ -217,6 +217,18 @@ it('documents checkbox SampaUI color variants', function () {
         ->assertSee('accent-accent', false);
 });
 
+it('renders the complete sidebar reference with properties active', function () {
+    $this->get(route('documentation.components.show', 'sidebar'))
+        ->assertOk()
+        ->assertSee('h-[62rem]', false)
+        ->assertSee('src')
+        ->assertSee('logo-alt')
+        ->assertSee('Imóveis')
+        ->assertSee('bg-purple/10 text-purple', false)
+        ->assertSee('-right-10 hidden w-10 bg-light', false)
+        ->assertSee('Sair do sistema');
+});
+
 it('documents textarea native usage', function () {
     $this->get(route('documentation.components.show', 'textarea'))
         ->assertOk()
@@ -348,6 +360,17 @@ it('renders the new complete example pages', function () {
             ->assertSee('Trecho de uso')
             ->assertSee($snippet, false);
     }
+});
+
+it('renders the advanced table with SampaUI checkboxes filters and numbered pagination', function () {
+    $this->get(route('examples.advanced-table'))
+        ->assertOk()
+        ->assertSee('placeholder="Buscar cliente, email ou valor"', false)
+        ->assertSee('h-5 w-5 cursor-pointer', false)
+        ->assertSee('x-bind:checked="allVisibleSelected()"', false)
+        ->assertSee('x-on:change="toggleRow($el.value, $event.target.checked)"', false)
+        ->assertSee('data-pagination-type="numbers"', false)
+        ->assertSee('aria-current="page"', false);
 });
 
 it('renders chat customer photos and a toggleable context panel', function () {

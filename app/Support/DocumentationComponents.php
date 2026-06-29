@@ -1080,8 +1080,9 @@ BLADE,
                     ['name' => 'brand', 'type' => 'string', 'default' => 'SampaUI', 'notes' => 'Nome exibido no topo.'],
                     ['name' => 'brandHref', 'type' => 'string', 'default' => '#', 'notes' => 'Destino do link da marca.'],
                     ['name' => 'brandIcon', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Nome Bootstrap Icon sem `bi-`, exibido sobre a marca abstrata.'],
-                    ['name' => 'logo', 'type' => 'string|null', 'default' => 'null', 'notes' => 'URL de uma imagem para substituir a marca abstrata.'],
-                    ['name' => 'logoAlt', 'type' => 'string|null', 'default' => 'brand', 'notes' => 'Texto alternativo da imagem informada em `logo`.'],
+                    ['name' => 'src', 'type' => 'string|null', 'default' => 'null', 'notes' => 'URL da imagem que substitui o simbolo oficial no topo.'],
+                    ['name' => 'logo', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Alias legado de `src`, mantido para compatibilidade.'],
+                    ['name' => 'logoAlt', 'type' => 'string|null', 'default' => 'brand', 'notes' => 'Texto alternativo da imagem informada em `src` ou `logo`.'],
                     ['name' => '$logo', 'type' => 'Named slot', 'default' => '-', 'notes' => 'Substitui `logo` por qualquer markup customizado, como SVG inline ou `<picture>`.'],
                     ['name' => 'items', 'type' => 'array', 'default' => '[]', 'notes' => 'Links principais do menu.'],
                     ['name' => 'sections', 'type' => 'array', 'default' => '[]', 'notes' => 'Grupos adicionais com `label` e `items`.'],
@@ -1094,7 +1095,7 @@ BLADE,
                     ['name' => 'openEvent', 'type' => 'string', 'default' => 'sampaui:sidebar-open', 'notes' => 'Evento Alpine para abrir no mobile.'],
                     ['name' => 'closeEvent', 'type' => 'string', 'default' => 'sampaui:sidebar-close', 'notes' => 'Evento Alpine para fechar no mobile.'],
                     ['name' => 'stateEvent', 'type' => 'string', 'default' => 'sampaui:sidebar-state', 'notes' => 'Evento emitido ao iniciar, abrir, fechar ou recolher. Use para ajustar `margin-left` do conteudo.'],
-                    ['name' => 'rail', 'type' => 'bool', 'default' => 'false', 'notes' => 'Adiciona uma faixa externa opcional. O padrao permanece totalmente branco.'],
+                    ['name' => 'rail', 'type' => 'bool', 'default' => 'true', 'notes' => 'Exibe a faixa externa clara que separa a navegacao do conteudo.'],
                     ['name' => 'position', 'type' => 'fixed|static', 'default' => 'fixed', 'notes' => 'Use `static` apenas quando a sidebar participar de um container ou preview; dashboards usam `fixed`.'],
                     ['name' => 'logoutHref', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Exibe link de saida quando informado.'],
                     ['name' => '$footer', 'type' => 'Named slot', 'default' => '-', 'notes' => 'Substitui o rodape padrao.'],
@@ -1102,7 +1103,7 @@ BLADE,
                 'attributes' => ['class', 'id', 'wire:key', 'x-on:*', 'aria-*', 'data-*'],
                 'accessibility' => [
                     'O componente usa `aria-label` em aside/nav e `aria-current="page"` no item ativo.',
-                    'Quando usar `logo`, informe `logo-alt`. Quando usar o slot `logo`, inclua `alt` em imagens ou `aria-hidden="true"` em marcas puramente decorativas.',
+                    'Quando usar `src` ou `logo`, informe `logo-alt`. Quando usar o slot `logo`, inclua `alt` em imagens ou `aria-hidden="true"` em marcas puramente decorativas.',
                     'Mantenha labels textuais mesmo quando iniciar com `initial-state="closed"`; o estado recolhido esconde apenas visualmente no desktop.',
                     'Em layouts com sidebar fixa, escute `sampaui:sidebar-state` e aplique a largura emitida no container de conteudo.',
                     'Evite usar `#` em links reais; envie URLs validas do app consumidor.',
@@ -1116,7 +1117,7 @@ BLADE,
     brand="SampaUI"
     initial-state="open"
     brand-href="/dashboard"
-    logo="/images/logo-liacor.svg"
+    src="/images/logo-liacor.svg"
     logo-alt="SampaUI"
     :user="[
         'name' => 'Administrador Lia',
@@ -1124,9 +1125,9 @@ BLADE,
         'avatar' => '/images/admin.jpg',
     ]"
     :items="[
-        ['label' => 'Dashboard', 'href' => '/dashboard', 'icon' => 'grid', 'active' => true],
+        ['label' => 'Dashboard', 'href' => '/dashboard', 'icon' => 'grid'],
         ['label' => 'Clientes', 'href' => '/clients', 'icon' => 'people'],
-        ['label' => 'Imóveis', 'href' => '/properties', 'icon' => 'buildings'],
+        ['label' => 'Imóveis', 'href' => '/properties', 'icon' => 'buildings', 'active' => true],
         ['label' => 'Mapa', 'href' => '/map', 'icon' => 'map'],
     ]"
 />
@@ -1157,7 +1158,7 @@ BLADE,
                         'code' => <<<'BLADE'
 <x-sampaui::sidebar
     brand="SampaUI"
-    logo="/images/logo-liacor.svg"
+    src="/images/logo-liacor.svg"
     logo-alt="SampaUI"
     avatar="/images/admin.jpg"
     avatar-alt="Administrador Lia"
@@ -2605,7 +2606,7 @@ BLADE,
                 'title' => 'Sem secoes',
                 'description' => 'Marca, usuario e links diretos em uma lista unica.',
                 'preview' => <<<'BLADE'
-<div class="doc-sidebar-preview h-[49rem] overflow-visible bg-white">
+<div class="doc-sidebar-preview h-[62rem] overflow-visible bg-white">
     <x-sampaui::sidebar
         position="static"
         brand="SampaUI"
@@ -2618,7 +2619,7 @@ BLADE,
         :items="[
             ['label' => 'Dashboard', 'href' => '#', 'icon' => 'grid'],
             ['label' => 'Clientes', 'href' => '#', 'icon' => 'people'],
-            ['label' => 'Imóveis', 'href' => '#', 'icon' => 'buildings'],
+            ['label' => 'Imóveis', 'href' => '#', 'icon' => 'buildings', 'active' => true],
             ['label' => 'Mapa', 'href' => '#', 'icon' => 'map'],
         ]"
         :sections="[
@@ -2639,6 +2640,8 @@ BLADE,
     brand="SampaUI"
     initial-state="open"
     brand-href="/dashboard"
+    src="/images/minha-logo.png"
+    logo-alt="Minha marca"
     :user="[
         'name' => 'Administrador Lia',
         'email' => 'admin@sampa.dev',
@@ -2647,7 +2650,7 @@ BLADE,
     :items="[
         ['label' => 'Dashboard', 'href' => '/dashboard', 'icon' => 'grid'],
         ['label' => 'Clientes', 'href' => '/clients', 'icon' => 'people'],
-        ['label' => 'Imóveis', 'href' => '/properties', 'icon' => 'buildings'],
+        ['label' => 'Imóveis', 'href' => '/properties', 'icon' => 'buildings', 'active' => true],
         ['label' => 'Mapa', 'href' => '/map', 'icon' => 'map'],
     ]"
     :sections="[
