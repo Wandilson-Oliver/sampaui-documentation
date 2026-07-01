@@ -1,39 +1,47 @@
 @extends('docs.layout', ['title' => $title ?? 'Exemplos · Documentação SampaUI'])
 
 @section('content')
-    <section class="doc-component-intro-grid">
-        <article class="doc-hero-card">
-            <div class="relative z-[1] flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-                <div>
-                    <p class="doc-kicker">Exemplos</p>
-                    <h1 class="mt-3 text-3xl font-semibold tracking-tight text-primary md:text-4xl">Páginas reais para produtos imobiliários</h1>
-                    <p class="mt-4 max-w-3xl text-sm leading-6 text-secondary">
-                        Exemplos para CRM, captação, atendimento, propostas, configurações e autenticação, construídos com Laravel 13, Livewire 4, Tailwind CSS 4, AlpineJS e Bootstrap Icons.
-                    </p>
-                </div>
+    @php
+        $previewTypes = [
+            'examples.dashboard' => 'dashboard',
+            'examples.users.index' => 'users',
+            'examples.authentication' => 'authentication',
+            'examples.admin-form' => 'admin-form',
+            'examples.advanced-table' => 'advanced-table',
+            'examples.profile' => 'profile',
+            'examples.settings' => 'settings',
+            'examples.chat' => 'chat',
+        ];
+    @endphp
 
-                <x-sampaui::badge variant="primary" icon="window-sidebar">Estilo de produção</x-sampaui::badge>
-            </div>
-        </article>
+    <section class="doc-page-hero">
+        <x-docs.breadcrumbs :items="[
+            ['label' => 'Documentação', 'href' => route('documentation')],
+            ['label' => 'Blocks/Templates'],
+        ]" />
+
+        <div class="doc-page-hero-copy">
+            <span class="doc-component-tag">Composições SampaUI</span>
+            <h1>Blocks / Templates</h1>
+            <p>Fluxos essenciais para dashboards, autenticação, dados, formulários e atendimento.</p>
+            <p>A seleção foi reduzida aos exemplos que demonstram composição real, responsividade e integração com Blade ou Livewire.</p>
+        </div>
     </section>
 
-    <section class="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
+    <section class="doc-block-grid" aria-label="Blocks e templates">
         @foreach ($examples as $example)
-            <a href="{{ route($example['route']) }}" class="group flex min-h-64 flex-col rounded-[1.35rem] border border-light bg-white p-6 shadow-default transition hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-2xl">
-                <div class="flex items-start justify-between gap-4">
-                    <span class="inline-flex h-14 w-14 items-center justify-center rounded-default bg-light text-2xl text-primary transition group-hover:bg-primary group-hover:text-white">
-                        <i class="bi bi-{{ $example['icon'] }}" aria-hidden="true"></i>
-                    </span>
-                    <x-sampaui::badge variant="light">{{ $example['tag'] }}</x-sampaui::badge>
+            <a href="{{ route($example['route']) }}" class="doc-block-card">
+                <div class="doc-block-preview">
+                    @include('docs.partials.template-preview', ['type' => $previewTypes[$example['route']]])
                 </div>
 
-                <div class="mt-6 flex flex-1 flex-col">
-                    <h2 class="text-xl font-semibold text-primary">{{ $example['title'] }}</h2>
-                    <p class="mt-3 flex-1 text-sm leading-6 text-secondary">{{ $example['copy'] }}</p>
-                    <span class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary">
-                        Abrir exemplo
-                        <i class="bi bi-arrow-right" aria-hidden="true"></i>
-                    </span>
+                <div class="doc-block-copy">
+                    <div>
+                        <x-sampaui::badge variant="light" size="sm">{{ $example['tag'] }}</x-sampaui::badge>
+                        <h2>{{ $example['title'] }}</h2>
+                        <p>{{ $example['copy'] }}</p>
+                    </div>
+                    <span>Explorar template <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
                 </div>
             </a>
         @endforeach

@@ -76,7 +76,7 @@ BLADE;
             class="fixed inset-0 z-[2147483647] m-0 h-screen min-h-dvh w-screen max-h-none max-w-none overflow-hidden bg-transparent p-0 text-secondary outline-none backdrop:bg-primary/40 backdrop:backdrop-blur-[2px]"
         >
             <div class="flex min-h-dvh justify-end">
-                <section class="flex h-dvh w-full max-w-lg flex-col rounded-l-default border-l border-light bg-white">
+                <section class="flex h-dvh w-full max-w-lg flex-col rounded-l-default border-l border-border bg-white">
                     <header class="flex items-start justify-between gap-4 px-5 py-5">
                         <div>
                             <h2 class="text-lg font-semibold text-primary">Filtros</h2>

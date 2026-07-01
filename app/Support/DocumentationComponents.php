@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use SampaUI\Support\ComponentRegistry;
+
 class DocumentationComponents
 {
     /**
@@ -132,7 +134,7 @@ BLADE,
     wire:loading.attr="disabled"
     wire:target="save"
 >
-    Salvar lead
+    Salvar cliente
 </x-sampaui::button>
 BLADE,
                     ],
@@ -143,13 +145,13 @@ BLADE,
                 'name' => 'Input',
                 'tag' => '<x-sampaui::input />',
                 'summary' => 'Campo textual com label opcional, mensagem de erro, estados desabilitados e passthrough total de atributos HTML/Livewire.',
-                'description' => 'Indicado para formularios operacionais, autenticacao e filtros. A borda padrao usa `border-secondary/20`, e `wire:model` inicializa o campo sem exigir a prop `value`.',
+                'description' => 'Indicado para formularios operacionais, autenticacao e filtros. A borda padrao usa `border-secondary/20`; `wire:model` inicializa o campo e identifica automaticamente a chave do ErrorBag sem exigir `name`.',
                 'preview_title' => 'Formulario de contato',
                 'preview_caption' => 'Exemplos de input simples, erro validado e binding Livewire.',
                 'props' => [
                     ['name' => 'type', 'type' => 'string', 'default' => 'text', 'notes' => 'Aceita qualquer tipo suportado por `<input>`.'],
                     ['name' => 'label', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Renderiza `<label>` associado ao campo.'],
-                    ['name' => 'name', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Usado para `name`, `id` fallback e leitura do ErrorBag.'],
+                    ['name' => 'name', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Usado para o atributo `name`; id e ErrorBag tambem podem ser derivados de `wire:model`.'],
                     ['name' => 'value', 'type' => 'mixed', 'default' => 'null', 'notes' => 'Valor inicial opcional para uso sem Livewire.'],
                     ['name' => 'placeholder', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Texto auxiliar dentro do campo.'],
                     ['name' => 'error', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Sobrescreve a mensagem automatica do ErrorBag.'],
@@ -221,13 +223,14 @@ BLADE,
 BLADE,
                     ],
                     [
-                        'title' => 'Erro customizado',
-                        'description' => 'Forca a mensagem de erro sem depender do validator.',
+                        'title' => 'Validacao Livewire',
+                        'description' => 'Depois de `$this->validate()`, a mensagem do ErrorBag aparece sem prop `error` manual.',
                         'code' => <<<'BLADE'
 <x-sampaui::input
-    name="cpf"
-    label="CPF"
-    error="Documento invalido para este cadastro."
+    type="email"
+    label="Email"
+    wire:model.blur="email"
+    required
 />
 BLADE,
                     ],
@@ -323,12 +326,12 @@ BLADE,
                 'name' => 'Select',
                 'tag' => '<x-sampaui::select />',
                 'summary' => 'Select com combobox Alpine, dropdown customizado, placeholder, erro e sombra forte na listagem.',
-                'description' => 'Bom para formularios administrativos e filtros curtos. O componente aceita `options` ou `option`s no slot, preserva `wire:model` no `<select>` real oculto e sincroniza o trigger Alpine pelos eventos nativos.',
+                'description' => 'Bom para formularios administrativos e filtros curtos. O componente aceita `options` ou `option`s no slot e usa `x-modelable` para manter o valor do Livewire, o `<select>` real oculto e o label visivel sincronizados.',
                 'preview_title' => 'Filtro operacional',
                 'preview_caption' => 'Placeholder inicial, opcoes reais e estado com erro.',
                 'props' => [
                     ['name' => 'label', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Renderiza `<label>` associado.'],
-                    ['name' => 'name', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Usado como `name`, `id` fallback e chave de erro.'],
+                    ['name' => 'name', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Usado como atributo `name`; id e erro tambem podem ser derivados de `wire:model`.'],
                     ['name' => 'value', 'type' => 'string|int|null', 'default' => 'null', 'notes' => 'Valor inicial selecionado.'],
                     ['name' => 'options', 'type' => 'array', 'default' => '[]', 'notes' => 'Aceita `valor => label` ou arrays com `value`, `label` e `disabled`.'],
                     ['name' => 'placeholder', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Texto exibido antes de selecionar uma opcao.'],
@@ -378,12 +381,12 @@ BLADE,
                     ],
                     [
                         'title' => 'Livewire',
-                        'description' => 'Binding em filtros de dashboard.',
+                        'description' => 'Binding bidirecional; mudancas feitas pelo servidor atualizam valor e label.',
                         'code' => <<<'BLADE'
 <x-sampaui::select
-    name="city"
     label="Cidade"
     wire:model.live="city"
+    required
     :options="[
         'sp' => 'Sao Paulo',
         'campinas' => 'Campinas',
@@ -617,7 +620,7 @@ BLADE,
                 'name' => 'Checkbox',
                 'tag' => '<x-sampaui::checkbox />',
                 'summary' => 'Controle booleano com label opcional, suporte a slot e integracao direta com validacao.',
-                'description' => 'Use em consentimentos, flags operacionais e configuracoes binarias. O componente usa `border-secondary/40` e cuida de alinhamento, estados desabilitados e vinculo do label.',
+                'description' => 'Use em consentimentos, flags operacionais e configuracoes binarias. O componente usa `border-secondary/40`; em grupos, combina model/nome e valor para manter ids e labels unicos.',
                 'preview_title' => 'Preferencias e opt-in',
                 'preview_caption' => 'Checkbox com label, slot customizado e estado de erro.',
                 'props' => [
@@ -655,6 +658,14 @@ BLADE,
 <x-sampaui::checkbox name="terms">
     Concordo com os <a href="/termos" class="underline">termos de uso</a>.
 </x-sampaui::checkbox>
+BLADE,
+                    ],
+                    [
+                        'title' => 'Grupo Livewire',
+                        'description' => 'Valores diferentes recebem ids unicos mesmo compartilhando o mesmo model.',
+                        'code' => <<<'BLADE'
+<x-sampaui::checkbox label="Administrador" value="admin" wire:model="roles" />
+<x-sampaui::checkbox label="Editor" value="editor" wire:model="roles" />
 BLADE,
                     ],
                     [
@@ -860,7 +871,7 @@ BLADE,
                         'code' => <<<'BLADE'
 <x-sampaui::alert
     variant="success"
-    title="Lead atualizado"
+    title="Cliente atualizado"
     wire:show="saved"
 >
     As alteracoes foram sincronizadas.
@@ -874,7 +885,7 @@ BLADE,
                 'name' => 'Card',
                 'tag' => '<x-sampaui::card />',
                 'summary' => 'Container com header, descricao, actions, footer e variantes discretas para superficies de conteudo.',
-                'description' => 'Use para agrupar dados operacionais, formularios curtos e blocos de resumo sem recriar sombra e espacamento.',
+                'description' => 'Use para agrupar dados operacionais, formularios curtos e blocos de resumo sem recriar sombra e espacamento. Quando existe header, o conteudo inicia 15px abaixo dele; dropdowns absolutos podem escapar com `overflow="visible"`.',
                 'preview_title' => 'Resumo operacional',
                 'preview_caption' => 'Card com header, conteudo, actions e footer.',
                 'props' => [
@@ -883,6 +894,7 @@ BLADE,
                     ['name' => 'variant', 'type' => 'default|muted|primary|secondary|accent|danger|success|warning|info|purple', 'default' => 'default', 'notes' => 'Define a superficie e a cor de borda com tokens oficiais.'],
                     ['name' => 'padding', 'type' => 'sm|md|lg', 'default' => 'md', 'notes' => 'Controla espacamento interno do header, body e footer.'],
                     ['name' => 'divided', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe divisor entre header e body quando ativado.'],
+                    ['name' => 'overflow', 'type' => 'hidden|visible|auto', 'default' => 'hidden', 'notes' => 'Use `visible` para dropdowns e popovers absolutos; `auto` cria rolagem interna.'],
                     ['name' => '$slot', 'type' => 'Blade slot', 'default' => '-', 'notes' => 'Conteudo principal.'],
                     ['name' => '$header/$actions/$footer', 'type' => 'Named slots', 'default' => '-', 'notes' => 'Substituem ou complementam as regioes do card.'],
                 ],
@@ -897,7 +909,7 @@ BLADE,
                         'title' => 'Basico',
                         'description' => 'Header simples com conteudo no slot.',
                         'code' => <<<'BLADE'
-<x-sampaui::card title="Atendimento" description="Resumo do lead">
+<x-sampaui::card title="Atendimento" description="Resumo da conta">
     Cliente aguardando retorno comercial.
 </x-sampaui::card>
 BLADE,
@@ -912,6 +924,18 @@ BLADE,
     </x-slot:actions>
 
     Proposta em analise juridica.
+</x-sampaui::card>
+BLADE,
+                    ],
+                    [
+                        'title' => 'Dropdown visivel',
+                        'description' => 'Permite que menus absolutos ultrapassem os limites do card.',
+                        'code' => <<<'BLADE'
+<x-sampaui::card title="Filtros" overflow="visible">
+    <x-sampaui::select
+        label="Status"
+        :options="['active' => 'Ativo', 'inactive' => 'Inativo']"
+    />
 </x-sampaui::card>
 BLADE,
                     ],
@@ -935,7 +959,7 @@ BLADE,
                 'name' => 'Modal',
                 'tag' => '<x-sampaui::modal />',
                 'summary' => 'Dialog Livewire com entangle, backdrop, header, actions e fechamento por evento.',
-                'description' => 'Use para formularios curtos, confirmacoes e fluxos que precisam interromper a pagina sem sair do contexto. O componente usa Alpine core, Bootstrap Icons e tokens oficiais SampaUI.',
+                'description' => 'Use para formularios curtos, confirmacoes e fluxos que precisam interromper a pagina sem sair do contexto. O painel e transportado para o body, permanece acima do layout e continua sincronizado durante atualizacoes do Livewire.',
                 'preview_title' => 'Dialog operacional',
                 'preview_caption' => 'Modal controlado por propriedade Livewire e slots Blade.',
                 'props' => [
@@ -946,7 +970,7 @@ BLADE,
                     ['name' => 'variant', 'type' => 'default|primary|secondary|accent|danger|success|warning|info|purple|muted', 'default' => 'default', 'notes' => 'Define a cor de borda do painel.'],
                     ['name' => 'persistent', 'type' => 'bool', 'default' => 'false', 'notes' => 'Impede fechamento por ESC ou clique no backdrop.'],
                     ['name' => 'closeButton', 'type' => 'bool', 'default' => 'true', 'notes' => 'Exibe ou remove o botao de fechar no header.'],
-                    ['name' => 'closeEvent', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Evento browser que fecha o modal, como `lead-saved`.'],
+                    ['name' => 'closeEvent', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Evento browser que fecha o modal, como `customer-saved`.'],
                     ['name' => 'afterClose', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Metodo Livewire chamado apos a animacao de fechamento.'],
                     ['name' => 'panelClass', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Classes extras aplicadas ao painel interno, uteis para trocar ou remover a borda.'],
                     ['name' => '$header/$actions', 'type' => 'Named slots', 'default' => '-', 'notes' => 'Permitem substituir o header e adicionar acoes no rodape.'],
@@ -962,15 +986,15 @@ BLADE,
                         'title' => 'Basico',
                         'description' => 'Modal controlado por propriedade booleana Livewire.',
                         'code' => <<<'BLADE'
-<x-sampaui::button wire:click="$set('showLeadModal', true)">
+<x-sampaui::button wire:click="$set('showCustomerModal', true)">
     Abrir modal
 </x-sampaui::button>
 
-<x-sampaui::modal model="showLeadModal" title="Novo lead" subtitle="Preencha os dados principais">
+<x-sampaui::modal model="showCustomerModal" title="Novo cliente" subtitle="Preencha os dados principais">
     Conteudo do formulario.
 
     <x-slot:actions>
-        <x-sampaui::button variant="outline" wire:click="$set('showLeadModal', false)">
+        <x-sampaui::button variant="outline" wire:click="$set('showCustomerModal', false)">
             Cancelar
         </x-sampaui::button>
         <x-sampaui::button wire:click="save">
@@ -985,9 +1009,9 @@ BLADE,
                         'description' => 'Fechamento por evento e callback depois da animacao.',
                         'code' => <<<'BLADE'
 <x-sampaui::modal
-    model="showLeadModal"
-    title="Editar lead"
-    close-event="lead-saved"
+    model="showCustomerModal"
+    title="Editar cliente"
+    close-event="customer-saved"
     after-close="afterModalClose"
 >
     Dados atualizados no Livewire.
@@ -1001,7 +1025,7 @@ BLADE,
                 'name' => 'Header',
                 'tag' => '<x-sampaui::header />',
                 'summary' => 'Cabecalho de pagina com titulo, subtitulo, status, acoes e botao mobile para navegacao.',
-                'description' => 'Use no topo de dashboards e telas internas. O componente organiza contexto da pagina e comandos principais sem depender de layout especifico do app consumidor.',
+                'description' => 'Use no topo de dashboards e telas internas. O componente organiza contexto e comandos principais; em desktop, a area de acoes usa largura automatica estrutural para nunca reduzir o titulo a zero.',
                 'preview_title' => 'Cabecalho operacional',
                 'preview_caption' => 'Titulo, status e acoes alinhados em uma unica superficie.',
                 'props' => [
@@ -1011,6 +1035,14 @@ BLADE,
                     ['name' => 'status', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Pill de status exibida na direita.'],
                     ['name' => 'menu', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe botao mobile para abrir navegacao.'],
                     ['name' => 'menuEvent', 'type' => 'string', 'default' => 'sampaui:sidebar-open', 'notes' => 'Evento Alpine disparado pelo botao mobile.'],
+                    ['name' => 'search', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe o campo de busca responsivo no centro do header.'],
+                    ['name' => 'searchName', 'type' => 'string', 'default' => 'header_search', 'notes' => 'Nome do input de busca.'],
+                    ['name' => 'searchModel', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Aplica `wire:model.live.debounce.300ms` quando informado.'],
+                    ['name' => 'searchPlaceholder', 'type' => 'string', 'default' => 'Buscar...', 'notes' => 'Placeholder do campo de busca.'],
+                    ['name' => 'notifications', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe o botao de notificacoes.'],
+                    ['name' => 'notificationCount', 'type' => 'int', 'default' => '0', 'notes' => 'Badge numerico limitado visualmente a `99+`.'],
+                    ['name' => 'notificationEvent', 'type' => 'string', 'default' => 'sampaui:notifications-open', 'notes' => 'Evento disparado pelo botao de notificacoes.'],
+                    ['name' => 'sticky', 'type' => 'bool', 'default' => 'false', 'notes' => 'Mantem o header no topo durante a rolagem.'],
                     ['name' => '$actions', 'type' => 'Named slot', 'default' => '-', 'notes' => 'Regiao para botoes e comandos do topo.'],
                 ],
                 'attributes' => ['class', 'id', 'wire:key', 'x-data', 'aria-*', 'data-*'],
@@ -1039,7 +1071,7 @@ BLADE,
 <x-sampaui::header title="Pipeline" subtitle="Atendimentos em aberto">
     <x-slot:actions>
         <x-sampaui::button variant="outline" icon="download">Exportar</x-sampaui::button>
-        <x-sampaui::button icon="plus">Novo lead</x-sampaui::button>
+        <x-sampaui::button icon="plus">Novo cliente</x-sampaui::button>
     </x-slot:actions>
 </x-sampaui::header>
 BLADE,
@@ -1062,17 +1094,14 @@ BLADE,
                 'slug' => 'sidebar',
                 'name' => 'Sidebar',
                 'tag' => '<x-sampaui::sidebar />',
-                'summary' => 'Navegacao lateral responsiva com marca, usuario, secoes, links ativos e suporte a `wire:navigate`.',
-                'description' => 'Use em areas autenticadas e dashboards. O componente nao chama rotas nem `auth()` internamente: links, usuario e estado ativo entram por arrays do app consumidor.',
+                'summary' => 'Navegacao lateral responsiva de 18rem com logo do cliente, usuario, secoes, links ativos e suporte a `wire:navigate`.',
+                'description' => 'Use em areas autenticadas e dashboards. O componente nao chama rotas nem `auth()` internamente: a marca entra somente por `logo-src`, e links, usuario e estado ativo entram por arrays do app consumidor.',
                 'preview_title' => 'Navegacao interna',
                 'preview_caption' => 'Menu lateral com secoes e item ativo.',
                 'props' => [
-                    ['name' => 'brand', 'type' => 'string', 'default' => 'SampaUI', 'notes' => 'Nome exibido no topo.'],
+                    ['name' => 'logoSrc', 'type' => 'string|null', 'default' => 'null', 'notes' => 'URL da logo do cliente. Em Blade, use `logo-src`.'],
+                    ['name' => 'logoAlt', 'type' => 'string|null', 'default' => 'Logo', 'notes' => 'Texto alternativo da logo.'],
                     ['name' => 'brandHref', 'type' => 'string', 'default' => '#', 'notes' => 'Destino do link da marca.'],
-                    ['name' => 'brandIcon', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Nome Bootstrap Icon sem `bi-`, exibido sobre a marca abstrata.'],
-                    ['name' => 'logo', 'type' => 'string|null', 'default' => 'null', 'notes' => 'URL de uma imagem para substituir a marca abstrata.'],
-                    ['name' => 'logoAlt', 'type' => 'string|null', 'default' => 'brand', 'notes' => 'Texto alternativo da imagem informada em `logo`.'],
-                    ['name' => '$logo', 'type' => 'Named slot', 'default' => '-', 'notes' => 'Substitui `logo` por qualquer markup customizado, como SVG inline ou `<picture>`.'],
                     ['name' => 'items', 'type' => 'array', 'default' => '[]', 'notes' => 'Links principais do menu.'],
                     ['name' => 'sections', 'type' => 'array', 'default' => '[]', 'notes' => 'Grupos adicionais com `label` e `items`.'],
                     ['name' => 'user', 'type' => 'array|null', 'default' => 'null', 'notes' => 'Dados opcionais: `name`, `email`, `avatar`.'],
@@ -1084,14 +1113,15 @@ BLADE,
                     ['name' => 'openEvent', 'type' => 'string', 'default' => 'sampaui:sidebar-open', 'notes' => 'Evento Alpine para abrir no mobile.'],
                     ['name' => 'closeEvent', 'type' => 'string', 'default' => 'sampaui:sidebar-close', 'notes' => 'Evento Alpine para fechar no mobile.'],
                     ['name' => 'stateEvent', 'type' => 'string', 'default' => 'sampaui:sidebar-state', 'notes' => 'Evento emitido ao iniciar, abrir, fechar ou recolher. Use para ajustar `margin-left` do conteudo.'],
-                    ['name' => 'rail', 'type' => 'bool', 'default' => 'true', 'notes' => 'Exibe o trilho lateral decorativo. Desative com `:rail="false"` em layouts full-page.'],
+                    ['name' => 'rail', 'type' => 'bool', 'default' => 'true', 'notes' => 'Exibe a faixa externa clara que separa a navegacao do conteudo.'],
+                    ['name' => 'position', 'type' => 'fixed|static', 'default' => 'fixed', 'notes' => 'Use `static` apenas quando a sidebar participar de um container ou preview; dashboards usam `fixed`.'],
                     ['name' => 'logoutHref', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Exibe link de saida quando informado.'],
                     ['name' => '$footer', 'type' => 'Named slot', 'default' => '-', 'notes' => 'Substitui o rodape padrao.'],
                 ],
                 'attributes' => ['class', 'id', 'wire:key', 'x-on:*', 'aria-*', 'data-*'],
                 'accessibility' => [
                     'O componente usa `aria-label` em aside/nav e `aria-current="page"` no item ativo.',
-                    'Quando usar `logo`, informe `logo-alt`. Quando usar o slot `logo`, inclua `alt` em imagens ou `aria-hidden="true"` em marcas puramente decorativas.',
+                    'Quando usar `logo-src`, informe `logo-alt` com o nome da marca.',
                     'Mantenha labels textuais mesmo quando iniciar com `initial-state="closed"`; o estado recolhido esconde apenas visualmente no desktop.',
                     'Em layouts com sidebar fixa, escute `sampaui:sidebar-state` e aplique a largura emitida no container de conteudo.',
                     'Evite usar `#` em links reais; envie URLs validas do app consumidor.',
@@ -1102,20 +1132,19 @@ BLADE,
                         'description' => 'Marca, usuario e links principais.',
                         'code' => <<<'BLADE'
 <x-sampaui::sidebar
-    brand="LIACOR"
+    logo-src="/images/logo-liacor.svg"
+    logo-alt="LIACOR"
     initial-state="open"
     brand-href="/dashboard"
-    logo="/images/logo-liacor.svg"
-    logo-alt="LIACOR"
     :user="[
         'name' => 'Administrador Lia',
-        'email' => 'admin@liacorretora.com',
+        'email' => 'admin@sampa.dev',
         'avatar' => '/images/admin.jpg',
     ]"
     :items="[
-        ['label' => 'Dashboard', 'href' => '/dashboard', 'icon' => 'grid', 'active' => true],
+        ['label' => 'Dashboard', 'href' => '/dashboard', 'icon' => 'grid'],
         ['label' => 'Clientes', 'href' => '/clients', 'icon' => 'people'],
-        ['label' => 'Imóveis', 'href' => '/properties', 'icon' => 'buildings'],
+        ['label' => 'Imóveis', 'href' => '/properties', 'icon' => 'buildings', 'active' => true],
         ['label' => 'Mapa', 'href' => '/map', 'icon' => 'map'],
     ]"
 />
@@ -1126,7 +1155,7 @@ BLADE,
                         'description' => 'Agrupe links por contexto operacional.',
                         'code' => <<<'BLADE'
 <x-sampaui::sidebar
-    brand="Operacao"
+    logo-src="/images/logo-operacao.svg"
     initial-state="closed"
     :items="[
         ['label' => 'Dashboard', 'href' => '/dashboard', 'icon' => 'grid', 'active' => true],
@@ -1145,39 +1174,16 @@ BLADE,
                         'description' => 'Use props simples para logo da marca e avatar do usuario.',
                         'code' => <<<'BLADE'
 <x-sampaui::sidebar
-    brand="LIACOR"
-    logo="/images/logo-liacor.svg"
+    logo-src="/images/logo-liacor.svg"
     logo-alt="LIACOR"
     avatar="/images/admin.jpg"
     avatar-alt="Administrador Lia"
-    :user="['name' => 'Administrador Lia', 'email' => 'admin@liacorretora.com']"
+    :user="['name' => 'Administrador Lia', 'email' => 'admin@sampa.dev']"
     :items="[
         ['label' => 'Dashboard', 'href' => '/dashboard', 'icon' => 'grid', 'active' => true],
         ['label' => 'Clientes', 'href' => '/clients', 'icon' => 'people'],
     ]"
 />
-BLADE,
-                    ],
-                    [
-                        'title' => 'Logo via slot',
-                        'description' => 'Use o slot quando precisar de SVG inline, `<picture>` ou markup da marca.',
-                        'code' => <<<'BLADE'
-<x-sampaui::sidebar
-    brand="LIACOR"
-    brand-href="/dashboard"
-    initial-state="open"
-    :items="[
-        ['label' => 'Dashboard', 'href' => '/dashboard', 'icon' => 'grid', 'active' => true],
-    ]"
->
-    <x-slot:logo>
-        <img
-            src="/images/logo-liacor.svg"
-            alt="LIACOR"
-            class="h-11 w-16 shrink-0 object-contain"
-        >
-    </x-slot:logo>
-</x-sampaui::sidebar>
 BLADE,
                     ],
                     [
@@ -1199,7 +1205,7 @@ BLADE,
                 'name' => 'Drawer',
                 'tag' => '<x-sampaui::drawer />',
                 'summary' => 'Painel lateral ou vertical com Livewire entangle, backdrop, header, actions e transicao suave.',
-                'description' => 'Use para filtros, formularios auxiliares, detalhes de registro e fluxos secundarios sem tirar o usuario da tela atual. O componente compartilha o padrao do Modal, mas entra pelas bordas da viewport.',
+                'description' => 'Use para filtros, formularios auxiliares, detalhes de registro e fluxos secundarios sem tirar o usuario da tela atual. O painel e transportado para o body, abre na borda real da viewport e fecha pela mesma borda.',
                 'preview_title' => 'Painel de filtros',
                 'preview_caption' => 'Drawer controlado por propriedade Livewire, com posicao, tamanho e slots.',
                 'props' => [
@@ -1590,6 +1596,7 @@ BLADE,
             'card' => [
                 'Use para agrupar conteudo relacionado, formularios curtos ou resumos operacionais.',
                 'Use slots `header`, `actions` e `footer` para compor estrutura sem recriar bordas.',
+                'Use `overflow="visible"` quando dropdowns ou popovers precisarem escapar dos limites do card.',
                 'Evite aninhar muitos cards; prefira secoes quando o conteudo for uma pagina inteira.',
             ],
             'modal' => [
@@ -1600,11 +1607,12 @@ BLADE,
             'header' => [
                 'Use no topo de paginas internas para titulo, subtitulo, status e acoes principais.',
                 'Mantenha uma acao primaria clara no slot `actions` quando a tela tiver fluxo de criacao.',
+                'A largura estrutural das acoes preserva o titulo em desktop mesmo com CSS compilado em outra ordem.',
                 'Use `menuEvent` para integrar com sidebar ou drawer em layouts responsivos.',
             ],
             'sidebar' => [
                 'Use para navegacao principal persistente em dashboards e sistemas internos.',
-                'Use o slot `logo` quando a aplicacao tiver marca propria em SVG ou imagem.',
+                'Informe a marca do cliente somente por `logo-src` e descreva-a com `logo-alt`.',
                 'Passe `sections` quando houver muitos links; use `items` para menus simples.',
                 'Use `initial-state` para iniciar aberto ou fechado sem depender de JavaScript externo.',
             ],
@@ -2236,7 +2244,7 @@ BLADE,
                 'code' => <<<'BLADE'
 <x-sampaui::date-picker
     name="visit_date"
-    label="Data da visita"
+    label="Data de reunião"
     wire:model.live="visitDate"
 />
 BLADE,
@@ -2279,6 +2287,27 @@ BLADE,
         ];
 
         $components['card']['showcases'] = [
+            [
+                'title' => 'Dropdown fora dos limites',
+                'description' => 'Use `overflow="visible"` para menus absolutos nao serem cortados pelo card.',
+                'preview' => <<<'BLADE'
+<x-sampaui::card title="Filtros" overflow="visible">
+    <x-sampaui::select
+        label="Status"
+        placeholder="Selecione"
+        :options="['active' => 'Ativo', 'inactive' => 'Inativo']"
+    />
+</x-sampaui::card>
+BLADE,
+                'code' => <<<'BLADE'
+<x-sampaui::card title="Filtros" overflow="visible">
+    <x-sampaui::select
+        label="Status"
+        :options="['active' => 'Ativo', 'inactive' => 'Inativo']"
+    />
+</x-sampaui::card>
+BLADE,
+            ],
             [
                 'title' => 'Variantes',
                 'description' => 'Superficies discretas para diferentes contextos.',
@@ -2332,10 +2361,10 @@ BLADE,
                 'title' => 'Estrutura basica',
                 'description' => 'Botao abre o modal pela propriedade Livewire e o componente sincroniza por `@entangle`.',
                 'preview' => <<<'BLADE'
-<div class="rounded-default border border-light bg-white p-5">
+<div class="rounded-default border border-border bg-white p-5">
     <div class="flex items-start justify-between gap-4 pb-4">
         <div>
-            <h3 class="text-lg font-semibold text-primary">Novo lead</h3>
+            <h3 class="text-lg font-semibold text-primary">Novo cliente</h3>
             <p class="mt-1 text-sm text-secondary">Preencha os dados principais</p>
         </div>
         <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-secondary">
@@ -2350,15 +2379,15 @@ BLADE,
 </div>
 BLADE,
                 'code' => <<<'BLADE'
-<x-sampaui::button wire:click="$set('showLeadModal', true)">
+<x-sampaui::button wire:click="$set('showCustomerModal', true)">
     Abrir modal
 </x-sampaui::button>
 
-<x-sampaui::modal model="showLeadModal" title="Novo lead" subtitle="Preencha os dados principais">
+<x-sampaui::modal model="showCustomerModal" title="Novo cliente" subtitle="Preencha os dados principais">
     Conteudo do formulario.
 
     <x-slot:actions>
-        <x-sampaui::button variant="outline" wire:click="$set('showLeadModal', false)">
+        <x-sampaui::button variant="outline" wire:click="$set('showCustomerModal', false)">
             Cancelar
         </x-sampaui::button>
         <x-sampaui::button wire:click="save">
@@ -2434,7 +2463,7 @@ BLADE,
         ></div>
 
         <section
-            class="relative flex max-h-[calc(100vh-2rem)] w-full origin-top-right flex-col overflow-hidden rounded-default border border-light bg-white"
+            class="relative flex max-h-[calc(100vh-2rem)] w-full origin-top-right flex-col overflow-hidden rounded-default border border-border bg-white"
             x-bind:class="sizes[activeSize]"
             x-show="open"
             x-transition:enter="transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
@@ -2488,14 +2517,14 @@ BLADE,
                 'description' => 'Feche por evento de browser e execute um metodo apos a animacao.',
                 'preview' => <<<'BLADE'
 <x-sampaui::alert title="Fluxo Livewire">
-    Depois de salvar, dispare <code>lead-saved</code> e o modal fecha automaticamente.
+    Depois de salvar, dispare <code>customer-saved</code> e o modal fecha automaticamente.
 </x-sampaui::alert>
 BLADE,
                 'code' => <<<'PHP'
 <x-sampaui::modal
-    model="showLeadModal"
-    title="Editar lead"
-    close-event="lead-saved"
+    model="showCustomerModal"
+    title="Editar cliente"
+    close-event="customer-saved"
     after-close="afterModalClose"
 >
     Dados atualizados no Livewire.
@@ -2503,13 +2532,13 @@ BLADE,
 
 <?php
 
-public bool $showLeadModal = false;
+public bool $showCustomerModal = false;
 
 public function save(): void
 {
     // Salve e valide os dados.
 
-    $this->dispatch('lead-saved');
+    $this->dispatch('customer-saved');
 }
 
 public function afterModalClose(): void
@@ -2523,7 +2552,7 @@ PHP,
                 'description' => 'O painel do modal usa borda por padrao; `panel-class` permite trocar ou remover o contorno.',
                 'preview' => <<<'BLADE'
 <div class="grid gap-4 md:grid-cols-2">
-    <div class="rounded-default border border-light bg-white p-5">
+    <div class="rounded-default border border-border bg-white p-5">
         <p class="font-semibold text-primary">Modal com borda</p>
         <p class="mt-2 text-sm text-secondary">Superficie padrao do pacote.</p>
     </div>
@@ -2570,7 +2599,7 @@ BLADE,
 <x-sampaui::header title="Pipeline" subtitle="Atendimentos em aberto">
     <x-slot:actions>
         <x-sampaui::button variant="outline" icon="download">Exportar</x-sampaui::button>
-        <x-sampaui::button icon="plus">Novo lead</x-sampaui::button>
+        <x-sampaui::button icon="plus">Novo cliente</x-sampaui::button>
     </x-slot:actions>
 </x-sampaui::header>
 BLADE,
@@ -2594,84 +2623,61 @@ BLADE,
                 'title' => 'Sem secoes',
                 'description' => 'Marca, usuario e links diretos em uma lista unica.',
                 'preview' => <<<'BLADE'
-<div
-    class="doc-sidebar-preview relative flex h-[49rem] flex-col border-r border-light bg-white py-8 transition-[width] duration-300"
-    x-data="{ collapsed: false }"
-    x-bind:style="collapsed ? 'width: 6rem;' : 'width: 18rem;'"
-    style="width: 18rem;"
->
-    <span class="absolute inset-y-0 -right-7 w-7 bg-light/50"></span>
-    <button type="button" class="absolute -right-5 top-8 z-10 inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-[1.1rem] border border-light bg-white text-secondary transition hover:border-primary hover:bg-white hover:text-primary" x-on:click.prevent.stop="collapsed = ! collapsed">
-        <i class="bi bi-chevron-left text-lg" x-show="! collapsed"></i>
-        <i class="bi bi-chevron-right text-lg" x-show="collapsed" x-cloak></i>
-    </button>
-    <div class="flex shrink-0 items-center gap-4 px-8" x-bind:class="collapsed ? 'justify-center px-0' : 'px-8'">
-        <x-sampaui::brand-mark />
-        <span class="truncate text-2xl font-black leading-none tracking-tight text-primary" x-bind:class="collapsed ? 'hidden' : ''">LIACOR</span>
-    </div>
-    <div class="mt-14 flex shrink-0 items-center gap-5 px-8" x-bind:class="collapsed ? 'justify-center px-0' : 'px-8'">
-        <span class="inline-flex aspect-square h-14 min-h-14 w-14 min-w-14 items-center justify-center overflow-hidden rounded-full bg-light text-lg font-semibold text-primary">
-            <img src="https://i.pravatar.cc/128?img=12" alt="Administrador Lia" class="block aspect-square h-14 min-h-14 w-14 min-w-14 rounded-full object-cover grayscale">
-        </span>
-        <div class="min-w-0" x-bind:class="collapsed ? 'hidden' : ''">
-            <p class="truncate text-base font-semibold leading-tight text-primary">Administrador Lia</p>
-            <p class="truncate text-sm leading-tight text-secondary/65">admin@liacorretora...</p>
-        </div>
-    </div>
-    <nav class="sampaui-sidebar-scroll mt-10 min-h-0 flex-1 overflow-y-auto overscroll-contain px-8" x-bind:class="collapsed ? 'px-0' : 'px-8'">
-        <div class="flex flex-col gap-2">
-        <span class="group flex cursor-pointer items-center gap-5 rounded-[1.35rem] px-3 py-2 text-base font-medium text-secondary transition hover:text-primary" x-bind:class="collapsed ? 'justify-center px-0' : 'px-3'">
-            <span class="inline-flex aspect-square h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-full text-secondary/70 transition group-hover:bg-light/50 group-hover:text-primary"><i class="bi bi-grid text-[1.35rem]"></i></span>
-            <span x-bind:class="collapsed ? 'hidden' : ''">Dashboard</span>
-        </span>
-        <span class="group flex cursor-pointer items-center gap-5 rounded-[1.35rem] px-3 py-2 text-base font-medium text-secondary transition hover:text-primary" x-bind:class="collapsed ? 'justify-center px-0' : 'px-3'">
-            <span class="inline-flex aspect-square h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-full text-secondary/70 transition group-hover:bg-light/50 group-hover:text-primary"><i class="bi bi-people text-[1.35rem]"></i></span>
-            <span x-bind:class="collapsed ? 'hidden' : ''">Clientes</span>
-        </span>
-        <span class="group flex cursor-pointer items-center gap-5 rounded-[1.35rem] px-3 py-2 text-base font-medium text-secondary transition hover:text-primary" x-bind:class="collapsed ? 'justify-center px-0' : 'px-3'">
-            <span class="inline-flex aspect-square h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-full text-secondary/70 transition group-hover:bg-light/50 group-hover:text-primary"><i class="bi bi-buildings text-[1.35rem]"></i></span>
-            <span x-bind:class="collapsed ? 'hidden' : ''">Imóveis</span>
-        </span>
-        <span class="group flex cursor-pointer items-center gap-5 rounded-[1.35rem] px-3 py-2 text-base font-medium text-secondary transition hover:text-primary" x-bind:class="collapsed ? 'justify-center px-0' : 'px-3'">
-            <span class="inline-flex aspect-square h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-full text-secondary/70 transition group-hover:bg-light/50 group-hover:text-primary"><i class="bi bi-map text-[1.35rem]"></i></span>
-            <span x-bind:class="collapsed ? 'hidden' : ''">Mapa</span>
-        </span>
-        <p class="px-3 pt-3 text-sm font-medium text-secondary/35" x-bind:class="collapsed ? 'hidden' : ''">Gestão</p>
-        <span class="group flex cursor-pointer items-center gap-5 rounded-[1.35rem] px-3 py-2 text-base font-medium text-secondary transition hover:text-primary" x-bind:class="collapsed ? 'justify-center px-0' : 'px-3'">
-            <span class="inline-flex aspect-square h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-full text-secondary/70 transition group-hover:bg-light/50 group-hover:text-primary"><i class="bi bi-file-earmark-text text-[1.35rem]"></i></span>
-            <span x-bind:class="collapsed ? 'hidden' : ''">Contratos</span>
-        </span>
-        <p class="px-3 pt-3 text-sm font-medium text-secondary/35" x-bind:class="collapsed ? 'hidden' : ''">Marketing</p>
-        <span class="group flex cursor-pointer items-center gap-5 rounded-[1.35rem] px-3 py-2 text-base font-medium text-secondary transition hover:text-primary" x-bind:class="collapsed ? 'justify-center px-0' : 'px-3'">
-            <span class="inline-flex aspect-square h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-full text-secondary/70 transition group-hover:bg-light/50 group-hover:text-primary"><i class="bi bi-camera-video text-[1.35rem]"></i></span>
-            <span x-bind:class="collapsed ? 'hidden' : ''">Roteiro de Vídeo</span>
-        </span>
-        <span class="flex cursor-pointer items-center gap-5 rounded-[1.35rem] px-3 py-2 text-base font-semibold text-primary" x-bind:class="collapsed ? 'justify-center px-0' : 'px-3'">
-            <span class="inline-flex aspect-square h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-full bg-primary text-white">
-                <i class="bi bi-kanban text-[1.35rem]"></i>
-            </span>
-            <span x-bind:class="collapsed ? 'hidden' : ''">Tarefa</span>
-        </span>
-        </div>
-    </nav>
-    <div class="mt-6 flex shrink-0 cursor-pointer items-center gap-5 px-11 text-base font-medium text-danger" x-bind:class="collapsed ? 'justify-center px-0' : 'px-11'">
-        <span class="inline-flex h-12 w-12 items-center justify-center"><i class="bi bi-box-arrow-right text-[1.35rem]"></i></span>
-        <span x-bind:class="collapsed ? 'hidden' : ''">Sair do sistema</span>
-    </div>
+<div class="doc-sidebar-preview h-[62rem] overflow-visible bg-white">
+    <x-sampaui::sidebar
+        position="static"
+        logo-src="/images/logo_sampaui.png"
+        logo-alt="Sampa UI"
+        brand-href="#"
+        :user="[
+            'name' => 'Administrador Lia',
+            'email' => 'admin@sampa.dev',
+            'avatar' => 'https://i.pravatar.cc/128?img=12',
+        ]"
+        :items="[
+            ['label' => 'Dashboard', 'href' => '#', 'icon' => 'grid'],
+            ['label' => 'Clientes', 'href' => '#', 'icon' => 'people'],
+            ['label' => 'Imóveis', 'href' => '#', 'icon' => 'buildings', 'active' => true],
+            ['label' => 'Mapa', 'href' => '#', 'icon' => 'map'],
+        ]"
+        :sections="[
+            ['label' => 'Gestão', 'items' => [
+                ['label' => 'Contratos', 'href' => '#', 'icon' => 'file-earmark-text'],
+            ]],
+            ['label' => 'Marketing', 'items' => [
+                ['label' => 'Roteiro de Vídeo', 'href' => '#', 'icon' => 'camera-video'],
+                ['label' => 'Tarefa', 'href' => '#', 'icon' => 'kanban'],
+            ]],
+        ]"
+        logout-href="#"
+    />
 </div>
 BLADE,
                 'code' => <<<'BLADE'
 <x-sampaui::sidebar
-    brand="LIACOR"
+    logo-src="/images/minha-logo.png"
+    logo-alt="Minha marca"
     initial-state="open"
     brand-href="/dashboard"
-    :user="['name' => 'Administrador Lia', 'email' => 'admin@liacorretora.com']"
+    :user="[
+        'name' => 'Administrador Lia',
+        'email' => 'admin@sampa.dev',
+        'avatar' => '/images/admin.jpg',
+    ]"
     :items="[
         ['label' => 'Dashboard', 'href' => '/dashboard', 'icon' => 'grid'],
         ['label' => 'Clientes', 'href' => '/clients', 'icon' => 'people'],
-        ['label' => 'Imóveis', 'href' => '/properties', 'icon' => 'buildings'],
+        ['label' => 'Imóveis', 'href' => '/properties', 'icon' => 'buildings', 'active' => true],
         ['label' => 'Mapa', 'href' => '/map', 'icon' => 'map'],
-        ['label' => 'Tarefa', 'href' => '/tasks', 'icon' => 'kanban', 'active' => true],
+    ]"
+    :sections="[
+        ['label' => 'Gestão', 'items' => [
+            ['label' => 'Contratos', 'href' => '/contracts', 'icon' => 'file-earmark-text'],
+        ]],
+        ['label' => 'Marketing', 'items' => [
+            ['label' => 'Roteiro de Vídeo', 'href' => '/scripts', 'icon' => 'camera-video'],
+            ['label' => 'Tarefa', 'href' => '/tasks', 'icon' => 'kanban'],
+        ]],
     ]"
     logout-href="/logout"
 />
@@ -2681,44 +2687,44 @@ BLADE,
                 'title' => 'Recolhida',
                 'description' => 'Estado compacto preserva marca, avatar, icones e acao de saida.',
                 'preview' => <<<'BLADE'
-<div class="doc-sidebar-preview relative flex h-[49rem] w-[6.25rem] flex-col border-r border-light bg-white px-0 py-8">
-    <span class="absolute inset-y-0 -right-8 w-8 bg-light/50"></span>
-    <span class="absolute -right-5 top-8 z-10 inline-flex h-12 cursor-pointer w-12 items-center justify-center rounded-[1.15rem] border border-light bg-white text-secondary">
-        <i class="bi bi-chevron-right text-lg"></i>
-    </span>
-    <div class="flex shrink-0 justify-center">
-        <x-sampaui::brand-mark />
-    </div>
-    <div class="mt-16 flex shrink-0 justify-center">
-        <span class="inline-flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-light text-lg font-semibold text-primary">
-            <img src="https://i.pravatar.cc/128?img=12" alt="Administrador Lia" class="block aspect-square h-12 min-h-12 w-12 min-w-12 rounded-full object-cover grayscale">
-        </span>
-    </div>
-    <nav class="sampaui-sidebar-scroll mt-16 min-h-0 flex-1 overflow-y-auto overscroll-contain">
-        <div class="space-y-10">
-        <span class="flex cursor-pointer justify-center text-secondary/70"><i class="bi bi-grid text-[1.45rem]"></i></span>
-        <span class="flex cursor-pointer justify-center text-secondary/70"><i class="bi bi-people text-[1.45rem]"></i></span>
-        <span class="flex cursor-pointer justify-center text-secondary/70"><i class="bi bi-buildings text-[1.45rem]"></i></span>
-        <span class="flex cursor-pointer justify-center text-secondary/70"><i class="bi bi-map text-[1.45rem]"></i></span>
-        <span class="flex cursor-pointer justify-center text-secondary/70"><i class="bi bi-file-earmark-text text-[1.45rem]"></i></span>
-        <span class="flex cursor-pointer justify-center text-secondary/70"><i class="bi bi-camera-video text-[1.45rem]"></i></span>
-        <span class="flex cursor-pointer justify-center">
-            <span class="inline-flex aspect-square h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-full bg-primary text-white">
-                <i class="bi bi-kanban text-[1.45rem]"></i>
-            </span>
-        </span>
-        <span class="flex cursor-pointer justify-center text-danger"><i class="bi bi-box-arrow-right text-[1.45rem]"></i></span>
-        </div>
-    </nav>
+<div class="doc-sidebar-preview h-[49rem] overflow-visible bg-white">
+    <x-sampaui::sidebar
+        position="static"
+        initial-state="closed"
+        logo-src="/images/logo_sampaui.png"
+        logo-alt="Sampa UI"
+        :user="[
+            'name' => 'Administrador Lia',
+            'email' => 'admin@sampa.dev',
+            'avatar' => 'https://i.pravatar.cc/128?img=12',
+        ]"
+        :items="[
+            ['label' => 'Dashboard', 'href' => '#', 'icon' => 'grid'],
+            ['label' => 'Clientes', 'href' => '#', 'icon' => 'people'],
+            ['label' => 'Imóveis', 'href' => '#', 'icon' => 'buildings'],
+            ['label' => 'Mapa', 'href' => '#', 'icon' => 'map'],
+        ]"
+        :sections="[
+            ['label' => 'Gestão', 'items' => [
+                ['label' => 'Contratos', 'href' => '#', 'icon' => 'file-earmark-text'],
+            ]],
+            ['label' => 'Marketing', 'items' => [
+                ['label' => 'Roteiro de Vídeo', 'href' => '#', 'icon' => 'camera-video'],
+                ['label' => 'Tarefa', 'href' => '#', 'icon' => 'kanban'],
+            ]],
+        ]"
+        logout-href="#"
+    />
 </div>
 BLADE,
                 'code' => <<<'BLADE'
 <x-sampaui::sidebar
-    brand="LIACOR"
+    logo-src="/images/minha-logo.png"
+    logo-alt="Minha marca"
     initial-state="closed"
     :user="[
         'name' => 'Administrador Lia',
-        'email' => 'admin@liacorretora.com',
+        'email' => 'admin@sampa.dev',
         'avatar' => '/images/admin.jpg',
     ]"
     :items="[
@@ -2744,26 +2750,27 @@ BLADE,
                 'title' => 'Com secoes',
                 'description' => 'Agrupamento por areas da aplicacao usando `items` principais e `sections`.',
                 'preview' => <<<'BLADE'
-<div class="doc-sidebar-preview w-[18rem] border-r border-light bg-white px-8 py-8">
-    <div class="space-y-8">
-        <span class="flex items-center gap-6 text-lg font-medium text-secondary">
-            <i class="bi bi-grid text-[1.45rem] text-secondary/70"></i> Dashboard
-        </span>
-    </div>
-    <p class="pb-5 pt-12 text-lg font-medium text-secondary/35">Gestao</p>
-    <div class="space-y-8">
-        <span class="flex items-center gap-6 text-lg font-medium text-secondary">
-            <i class="bi bi-people text-[1.45rem] text-secondary/70"></i> Clientes
-        </span>
-        <span class="flex items-center gap-6 text-lg font-medium text-secondary">
-            <i class="bi bi-file-earmark-text text-[1.45rem] text-secondary/70"></i> Contratos
-        </span>
-    </div>
+<div class="doc-sidebar-preview h-[40rem] overflow-visible bg-white">
+    <x-sampaui::sidebar
+        position="static"
+        logo-src="/images/logo_sampaui.png"
+        logo-alt="Operacao"
+        :items="[
+            ['label' => 'Dashboard', 'href' => '#', 'icon' => 'grid'],
+        ]"
+        :sections="[
+            ['label' => 'Gestao', 'items' => [
+                ['label' => 'Clientes', 'href' => '#', 'icon' => 'people'],
+                ['label' => 'Contratos', 'href' => '#', 'icon' => 'file-earmark-text'],
+            ]],
+        ]"
+    />
 </div>
 BLADE,
                 'code' => <<<'BLADE'
 <x-sampaui::sidebar
-    brand="Operacao"
+    logo-src="/images/logo-operacao.svg"
+    logo-alt="Operacao"
     initial-state="open"
     :items="[
         ['label' => 'Dashboard', 'href' => '/dashboard', 'icon' => 'grid', 'active' => true],
@@ -2795,41 +2802,29 @@ BLADE,
             ],
             [
                 'title' => 'Logo customizado',
-                'description' => 'Use o slot `logo` para inserir imagem, SVG inline ou marca do produto.',
+                'description' => 'Use somente `logo-src` para inserir a marca real do produto.',
                 'preview' => <<<'BLADE'
-<div class="doc-sidebar-preview w-[18rem] border-r border-light bg-white px-8 py-8">
-    <div class="flex items-center gap-4">
-        <span class="inline-flex h-11 w-11 items-center justify-center rounded-default bg-primary text-white">
-            <i class="bi bi-buildings"></i>
-        </span>
-        <span class="text-2xl font-black leading-none tracking-tight text-primary">LIACOR</span>
-    </div>
-    <div class="mt-10 space-y-5">
-        <span class="flex items-center gap-5 text-base font-semibold text-primary">
-            <span class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white">
-                <i class="bi bi-grid"></i>
-            </span>
-            Dashboard
-        </span>
-    </div>
+<div class="doc-sidebar-preview h-[32rem] overflow-visible bg-white">
+    <x-sampaui::sidebar
+        position="static"
+        logo-src="/images/logo_sampaui.png"
+        logo-alt="Sampa UI"
+        :items="[
+            ['label' => 'Dashboard', 'href' => '#', 'icon' => 'grid'],
+            ['label' => 'Clientes', 'href' => '#', 'icon' => 'people'],
+        ]"
+    />
 </div>
 BLADE,
                 'code' => <<<'BLADE'
 <x-sampaui::sidebar
-    brand="LIACOR"
+    logo-src="/images/logo-liacor.svg"
+    logo-alt="LIACOR"
     brand-href="/dashboard"
     :items="[
         ['label' => 'Dashboard', 'href' => '/dashboard', 'icon' => 'grid', 'active' => true],
     ]"
->
-    <x-slot:logo>
-        <img
-            src="/images/logo-liacor.svg"
-            alt="LIACOR"
-            class="h-11 w-16 shrink-0 object-contain"
-        >
-    </x-slot:logo>
-</x-sampaui::sidebar>
+/>
 BLADE,
             ],
         ];
@@ -2839,7 +2834,7 @@ BLADE,
                 'title' => 'Estrutura basica',
                 'description' => 'Botao abre o drawer pela propriedade Livewire e o painel entra pela direita por padrao.',
                 'preview' => <<<'BLADE'
-<div class="rounded-default border border-light bg-white p-5">
+<div class="rounded-default border border-border bg-white p-5">
     <div class="flex items-start justify-between gap-4">
         <div>
             <p class="text-xs font-semibold uppercase tracking-[0.22em] text-primary">Preview</p>
@@ -2915,7 +2910,7 @@ BLADE,
         close() {
             this.active = false;
             clearTimeout(this.closeTimer);
-            this.closeTimer = setTimeout(() => this.open = false, 260);
+            this.closeTimer = setTimeout(() => this.open = false, 520);
         },
         hiddenClass() {
             return {
@@ -2949,13 +2944,13 @@ BLADE,
         x-on:keydown.escape.window="close()"
     >
         <div
-            class="absolute inset-0 bg-primary/40 transition-[backdrop-filter,opacity] duration-300 ease-out"
+            class="absolute inset-0 bg-primary/40 transition-[backdrop-filter,opacity] duration-500 ease-out"
             x-bind:class="active ? 'opacity-100 backdrop-blur-[2px]' : 'opacity-0 backdrop-blur-none'"
             x-on:click="close()"
         ></div>
 
         <section
-            class="relative flex flex-col overflow-hidden border border-light bg-white outline-none transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            class="relative flex flex-col overflow-hidden border border-border bg-white outline-none transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
             style="will-change: transform, translate, opacity;"
             x-bind:class="{
                 'h-full w-full max-w-md rounded-l-default': activePlacement === 'right',
@@ -2995,7 +2990,7 @@ BLADE,
                 'description' => 'O painel usa borda por padrao; `panel-class` permite trocar ou remover o contorno.',
                 'preview' => <<<'BLADE'
 <div class="grid gap-4 md:grid-cols-2">
-    <div class="rounded-default border border-light bg-white p-5">
+    <div class="rounded-default border border-border bg-white p-5">
         <p class="font-semibold text-primary">Drawer com borda</p>
         <p class="mt-2 text-sm text-secondary">Superficie padrao do pacote.</p>
     </div>
@@ -3085,7 +3080,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 
-class SaveLead extends Component
+class SaveCustomer extends Component
 {
     public function save(): void
     {
@@ -3094,7 +3089,7 @@ class SaveLead extends Component
         $this->dispatch(
             'toast',
             type: 'success',
-            title: 'Lead salvo',
+            title: 'Cliente salvo',
             message: 'As alteracoes foram sincronizadas.'
         );
     }
@@ -3385,7 +3380,7 @@ BLADE],
 </x-sampaui::button>
 
 <x-sampaui::command-palette :items="[
-    ['label' => 'Novo lead', 'href' => '/leads/create', 'icon' => 'plus'],
+    ['label' => 'Novo cliente', 'href' => '/clientes/create', 'icon' => 'plus'],
     ['label' => 'Clientes', 'href' => '/clients', 'icon' => 'people'],
 ]" />
 BLADE],
@@ -3840,7 +3835,7 @@ PHP,
                 'title' => 'Card carregando',
                 'description' => 'Combine circulo, linhas e larguras para representar o card antes dos dados chegarem.',
                 'code' => <<<'BLADE'
-<div class="w-full max-w-md rounded-default border border-light bg-white p-5">
+<div class="w-full max-w-md rounded-default border border-border bg-white p-5">
     <div class="flex items-center gap-4">
         <x-sampaui::skeleton circle class="h-14 w-14" />
         <div class="flex-1">
@@ -3861,7 +3856,7 @@ BLADE,
                 'code' => <<<'BLADE'
 <div class="grid w-full gap-3">
     @foreach (range(1, 4) as $row)
-        <div class="flex items-center gap-4 rounded-default border border-light bg-white p-4">
+        <div class="flex items-center gap-4 rounded-default border border-border bg-white p-4">
             <x-sampaui::skeleton circle class="h-10 w-10" />
             <x-sampaui::skeleton class="h-4 flex-1" />
             <x-sampaui::skeleton class="h-4 w-24" />
@@ -3932,10 +3927,10 @@ PHP,
 </x-sampaui::button>
 
 <x-sampaui::command-palette
-    placeholder="Buscar imoveis, paginas e acoes"
+    placeholder="Buscar clientes, paginas e acoes"
     :items="[
-        ['label' => 'Novo imovel', 'href' => '/imoveis/create', 'icon' => 'plus'],
-        ['label' => 'Imoveis para revisar', 'href' => '/imoveis/revisao', 'icon' => 'house-check'],
+        ['label' => 'Novo cliente', 'href' => '/clientes/create', 'icon' => 'plus'],
+        ['label' => 'Clientes para revisar', 'href' => '/clientes/revisao', 'icon' => 'people'],
         ['label' => 'Categorias', 'href' => '/categorias', 'icon' => 'tags'],
         ['label' => 'Dicas em video', 'href' => '/videos', 'icon' => 'play-btn'],
     ]"
@@ -3966,8 +3961,8 @@ public array $commands = [];
 public function mount(): void
 {
     $this->commands = [
-        ['label' => 'Novo imovel', 'href' => route('properties.create'), 'icon' => 'plus'],
-        ['label' => 'Revisar imoveis', 'href' => route('properties.review'), 'icon' => 'house-check'],
+        ['label' => 'Novo cliente', 'href' => route('customers.create'), 'icon' => 'plus'],
+        ['label' => 'Revisar clientes', 'href' => route('customers.review'), 'icon' => 'people'],
         ['label' => 'Categorias', 'href' => route('categories.index'), 'icon' => 'tags'],
     ];
 }
@@ -4015,65 +4010,199 @@ BLADE,
             ],
         ];
 
-        return array_merge($components, $this->plannedRealEstateComponents());
+        $tableSearch = $components['table'];
+        $tableSearch['slug'] = 'table-search';
+        $tableSearch['name'] = 'Table Search';
+        $tableSearch['tag'] = '<x-sampaui::table-search />';
+        $tableSearch['summary'] = 'Tabela com pesquisa, ordenacao, paginacao, selecao, exportacao, loading e empty state.';
+        $tableSearch['description'] = 'Use quando a listagem precisar de busca local ou Livewire. O componente compoe o Table oficial e ativa a pesquisa sem duplicar a estrutura.';
+        $tableSearch['preview_title'] = 'Tabela com pesquisa';
+        $tableSearch['preview_caption'] = 'Busca, selecao, paginacao, loading, empty state e exportacao por link.';
+        $tableSearch['props'] = collect($tableSearch['props'])
+            ->reject(fn (array $prop): bool => $prop['name'] === 'searchable')
+            ->values()
+            ->all();
+        $tableSearch['examples'] = collect($tableSearch['examples'])
+            ->map(fn (array $example): array => array_merge($example, [
+                'code' => str_replace(["<x-sampaui::table\n", "    searchable\n"], ["<x-sampaui::table-search\n", ''], $example['code']),
+            ]))
+            ->all();
+        $tableSearch['showcases'] = collect($components['table']['showcases'])
+            ->map(fn (array $showcase): array => array_merge($showcase, [
+                'code' => str_replace(
+                    ['<x-sampaui::table', '</x-sampaui::table>'],
+                    ['<x-sampaui::table-search', '</x-sampaui::table-search>'],
+                    $showcase['code']
+                ),
+            ]))
+            ->all();
+        $components['table-search'] = $tableSearch;
+
+        $components['table']['summary'] = 'Tabela simples e responsiva para listagens por arrays ou slots.';
+        $components['table']['description'] = 'Use para listagens sem campo de pesquisa. A API avancada anterior continua disponivel por compatibilidade; em novas telas com busca, prefira Table Search.';
+        $components['table']['preview_title'] = 'Listagem simples';
+        $components['table']['preview_caption'] = 'Colunas, linhas, densidade, loading e empty state sem toolbar de pesquisa.';
+        $components['table']['props'] = collect($components['table']['props'])
+            ->reject(fn (array $prop): bool => in_array($prop['name'], ['searchable', 'searchModel'], true))
+            ->values()
+            ->all();
+        $components['table']['examples'] = array_slice($components['table']['examples'], 2);
+
+        return $this->withPackageRegistryComponents($components);
     }
 
     /**
+     * @param  array<string, array<string, mixed>>  $components
      * @return array<string, array<string, mixed>>
      */
-    private function plannedRealEstateComponents(): array
+    private function withPackageRegistryComponents(array $components): array
     {
-        $items = [
-            'property-card' => ['Property Card', 'Card de imóvel com imagem, preço, endereço, status e CTA principal.', 'houses'],
-            'property-gallery' => ['Property Gallery', 'Galeria responsiva para fotos, plantas, vídeos e tour virtual.', 'images'],
-            'property-features' => ['Property Features', 'Lista padronizada de dormitórios, vagas, área, condomínio e diferenciais.', 'list-check'],
-            'property-status' => ['Property Status', 'Marcador semântico para disponível, reservado, vendido, alugado ou em análise.', 'bookmark-check'],
-            'property-price' => ['Property Price', 'Exibição monetária com preço, condomínio, IPTU e variação por negociação.', 'cash-stack'],
-            'lead-card' => ['Lead Card', 'Resumo de lead com origem, prioridade, orçamento e próxima ação.', 'person-plus'],
-            'lead-pipeline' => ['Lead Pipeline', 'Funil comercial visual para captação, qualificação, visita, proposta e fechamento.', 'kanban'],
-            'lead-status' => ['Lead Status', 'Status semântico de lead para frio, morno, quente, perdido ou convertido.', 'thermometer-half'],
-            'client-card' => ['Client Card', 'Ficha compacta de cliente com contato, interesse, corretor e histórico recente.', 'person-vcard'],
-            'broker-card' => ['Broker Card', 'Perfil de corretor com carteira, metas, conversão e disponibilidade.', 'person-badge'],
-            'proposal-card' => ['Proposal Card', 'Resumo de proposta com valor, validade, responsável, etapa e ações.', 'file-earmark-check'],
-            'visit-timeline' => ['Visit Timeline', 'Linha do tempo para visitas, follow-ups, retornos e observações.', 'calendar2-check'],
-            'commission-card' => ['Commission Card', 'Resumo de comissão, split, previsão de pagamento e status financeiro.', 'cash-coin'],
-            'real-estate-dashboard-widgets' => ['Real Estate Dashboard Widgets', 'Widgets planejados para receita, leads, funil, agenda e performance comercial.', 'speedometer2'],
+        if (! class_exists(ComponentRegistry::class)) {
+            return $components;
+        }
+
+        foreach (ComponentRegistry::all() as $slug => $component) {
+            if (isset($components[$slug])) {
+                continue;
+            }
+
+            $components[$slug] = $this->componentFromRegistry($slug, $component);
+        }
+
+        return $components;
+    }
+
+    /**
+     * @param  array<string, mixed>  $component
+     * @return array<string, mixed>
+     */
+    private function componentFromRegistry(string $slug, array $component): array
+    {
+        $example = $this->concreteExample($slug) ?? (string) ($component['example'] ?? '<x-sampaui::'.$slug.' />');
+        $name = (string) ($component['name'] ?? str($slug)->headline());
+        $category = (string) ($component['category'] ?? 'ui');
+
+        return [
+            'slug' => $slug,
+            'name' => $name,
+            'tag' => (string) ($component['tag'] ?? '<x-sampaui::'.$slug.' />'),
+            'summary' => $this->registrySummary($slug, $name, $category),
+            'description' => (string) ($component['livewire'] ?? 'Componente oficial do pacote SampaUI com suporte a Blade, Tailwind e atributos de integração.'),
+            'preview_title' => 'Preview real',
+            'preview_caption' => 'Exemplo renderizado com o componente instalado no pacote SampaUI.',
+            'props' => collect($component['props'] ?? [])
+                ->map(fn (string $prop): array => [
+                    'name' => $prop,
+                    'type' => $this->registryPropType($prop),
+                    'default' => '-',
+                    'notes' => 'Prop pública registrada no pacote SampaUI.',
+                ])
+                ->values()
+                ->all(),
+            'attributes' => ['class', 'id', 'wire:*', 'x-*', 'aria-*', 'data-*'],
+            'accessibility' => [
+                'Use textos visíveis ou atributos aria-* quando o contexto não estiver explícito.',
+                'Preserve foco visível e navegação por teclado ao compor com outros componentes.',
+                'Valide dados no servidor mesmo quando houver máscara, estado visual ou validação nativa.',
+            ],
+            'examples' => [
+                [
+                    'title' => 'Uso base',
+                    'description' => 'Exemplo mínimo com o componente real do pacote.',
+                    'code' => $example,
+                ],
+            ],
+            'showcases' => [
+                [
+                    'title' => 'Padrão',
+                    'description' => 'Preview renderizado com o componente real do SampaUI.',
+                    'code' => $example,
+                ],
+            ],
         ];
+    }
 
-        return collect($items)
-            ->mapWithKeys(function (array $item, string $slug): array {
-                [$name, $summary, $icon] = $item;
+    private function registrySummary(string $slug, string $name, string $category): string
+    {
+        return match ($slug) {
+            'field' => 'Wrapper estrutural para label, hint, erro, indicador obrigatório e slot de controle.',
+            'chat-layout' => 'Estrutura de layout para inbox e conversa, com sidebar e área principal responsivas.',
+            'chat-sidebar' => 'Lista lateral de conversas com busca, ações e suporte a dados reativos.',
+            'chat-conversation' => 'Área de conversa com cabeçalho, mensagens e slot de composer.',
+            'chat-message' => 'Bolha de mensagem para contato, usuário atual ou aviso de sistema.',
+            'chat-composer' => 'Formulário compacto para envio de mensagens com textarea e botão.',
+            default => $name.' oficial do SampaUI na categoria '.$category.'.',
+        };
+    }
 
-                return [$slug => [
-                    'slug' => $slug,
-                    'name' => $name,
-                    'tag' => '<x-sampaui::'.$slug.' />',
-                    'status' => 'Planejado',
-                    'summary' => $summary,
-                    'description' => 'Este componente ainda não faz parte do pacote SampaUI. A página existe para documentar intenção de API, critérios de uso e prioridade do roadmap Real Estate sem apresentar o recurso como pronto.',
-                    'preview_title' => 'Componente planejado',
-                    'preview_caption' => 'Placeholder oficial para orientar implementação futura.',
-                    'props' => [
-                        ['name' => 'variant', 'type' => 'string', 'default' => 'default', 'notes' => 'Planejado. Variante visual conforme tokens SampaUI.'],
-                        ['name' => 'status', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Planejado. Estado de negócio quando aplicável.'],
-                        ['name' => 'class', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Planejado. Customização local sem quebrar estrutura.'],
-                    ],
-                    'attributes' => ['class', 'id', 'wire:*', 'x-*', 'aria-*', 'data-*'],
-                    'accessibility' => [
-                        'Planejar estados sem depender apenas de cor.',
-                        'Garantir labels, headings e regiões semânticas quando o componente sair do roadmap.',
-                        'Manter foco visível, contraste e compatibilidade com navegação por teclado.',
-                    ],
-                    'examples' => [
-                        [
-                            'title' => 'API prevista',
-                            'description' => 'Exemplo ilustrativo. Não use em produção até o componente existir no pacote.',
-                            'code' => '<x-sampaui::'.$slug.' status="planned" />',
-                        ],
-                    ],
-                    'planned_icon' => $icon,
-                ]];
-            })
-            ->all();
+    private function registryPropType(string $prop): string
+    {
+        return match (true) {
+            str_contains($prop, 'disabled')
+                || str_contains($prop, 'required')
+                || str_contains($prop, 'loading')
+                || str_contains($prop, 'multiple')
+                || str_contains($prop, 'clear')
+                || str_contains($prop, 'persistent')
+                || str_contains($prop, 'open') => 'bool',
+            str_contains($prop, 'items')
+                || str_contains($prop, 'steps')
+                || str_contains($prop, 'options')
+                || str_contains($prop, 'rows')
+                || str_contains($prop, 'columns')
+                || str_contains($prop, 'conversations') => 'array',
+            default => 'string|null',
+        };
+    }
+
+    private function concreteExample(string $slug): ?string
+    {
+        return match ($slug) {
+            'field' => <<<'BLADE'
+<x-sampaui::field id="company" label="Empresa" hint="Use o nome fiscal." required>
+    <x-sampaui::input id="company" name="company" placeholder="Sampa Tecnologia" />
+</x-sampaui::field>
+BLADE,
+            'chat-layout' => <<<'BLADE'
+<x-sampaui::chat-layout>
+    <x-slot:sidebar>
+        <x-sampaui::chat-sidebar title="Inbox" subtitle="2 conversas" />
+    </x-slot:sidebar>
+    <x-sampaui::chat-conversation name="Ana Souza" subtitle="Online">
+        <x-sampaui::chat-message>Olá, preciso de ajuda.</x-sampaui::chat-message>
+    </x-sampaui::chat-conversation>
+</x-sampaui::chat-layout>
+BLADE,
+            'chat-sidebar' => <<<'BLADE'
+<x-sampaui::chat-sidebar
+    title="Inbox"
+    subtitle="Atendimentos recentes"
+    :conversations="[
+        ['name' => 'Ana Souza', 'message' => 'Pode revisar?', 'time' => '09:40', 'active' => true],
+        ['name' => 'Bruno Lima', 'message' => 'Obrigado!', 'time' => '09:12'],
+    ]"
+/>
+BLADE,
+            'chat-conversation' => <<<'BLADE'
+<x-sampaui::chat-conversation name="Ana Souza" subtitle="Online" status="online">
+    <x-sampaui::chat-message time="09:40">Pode revisar a proposta?</x-sampaui::chat-message>
+    <x-sampaui::chat-message from="me" time="09:42" status="Lida">Enviei a nova versão.</x-sampaui::chat-message>
+</x-sampaui::chat-conversation>
+BLADE,
+            'chat-message' => <<<'BLADE'
+<div class="space-y-3">
+    <x-sampaui::chat-message author="Ana" time="09:40">Olá, preciso de ajuda.</x-sampaui::chat-message>
+    <x-sampaui::chat-message from="me" time="09:42" status="Lida">Já estou verificando.</x-sampaui::chat-message>
+</div>
+BLADE,
+            'chat-composer' => <<<'BLADE'
+<x-sampaui::chat-composer
+    name="message"
+    placeholder="Escreva uma mensagem..."
+    button-label="Enviar"
+/>
+BLADE,
+            default => null,
+        };
     }
 }

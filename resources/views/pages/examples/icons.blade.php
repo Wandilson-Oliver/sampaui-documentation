@@ -60,7 +60,7 @@
             <template x-for="icon in results" x-bind:key="icon">
                 <button
                     type="button"
-                    class="group flex cursor-pointer items-center gap-3 rounded-default border border-light bg-white p-4 text-left transition hover:border-primary/30 hover:bg-light"
+                    class="group flex cursor-pointer items-center gap-3 rounded-default border border-border bg-white p-4 text-left transition hover:border-primary/30 hover:bg-light"
                     x-on:click="copy(icon)"
                 >
                     <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-default bg-light text-xl text-primary transition group-hover:bg-primary group-hover:text-white">

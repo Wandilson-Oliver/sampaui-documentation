@@ -35,24 +35,36 @@ class DocumentationPages
         </div>
     </x-sampaui::card>
 
+    <figure class="overflow-hidden rounded-default border border-border bg-white">
+        <img
+            src="{{ asset('images/paleta de cores novas.png') }}"
+            alt="Paleta oficial de cores do SampaUI"
+            class="block h-auto w-full"
+        >
+        <figcaption class="border-t border-border px-5 py-4 text-sm text-secondary">
+            Referência visual oficial da paleta usada pelo pacote e pela documentação.
+        </figcaption>
+    </figure>
+
     <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         @foreach ([
-            ['name' => 'Primary', 'className' => 'bg-primary', 'hex' => '#5574C9', 'class' => 'bg-primary'],
-            ['name' => 'Secondary', 'className' => 'bg-secondary', 'hex' => '#2E314A', 'class' => 'bg-secondary'],
-            ['name' => 'Success', 'className' => 'bg-success', 'hex' => '#79C8BC', 'class' => 'bg-success'],
-            ['name' => 'Accent', 'className' => 'bg-accent', 'hex' => '#FDB82E', 'class' => 'bg-accent'],
-            ['name' => 'Purple', 'className' => 'bg-purple', 'hex' => '#895FC4', 'class' => 'bg-purple'],
-            ['name' => 'Danger', 'className' => 'bg-danger', 'hex' => '#E84586', 'class' => 'bg-danger'],
-            ['name' => 'Warning', 'className' => 'bg-warning', 'hex' => '#FF7D3D', 'class' => 'bg-warning'],
-            ['name' => 'Info', 'className' => 'bg-info', 'hex' => '#43BEE3', 'class' => 'bg-info'],
-            ['name' => 'Light', 'className' => 'bg-light', 'hex' => '#F4F6FA', 'class' => 'bg-light'],
-            ['name' => 'Muted', 'className' => 'bg-muted', 'hex' => '#B7B8C5', 'class' => 'bg-muted'],
-            ['name' => 'Surface', 'className' => 'bg-white', 'hex' => '#FFFFFF', 'class' => 'bg-white'],
-            ['name' => 'Border', 'className' => 'border-light', 'hex' => '#F4F6FA', 'class' => 'bg-white'],
+            ['name' => 'Primary', 'className' => 'bg-primary', 'hex' => '#2FAFD3', 'class' => 'bg-primary'],
+            ['name' => 'Secondary', 'className' => 'bg-secondary', 'hex' => '#102A43', 'class' => 'bg-secondary'],
+            ['name' => 'Success', 'className' => 'bg-success', 'hex' => '#2CB36C', 'class' => 'bg-success'],
+            ['name' => 'Accent', 'className' => 'bg-accent', 'hex' => '#F7931E', 'class' => 'bg-accent'],
+            ['name' => 'Purple', 'className' => 'bg-purple', 'hex' => '#7C5CFC', 'class' => 'bg-purple'],
+            ['name' => 'Danger', 'className' => 'bg-danger', 'hex' => '#D93045', 'class' => 'bg-danger'],
+            ['name' => 'Warning', 'className' => 'bg-warning', 'hex' => '#FBBF24', 'class' => 'bg-warning'],
+            ['name' => 'Info', 'className' => 'bg-info', 'hex' => '#4FC3E8', 'class' => 'bg-info'],
+            ['name' => 'Light', 'className' => 'bg-light', 'hex' => '#F8FAFC', 'class' => 'bg-light'],
+            ['name' => 'Muted', 'className' => 'bg-muted', 'hex' => '#CBD5E1', 'class' => 'bg-muted'],
+            ['name' => 'Surface', 'className' => 'bg-surface', 'hex' => '#FFFFFF', 'class' => 'bg-surface'],
+            ['name' => 'Border', 'className' => 'border-border', 'hex' => '#E2E8F0', 'class' => 'bg-border'],
+            ['name' => 'Text', 'className' => 'text-text', 'hex' => '#0F172A', 'class' => 'bg-text'],
         ] as $color)
             <x-sampaui::card padding="lg">
                 <div class="flex items-start gap-4">
-                    <span class="h-14 w-14 shrink-0 rounded-[1.1rem] border border-light {{ $color['class'] }}"></span>
+                    <span class="h-14 w-14 shrink-0 rounded-[1.1rem] border border-border {{ $color['class'] }}"></span>
                     <div class="min-w-0">
                         <p class="font-semibold text-primary">{{ $color['name'] }}</p>
                         <p class="mt-1 text-sm text-secondary">{{ $color['className'] }}</p>
@@ -67,12 +79,12 @@ class DocumentationPages
     <x-sampaui::card title="Fundamentos do framework" description="Referência rápida para revisar antes de criar ou ajustar componentes" padding="lg">
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             @foreach ([
-                ['title' => 'Colors', 'copy' => 'Tokens semânticos: primary, secondary, accent, danger, light, success, warning, info, purple e muted.'],
+                ['title' => 'Colors', 'copy' => 'Tokens semânticos: primary, secondary, accent, danger, light, surface, success, warning, info, purple, muted, border e text.'],
                 ['title' => 'Typography', 'copy' => 'Hierarquia objetiva, pesos fortes em títulos, texto operacional legível e labels compactos.'],
                 ['title' => 'Spacing', 'copy' => 'Espaçamento generoso, mas funcional: grids densos em dashboards e respiro em páginas institucionais.'],
                 ['title' => 'Radius', 'copy' => 'Use rounded-default como base e aumente raio apenas em superfícies editoriais ou hero cards.'],
                 ['title' => 'Shadows', 'copy' => 'Sombras discretas para elevação; nunca usar sombra pesada como substituta de hierarquia.'],
-                ['title' => 'Borders', 'copy' => 'Campos e triggers usam border-secondary/20; divisores e cards usam border-light.'],
+                ['title' => 'Borders', 'copy' => 'Campos e triggers usam border-secondary/20; divisores e cards usam border-border.'],
                 ['title' => 'Elevation', 'copy' => 'Elevação deve indicar sobreposição, foco ou agrupamento de tarefas.'],
                 ['title' => 'Motion', 'copy' => 'Transições curtas, úteis e previsíveis. Evite animações decorativas em fluxos operacionais.'],
                 ['title' => 'Grid', 'copy' => 'Priorize layouts responsivos com colunas claras e fallback mobile em uma coluna.'],
@@ -80,7 +92,7 @@ class DocumentationPages
                 ['title' => 'Focus Ring', 'copy' => 'Foco visível com focus:ring-primary/20 e contraste suficiente em light/dark.'],
                 ['title' => 'Dark Mode', 'copy' => 'Superfícies, bordas, textos e estados precisam manter contraste sem criar tema paralelo.'],
             ] as $foundation)
-                <div class="rounded-[1rem] border border-light bg-white p-4">
+                <div class="rounded-[1rem] border border-border bg-white p-4">
                     <p class="font-semibold text-primary">{{ $foundation['title'] }}</p>
                     <p class="mt-2 text-sm leading-6 text-secondary">{{ $foundation['copy'] }}</p>
                 </div>
@@ -100,7 +112,7 @@ class DocumentationPages
 
         <x-sampaui::card title="Tokens semânticos" description="Não crie paleta paralela dentro de componentes" padding="lg">
             <div class="flex flex-wrap gap-2">
-                @foreach (['primary', 'secondary', 'accent', 'danger', 'light', 'success', 'warning', 'info', 'purple', 'muted'] as $token)
+                @foreach (['primary', 'secondary', 'accent', 'danger', 'light', 'surface', 'success', 'warning', 'info', 'purple', 'muted', 'border', 'text'] as $token)
                     <x-sampaui::badge variant="light">{{ $token }}</x-sampaui::badge>
                 @endforeach
             </div>
@@ -115,11 +127,11 @@ class DocumentationPages
             <div class="space-y-4">
                 @foreach ([
                     ['title' => '1. Edite sampaui/config/sampaui.php', 'copy' => 'Atualize o array theme com os hexadecimais oficiais da marca. Esses valores documentam a paleta que o pacote expõe.'],
-                    ['title' => '2. Edite sampaui/resources/css/sampaui.css', 'copy' => 'Repita os mesmos valores no bloco @theme para o Tailwind gerar bg-primary, text-secondary, border-light e demais utilitarias.'],
+                    ['title' => '2. Edite sampaui/resources/css/sampaui.css', 'copy' => 'Repita os mesmos valores no bloco @theme para o Tailwind gerar bg-primary, text-secondary, border-border e demais utilitarias.'],
                     ['title' => '3. Recompile o pacote', 'copy' => 'Rode npm run build dentro de sampaui para atualizar dist/sampaui.css.'],
                     ['title' => '4. Publique no app consumidor', 'copy' => 'Rode php artisan vendor:publish --tag=sampaui-assets --force e php artisan view:clear no projeto Laravel que usa o pacote.'],
                 ] as $step)
-                    <div class="rounded-[1.1rem] border border-light bg-white p-4">
+                    <div class="rounded-[1.1rem] border border-border bg-white p-4">
                         <p class="font-semibold text-primary">{{ $step['title'] }}</p>
                         <p class="mt-1 text-sm leading-6 text-secondary">{{ $step['copy'] }}</p>
                     </div>
@@ -132,32 +144,38 @@ class DocumentationPages
                 <div>
                     <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">config/sampaui.php</p>
                     <pre class="overflow-x-auto rounded-[1rem] bg-primary p-4 text-xs leading-6 text-white"><code>'theme' => [
-    'primary' => '#5574C9',
-    'secondary' => '#2E314A',
-    'accent' => '#FDB82E',
-    'danger' => '#E84586',
-    'light' => '#F4F6FA',
-    'success' => '#79C8BC',
-    'warning' => '#FF7D3D',
-    'info' => '#43BEE3',
-    'purple' => '#895FC4',
-    'muted' => '#B7B8C5',
+    'primary' => '#2FAFD3',
+    'secondary' => '#102A43',
+    'accent' => '#F7931E',
+    'danger' => '#D93045',
+    'light' => '#F8FAFC',
+    'success' => '#2CB36C',
+    'warning' => '#FBBF24',
+    'info' => '#4FC3E8',
+    'purple' => '#7C5CFC',
+    'muted' => '#CBD5E1',
+    'surface' => '#FFFFFF',
+    'border' => '#E2E8F0',
+    'text' => '#0F172A',
 ],</code></pre>
                 </div>
 
                 <div>
                     <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">resources/css/sampaui.css</p>
                     <pre class="overflow-x-auto rounded-[1rem] bg-secondary p-4 text-xs leading-6 text-white"><code>@theme {
-  --color-primary: #5574C9;
-  --color-secondary: #2E314A;
-  --color-accent: #FDB82E;
-  --color-danger: #E84586;
-  --color-light: #F4F6FA;
-  --color-success: #79C8BC;
-  --color-warning: #FF7D3D;
-  --color-info: #43BEE3;
-  --color-purple: #895FC4;
-  --color-muted: #B7B8C5;
+  --color-primary: #2FAFD3;
+  --color-secondary: #102A43;
+  --color-accent: #F7931E;
+  --color-danger: #D93045;
+  --color-light: #F8FAFC;
+  --color-success: #2CB36C;
+  --color-warning: #FBBF24;
+  --color-info: #4FC3E8;
+  --color-purple: #7C5CFC;
+  --color-muted: #CBD5E1;
+  --color-surface: #FFFFFF;
+  --color-border: #E2E8F0;
+  --color-text: #0F172A;
 }</code></pre>
                 </div>
             </div>
@@ -192,108 +210,6 @@ BLADE,
 {{-- Depois, no app consumidor --}}
 {{-- php artisan vendor:publish --tag=sampaui-assets --force --}}
 {{-- php artisan view:clear --}}
-BLADE,
-            ],
-            'real-estate-patterns' => [
-                'slug' => 'real-estate-patterns',
-                'name' => 'Padrões imobiliários',
-                'icon' => 'buildings',
-                'tag' => 'Imobiliário',
-                'summary' => 'Receitas objetivas para CRM, captação, funil comercial, atendimento e propostas.',
-                'description' => 'Guia de composição para manter produtos imobiliários Laravel consistentes com o ecossistema SampaUI.',
-                'preview' => <<<'BLADE'
-<div class="space-y-6">
-    <x-sampaui::card padding="lg">
-        <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.24em] text-primary">CRM imobiliário</p>
-                <h2 class="mt-3 text-3xl font-semibold tracking-tight text-primary">Padrões para captação, atendimento e conversão</h2>
-                <p class="mt-4 max-w-2xl text-sm leading-6 text-secondary">
-                    Use estes blocos para orientar agentes de IA e times de produto. A regra é compor telas com componentes SampaUI antes de criar marcação solta.
-                </p>
-            </div>
-
-            <x-sampaui::alert title="Regra prática" variant="info">
-                Componentes primeiro, `class=""` para ajuste fino e novo componente apenas quando o padrão se repetir.
-            </x-sampaui::alert>
-        </div>
-    </x-sampaui::card>
-
-    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        @foreach ([
-            ['title' => 'Captar', 'icon' => 'person-plus', 'copy' => 'Formulários de lead, proprietário e imóvel.'],
-            ['title' => 'Qualificar', 'icon' => 'funnel', 'copy' => 'Origem, orçamento, região, interesse e prioridade.'],
-            ['title' => 'Atender', 'icon' => 'chat-dots', 'copy' => 'Histórico de conversa, anexos e follow-up.'],
-            ['title' => 'Converter', 'icon' => 'file-earmark-check', 'copy' => 'Proposta, visita, contrato e assinatura.'],
-        ] as $step)
-            <x-sampaui::card padding="lg">
-                <span class="inline-flex h-12 w-12 items-center justify-center rounded-default bg-light text-xl text-primary">
-                    <i class="bi bi-{{ $step['icon'] }}"></i>
-                </span>
-                <h3 class="mt-5 text-xl font-semibold text-primary">{{ $step['title'] }}</h3>
-                <p class="mt-2 text-sm leading-6 text-secondary">{{ $step['copy'] }}</p>
-            </x-sampaui::card>
-        @endforeach
-    </div>
-
-    <div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
-        <x-sampaui::card title="Lead comprador" description="Ficha de qualificação" padding="lg">
-            <div class="grid gap-4 md:grid-cols-2">
-                <x-sampaui::input name="lead_name" label="Nome" icon="person" placeholder="Ana Souza" />
-                <x-sampaui::phone name="lead_phone" label="WhatsApp" value="11988887777" />
-                <x-sampaui::currency-br name="lead_budget" label="Orçamento" value="890000" />
-                <x-sampaui::select-search
-                    name="lead_broker"
-                    label="Corretor"
-                    :options="['ana' => 'Ana Souza', 'bruno' => 'Bruno Lima', 'carla' => 'Carla Martins']"
-                    value="ana"
-                />
-            </div>
-        </x-sampaui::card>
-
-        <x-sampaui::card title="Meta mensal" description="Fechamento projetado" padding="lg">
-            <div class="space-y-5">
-                <div class="flex items-end justify-between gap-4">
-                    <div>
-                        <p class="text-3xl font-semibold text-primary">68%</p>
-                        <p class="mt-1 text-sm text-secondary">R$ 2,4 mi em propostas</p>
-                    </div>
-                    <x-sampaui::badge variant="success">No prazo</x-sampaui::badge>
-                </div>
-                <x-sampaui::progress value="68" label="Receita" />
-                <x-sampaui::button full icon="clipboard-check">Revisar propostas</x-sampaui::button>
-            </div>
-        </x-sampaui::card>
-    </div>
-
-    <x-sampaui::card title="Trechos recomendados para IA" description="Copie o bloco certo e adapte dados/rotas ao app consumidor" padding="lg">
-        <pre class="overflow-x-auto rounded-[1rem] bg-secondary p-4 text-xs leading-6 text-white"><code>&lt;x-sampaui::card title="Apartamento Vila Mariana" description="Lead quente"&gt;
-    &lt;x-sampaui::badge variant="success"&gt;Disponível&lt;/x-sampaui::badge&gt;
-    &lt;x-sampaui::badge variant="accent"&gt;R$ 890.000&lt;/x-sampaui::badge&gt;
-    &lt;x-sampaui::button icon="calendar2-check"&gt;Agendar visita&lt;/x-sampaui::button&gt;
-&lt;/x-sampaui::card&gt;</code></pre>
-    </x-sampaui::card>
-</div>
-BLADE,
-                'code' => <<<'BLADE'
-{{-- Card de imóvel --}}
-<x-sampaui::card title="Apartamento Vila Mariana" description="Lead quente" padding="lg">
-    <div class="flex flex-wrap gap-2">
-        <x-sampaui::badge variant="success">Disponível</x-sampaui::badge>
-        <x-sampaui::badge variant="accent">R$ 890.000</x-sampaui::badge>
-        <x-sampaui::badge variant="light">2 dorms</x-sampaui::badge>
-    </div>
-
-    <div class="mt-5 flex flex-wrap gap-3">
-        <x-sampaui::button icon="calendar2-check">Agendar visita</x-sampaui::button>
-        <x-sampaui::button variant="outline" icon="chat-dots">Conversar</x-sampaui::button>
-    </div>
-</x-sampaui::card>
-
-{{-- Formulário de lead --}}
-<x-sampaui::input name="name" label="Nome" icon="person" wire:model.live="lead.name" />
-<x-sampaui::phone name="phone" label="WhatsApp" wire:model.live="lead.phone" />
-<x-sampaui::currency-br name="budget" label="Orçamento" wire:model.live="lead.budget" />
 BLADE,
             ],
         ];

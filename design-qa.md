@@ -1,34 +1,39 @@
 # Design QA
 
-source visual truth path: current user brief in this Codex thread plus existing SampaUI documentation design system.
+source visual truth: Home reference supplied by the user in the Codex thread.
 
-implementation screenshot path: browser DOM/runtime QA on `http://127.0.0.1:8000/`, `http://127.0.0.1:8000/components/button`, `http://127.0.0.1:8000/components/table`, `http://127.0.0.1:8000/components/modal` and `http://127.0.0.1:8000/components/property-card`.
+implementation screenshot path: unavailable; the in-app browser rendered the updated route and exposed DOM measurements, but its screenshot operation stopped responding after repeated recovery attempts.
 
-viewport: 1280x720 and 390x844
+viewport: 1280x720
 
-state: documentation app after playground, catalog spacing, Real Estate previews and version `0.1.18` updates.
+state: light theme, Home at the top of the page after removing the requested promotional sections.
 
-full-view comparison evidence: browser QA inspected home, planned Real Estate page and Design System page. Verified:
+full-view comparison evidence: the source image was opened at original resolution. The implementation was rendered at `http://sampaui-documentation.test/`; DOM checks confirmed the two-column hero, official logo, headline, actions, technology badges and real SampaUI dashboard preview. The requested Home copy was absent.
 
-- catalog heading is `Componentes organizados para acelerar CRMs, ERPs e sistemas internos em Laravel.`;
-- catalog cards now reserve 140px preview height, 16px between preview/meta and 18px between meta/content in desktop QA;
-- Real Estate cards use four distinct conceptual preview families: property, lead, person and operation;
-- `Property Card` page clearly says the component is planned, shows preview conceitual and exposes API prevista;
-- Button playground renders real SampaUI buttons and shows only the selected variant/size in the visible state;
-- Table playground renders the real SampaUI table and keeps the code snippet synchronized;
-- Modal playground and modal page previews render the real SampaUI modal inside a Livewire preview component to avoid `$wire.entangle` errors in static Blade context;
-- mobile catalog uses one column at 390px width, no horizontal overflow and 120px mini preview height.
+focused region comparison evidence: blocked because the browser could not produce the implementation screenshot required for a side-by-side visual comparison.
 
-focused region comparison evidence: no external static mock was provided. Focused DOM/runtime checks were used for catalog spacing, Real Estate preview variety, playground presence, modal Livewire runtime and mobile overflow.
+## Findings
 
-findings: no actionable P0/P1/P2 findings after implementation.
+- [P1] Visual comparison could not be completed
+  - Location: Home hero.
+  - Evidence: the source image is available, but the current implementation screenshot could not be captured.
+  - Impact: typography, crop and spacing cannot receive a final evidence-based visual pass.
+  - Fix: reopen the in-app browser session and capture the Home at 1280x720.
 
-patches made since previous QA pass:
+## Patches made
 
-- replaced fake Button/Badge/Input/Select/Table/Modal playground surfaces with real SampaUI-rendered previews where runtime allows;
-- wrapped Modal previews in a dedicated Livewire component because the package modal requires `$wire.entangle`;
-- increased catalog card padding, preview height, badge/meta gaps and mobile layout rules;
-- added distinct Real Estate conceptual preview partials and planned page preview reuse;
-- bumped package/docs version to `0.1.18` and updated changelogs.
+- removed all interactive playgrounds and their unused controllers/views;
+- removed the “Decisão de uso” section and its table-of-contents entry;
+- removed the three requested promotional sections from the Home;
+- refined hero proportions, typography, actions and dashboard preview spacing;
+- increased Drawer entry/exit duration and aligned the documentation example.
 
-final result: passed
+## Required fidelity surfaces
+
+- fonts and typography: implementation uses the existing Instrument Sans setup; final visual comparison blocked;
+- spacing and layout rhythm: DOM measurements completed; final screenshot comparison blocked;
+- colors and visual tokens: existing SampaUI tokens and official assets preserved;
+- image quality and asset fidelity: official project logo retained, with no replacement or generated placeholder;
+- copy and content: requested sections and playground language removed.
+
+final result: blocked

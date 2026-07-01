@@ -1,4 +1,4 @@
-@extends('docs.layout', ['title' => $title ?? 'Upload e perfil · Documentação SampaUI'])
+@extends('docs.layout', ['title' => $title ?? 'Perfil e arquivos · Documentação SampaUI'])
 
 @php
 $snippet = <<<'BLADE'
@@ -21,7 +21,7 @@ BLADE;
             <div class="relative z-[1] flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                     <p class="doc-kicker">Exemplo</p>
-                    <h1 class="mt-3 text-3xl font-semibold tracking-tight text-primary md:text-4xl">Upload e perfil</h1>
+                    <h1 class="mt-3 text-3xl font-semibold tracking-tight text-primary md:text-4xl">Perfil e arquivos</h1>
                     <p class="mt-4 max-w-3xl text-sm leading-6 text-secondary">
                         Formulário de perfil com avatar, documentos, dados de contato e campos de senha usando componentes SampaUI.
                     </p>
@@ -35,7 +35,7 @@ BLADE;
         <x-sampaui::card title="Perfil" description="Avatar, contato e credenciais" padding="lg" class="shadow-default">
             <form class="space-y-7" wire:submit.prevent="saveProfile">
                 <div class="grid gap-8 xl:grid-cols-[22rem_minmax(0,1fr)]">
-                    <div class="flex flex-col items-center justify-center rounded-[1.25rem] border border-light bg-light p-6">
+                    <div class="flex flex-col items-center justify-center rounded-[1.25rem] border border-border bg-light p-6">
                         <x-sampaui::avatar-upload
                             name="avatar"
                             label="Avatar"
@@ -70,7 +70,7 @@ BLADE;
                     Anexe RG, comprovante ou imagem complementar.
                 </x-sampaui::file-upload>
 
-                <div class="flex flex-col-reverse gap-3 border-t border-light pt-6 sm:flex-row sm:justify-end">
+                <div class="flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:justify-end">
                     <x-sampaui::button type="button" variant="outline" icon="x-lg">Cancelar</x-sampaui::button>
                     <x-sampaui::button type="submit" icon="check2-circle">Salvar perfil</x-sampaui::button>
                 </div>

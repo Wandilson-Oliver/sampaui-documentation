@@ -15,102 +15,60 @@ class ExampleController extends Controller
     {
         return [
             [
-                'title' => 'Login completo',
-                'copy' => 'Tela de acesso com alerta, campos, lembrar-me e estado de loading.',
-                'icon' => 'shield-lock',
-                'route' => 'examples.authentication',
-                'tag' => 'Auth',
-            ],
-            [
                 'title' => 'Dashboard operacional',
-                'copy' => 'Sidebar, topbar, metricas, atividades e tabela no padrao SaaS.',
+                'copy' => 'Dashboard SaaS com navegação, métricas, atividades, prioridades e listagem.',
                 'icon' => 'speedometer2',
                 'route' => 'examples.dashboard',
                 'tag' => 'Dashboard',
             ],
             [
                 'title' => 'CRUD de usuários',
-                'copy' => 'Livewire real com filtros, tabela, modal, acoes e paginacao.',
+                'copy' => 'Fluxo Livewire completo com busca, filtros, tabela, modal e paginação.',
                 'icon' => 'people',
                 'route' => 'examples.users.index',
                 'tag' => 'Livewire',
             ],
             [
+                'title' => 'Login completo',
+                'copy' => 'Tela de acesso com validação, feedback, recuperação e estado de envio.',
+                'icon' => 'shield-lock',
+                'route' => 'examples.authentication',
+                'tag' => 'Auth',
+            ],
+            [
                 'title' => 'Formulário administrativo',
-                'copy' => 'Cadastro grande com dados, contato, endereco, valores e preferencias.',
+                'copy' => 'Cadastro responsivo com campos especializados, validação e ações consistentes.',
                 'icon' => 'ui-checks-grid',
                 'route' => 'examples.admin-form',
                 'tag' => 'Forms',
             ],
             [
-                'title' => 'Modal destrutivo',
-                'copy' => 'Confirmacao de exclusao com alerta, persistencia e acao final.',
-                'icon' => 'trash3',
-                'route' => 'examples.destructive-modal',
-                'tag' => 'Overlay',
-            ],
-            [
-                'title' => 'Drawer de filtros',
-                'copy' => 'Painel lateral para segmentar listagens sem perder contexto.',
-                'icon' => 'sliders2',
-                'route' => 'examples.filter-drawer',
-                'tag' => 'Overlay',
-            ],
-            [
-                'title' => 'Tabela avançada',
-                'copy' => 'Tabela com avatar, badges, dropdown, skeleton, vazio e paginacao.',
+                'title' => 'Listagem avançada',
+                'copy' => 'Pesquisa, filtros, seleção, ações por linha, estados e paginação.',
                 'icon' => 'table',
                 'route' => 'examples.advanced-table',
                 'tag' => 'Data',
             ],
             [
-                'title' => 'Upload e perfil',
-                'copy' => 'Avatar, galeria, documentos e informacoes de contato em uma tela.',
+                'title' => 'Perfil e arquivos',
+                'copy' => 'Avatar, documentos, dados pessoais e credenciais em uma única tela.',
                 'icon' => 'person-badge',
                 'route' => 'examples.profile',
                 'tag' => 'Upload',
             ],
             [
-                'title' => 'Verificação 2FA',
-                'copy' => 'Fluxo com PIN, alerta, progresso e reenvio de codigo.',
-                'icon' => 'key',
-                'route' => 'examples.verification',
-                'tag' => 'Auth',
-            ],
-            [
-                'title' => 'Command palette',
-                'copy' => 'Busca global acionada por evento, comandos e atalhos do painel.',
-                'icon' => 'command',
-                'route' => 'examples.command-palette',
-                'tag' => 'Busca',
-            ],
-            [
                 'title' => 'Configurações em abas',
-                'copy' => 'Perfil, seguranca e notificacoes organizados com tabs.',
+                'copy' => 'Perfil, segurança e notificações organizados em uma experiência única.',
                 'icon' => 'gear',
                 'route' => 'examples.settings',
                 'tag' => 'Settings',
             ],
             [
-                'title' => 'Estados de feedback',
-                'copy' => 'Toast, alertas, progresso, skeleton e estado vazio juntos.',
-                'icon' => 'chat-square-heart',
-                'route' => 'examples.feedback',
-                'tag' => 'Feedback',
-            ],
-            [
-                'title' => 'Chat atendimento',
-                'copy' => 'Interface de mensagens estilo WhatsApp Web com conversas, bolhas e envio local.',
+                'title' => 'Central de atendimento',
+                'copy' => 'Inbox, conversa, envio de mensagens e contexto do cliente em layout responsivo.',
                 'icon' => 'chat-dots',
                 'route' => 'examples.chat',
                 'tag' => 'Chat',
-            ],
-            [
-                'title' => 'Bootstrap Icons',
-                'copy' => 'Busca rápida dos principais ícones Bootstrap Icons com classes copiáveis.',
-                'icon' => 'bootstrap',
-                'route' => 'examples.icons',
-                'tag' => 'Icons',
             ],
         ];
     }
@@ -150,7 +108,7 @@ class ExampleController extends Controller
     public function profile(): View
     {
         return $this->view('pages.examples.profile', [
-            'title' => 'Upload e perfil · Documentação SampaUI',
+            'title' => 'Perfil e arquivos · Documentação SampaUI',
         ]);
     }
 
@@ -185,7 +143,7 @@ class ExampleController extends Controller
     public function advancedTable(): View
     {
         return $this->view('pages.examples.advanced-table', [
-            'title' => 'Tabela avançada · Documentação SampaUI',
+            'title' => 'Listagem avançada · Documentação SampaUI',
         ]);
     }
 
@@ -220,7 +178,7 @@ class ExampleController extends Controller
     public function chat(): View
     {
         return $this->view('pages.examples.chat', [
-            'title' => 'Chat atendimento · Documentação SampaUI',
+            'title' => 'Central de atendimento · Documentação SampaUI',
         ]);
     }
 

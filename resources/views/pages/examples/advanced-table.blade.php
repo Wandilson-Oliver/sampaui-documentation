@@ -1,26 +1,26 @@
-@extends('docs.layout', ['title' => $title ?? 'Tabela avançada · Documentação SampaUI'])
+@extends('docs.layout', ['title' => $title ?? 'Listagem avançada · Documentação SampaUI'])
 
 @php
     $snippet = <<<'BLADE'
-<x-sampaui::table
+<x-sampaui::table-search
     title="Clientes"
     description="Base comercial"
-    searchable
     selectable
     export-href="/exports/clientes.csv"
     per-page="10"
+    pagination-type="numbers"
     :columns="$columns"
     :rows="$rows"
 >
     <x-slot:filters>...</x-slot:filters>
     <x-slot:actions>...</x-slot:actions>
-</x-sampaui::table>
+</x-sampaui::table-search>
 BLADE;
 
     $rows = [
-        ['name' => 'Ana Martins', 'email' => 'ana@sampa.dev', 'status' => 'Ativo', 'variant' => 'success', 'value' => 'R$ 12.400'],
-        ['name' => 'Bruno Lima', 'email' => 'bruno@sampa.dev', 'status' => 'Pendente', 'variant' => 'accent', 'value' => 'R$ 8.900'],
-        ['name' => 'Carla Souza', 'email' => 'carla@sampa.dev', 'status' => 'Bloqueado', 'variant' => 'danger', 'value' => 'R$ 3.200'],
+        ['id' => 1, 'name' => 'Ana Martins', 'email' => 'ana@sampa.dev', 'status' => 'Ativo', 'variant' => 'success', 'value' => 'R$ 12.400'],
+        ['id' => 2, 'name' => 'Bruno Lima', 'email' => 'bruno@sampa.dev', 'status' => 'Pendente', 'variant' => 'accent', 'value' => 'R$ 8.900'],
+        ['id' => 3, 'name' => 'Carla Souza', 'email' => 'carla@sampa.dev', 'status' => 'Bloqueado', 'variant' => 'danger', 'value' => 'R$ 3.200'],
     ];
 @endphp
 
@@ -29,7 +29,7 @@ BLADE;
         <article class="doc-hero-card">
             <div class="relative z-[1]">
                 <p class="doc-kicker">Exemplo</p>
-                <h1 class="mt-3 text-3xl font-semibold tracking-tight text-primary md:text-4xl">Tabela avançada</h1>
+                <h1 class="mt-3 text-3xl font-semibold tracking-tight text-primary md:text-4xl">Listagem avançada</h1>
                 <p class="mt-4 max-w-3xl text-sm leading-6 text-secondary">
                     DataTable premium com busca, filtros, seleção múltipla, ações por linha, ações em massa, paginação, exportação CSV, loading/skeleton, estado vazio e layout responsivo.
                 </p>
@@ -39,10 +39,9 @@ BLADE;
 
     <section class="space-y-7">
         <x-sampaui::card title="Clientes" description="Exemplo de DataTable rica para áreas internas" padding="lg" class="shadow-default">
-            <x-sampaui::table
+            <x-sampaui::table-search
                 title="Base comercial"
                 description="42 registros encontrados"
-                searchable
                 search-placeholder="Buscar cliente, email ou valor"
                 selectable
                 export-href="/exports/clientes.csv"
@@ -50,6 +49,9 @@ BLADE;
                 per-page="5"
                 page="2"
                 total="42"
+                pagination-type="numbers"
+                row-key="id"
+                :rows="$rows"
                 class="min-w-[58rem]"
                 compact
             >
@@ -59,6 +61,13 @@ BLADE;
                         ['label' => 'Ativo', 'value' => 'active'],
                         ['label' => 'Pendente', 'value' => 'pending'],
                     ]" />
+
+                    <x-sampaui::input
+                        type="search"
+                        name="table_search"
+                        icon="search"
+                        placeholder="Buscar cliente, email ou valor"
+                    />
                 </x-slot:filters>
 
                 <x-slot:actions>
@@ -68,7 +77,14 @@ BLADE;
                     <x-slot:head>
                         <thead class="bg-light/70 text-left text-xs font-semibold uppercase tracking-[0.18em] text-secondary">
                             <tr>
-                                <th class="px-6 py-3"><input type="checkbox" class="rounded border-secondary/40 text-primary focus:ring-primary/20" aria-label="Selecionar todos"></th>
+                                <th class="px-6 py-3">
+                                    <x-sampaui::checkbox
+                                        value="all"
+                                        x-bind:checked="allVisibleSelected()"
+                                        x-on:change="toggleAll($event.target.checked)"
+                                        aria-label="Selecionar todos"
+                                    />
+                                </th>
                                 <th class="px-6 py-3">Cliente</th>
                                 <th class="px-6 py-3">Email</th>
                                 <th class="px-6 py-3">Status</th>
@@ -78,10 +94,17 @@ BLADE;
                         </thead>
                     </x-slot:head>
                     <x-slot:body>
-                        <tbody class="divide-y divide-light">
+                        <tbody class="divide-y divide-border">
                             @foreach ($rows as $row)
                                 <tr class="transition hover:bg-light/60">
-                                    <td class="px-6 py-4"><input type="checkbox" class="rounded border-secondary/40 text-primary focus:ring-primary/20" aria-label="Selecionar {{ $row['name'] }}"></td>
+                                    <td class="px-6 py-4">
+                                        <x-sampaui::checkbox
+                                            :value="$row['id']"
+                                            x-bind:checked="isSelected($el.value)"
+                                            x-on:change="toggleRow($el.value, $event.target.checked)"
+                                            aria-label="Selecionar {{ $row['name'] }}"
+                                        />
+                                    </td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
                                             <x-sampaui::avatar name="{{ $row['name'] }}" />
@@ -102,7 +125,7 @@ BLADE;
                             @endforeach
                         </tbody>
                     </x-slot:body>
-            </x-sampaui::table>
+            </x-sampaui::table-search>
         </x-sampaui::card>
 
         <div class="grid gap-5 lg:grid-cols-2">

@@ -113,7 +113,7 @@
                 </x-slot:head>
 
                 <x-slot:body>
-                    <tbody class="divide-y divide-light">
+                    <tbody class="divide-y divide-border">
                         @forelse ($rows as $user)
                             <tr wire:key="user-row-{{ $user['id'] }}" class="transition hover:bg-light/60">
                                 <td class="px-6 py-4">
@@ -201,19 +201,19 @@
     <x-sampaui::modal model="showUserModal" title="{{ $editingId ? 'Editar usuário' : 'Cadastrar usuário' }}" subtitle="Os dados ficam em memória para demonstrar o fluxo do componente." size="xl">
         <form id="user-form" wire:submit="saveUser" class="space-y-5">
             <div class="grid gap-4 md:grid-cols-2">
-                <x-sampaui::input name="formName" label="Nome" icon="person" wire:model.live="formName" error="{{ $errors->first('formName') }}" />
-                <x-sampaui::input name="formEmail" type="email" label="Email" icon="envelope" wire:model.live="formEmail" error="{{ $errors->first('formEmail') }}" />
+                <x-sampaui::input label="Nome" icon="person" wire:model.live="formName" required />
+                <x-sampaui::input type="email" label="Email" icon="envelope" wire:model.live="formEmail" required />
             </div>
 
             <div class="grid gap-4 md:grid-cols-2">
                 <x-sampaui::phone name="formWhatsapp" label="WhatsApp" icon="whatsapp" wire:model.live="formWhatsapp" error="{{ $errors->first('formWhatsapp') }}" />
-                <x-sampaui::select name="formStatus" label="Status" :options="array_slice($statusOptions, 1)" wire:model.live="formStatus" error="{{ $errors->first('formStatus') }}" />
+                <x-sampaui::select label="Status" placeholder="Selecione" :options="array_slice($statusOptions, 1)" wire:model.live="formStatus" required />
             </div>
         </form>
 
         <x-slot:actions>
             <x-sampaui::button variant="outline" wire:click="$set('showUserModal', false)">Cancelar</x-sampaui::button>
-            <x-sampaui::button type="submit" form="user-form" icon="check2" wire:loading.attr="disabled" wire:target="saveUser">
+            <x-sampaui::button type="submit" form="user-form" formnovalidate icon="check2" wire:loading.attr="disabled" wire:target="saveUser">
                 Salvar
             </x-sampaui::button>
         </x-slot:actions>

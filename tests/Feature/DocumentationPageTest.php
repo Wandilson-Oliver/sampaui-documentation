@@ -4,6 +4,7 @@ use App\Livewire\Examples\UsersIndex;
 use App\Support\DocumentationComponents;
 use App\Support\DocumentationGuidance;
 use Livewire\Livewire;
+use SampaUI\Support\ComponentRegistry;
 
 it('renders the overview with installation guidance and component links', function () {
     $response = $this->get(route('documentation'));
@@ -11,32 +12,25 @@ it('renders the overview with installation guidance and component links', functi
     $response
         ->assertOk()
         ->assertSee('Documentação SampaUI')
-        ->assertSee('Componentes Blade para produtos imobiliários')
+        ->assertSee('Componentes Blade para produtos digitais')
         ->assertSee('profissionais.')
-        ->assertSee('CRM imobiliário')
-        ->assertSee('Ver padrões imobiliários')
-        ->assertSee('Por que usar SampaUI')
         ->assertSee('Quatro comandos até o primeiro componente.')
-        ->assertSee('Componentes populares')
         ->assertSee('Todos os componentes')
         ->assertSee('Componentes organizados para acelerar CRMs, ERPs e sistemas internos em Laravel.')
-        ->assertSee('Templates e exemplos completos')
         ->assertSee('Roadmap')
         ->assertSee('npm run build')
-        ->assertSee('bi bi-buildings', false)
+        ->assertSee('bi bi-diagram-3', false)
         ->assertSee('doc-app-frame', false)
         ->assertSee('doc-topbar', false)
         ->assertSee('docs-sidebar', false)
         ->assertSee('sampaui-docs-theme', false)
         ->assertSee('Docs v'.config('docs.version'))
         ->assertSee('Todos')
-        ->assertSee('Real Estate')
-        ->assertSee('Planejado')
-        ->assertSee('Property Card')
         ->assertSee('doc-catalog-meta-row', false)
         ->assertSee('doc-category-pill', false)
-        ->assertSee('doc-real-estate-preview', false)
         ->assertSee('Blocks/Templates')
+        ->assertSee('images/logo_sampaui.png', false)
+        ->assertSee('images/icon_favicon_sampaui.png', false)
         ->assertSee('Links do rodapé', false)
         ->assertSee('GitHub')
         ->assertSee('Voltar ao topo')
@@ -50,18 +44,21 @@ it('renders the overview with installation guidance and component links', functi
         ->assertSee('Alert')
         ->assertSee('Card')
         ->assertSee('Drawer')
-        ->assertSee('Toast');
+        ->assertSee('Toast')
+        ->assertDontSee('Por que usar SampaUI')
+        ->assertDontSee('Os blocos mais usados, renderizados de verdade.')
+        ->assertDontSee('Blocks e templates essenciais')
+        ->assertDontSee('Fluxos completos, sem exemplos redundantes.')
+        ->assertDontSee('Real Estate')
+        ->assertDontSee('Property Card')
+        ->assertDontSee('Lead Pipeline')
+        ->assertDontSee('Ver padrões imobiliários')
+        ->assertDontSee('doc-real-estate-preview', false);
 });
 
-it('renders the real estate patterns documentation page', function () {
+it('does not expose the removed real estate patterns documentation page', function () {
     $this->get(route('documentation.pages.show', 'real-estate-patterns'))
-        ->assertOk()
-        ->assertSee('Padrões imobiliários')
-        ->assertSee('CRM imobiliário')
-        ->assertSee('Lead comprador')
-        ->assertSee('Trechos recomendados para IA')
-        ->assertSee('x-sampaui::card', false)
-        ->assertSee('x-sampaui::currency-br', false);
+        ->assertNotFound();
 });
 
 it('renders a dedicated documentation page for each component', function () {
@@ -71,14 +68,17 @@ it('renders a dedicated documentation page for each component', function () {
         $response = $this->get(route('documentation.components.show', $component))
             ->assertOk()
             ->assertSee('Acessibilidade')
-            ->assertSee('Quando este componente faz sentido')
             ->assertSee('doc-content-with-toc', false)
             ->assertSee('doc-reading-column', false)
             ->assertSee('doc-toc', false)
             ->assertSee('doc-props-table', false)
-            ->assertSee('doc-playground', false)
+            ->assertSee('doc-example', false)
             ->assertSee('doc-code-block', false)
-            ->assertSee('x-sampaui::'.$component, false);
+            ->assertSee('x-sampaui::'.$component, false)
+            ->assertDontSee('Decisão de uso')
+            ->assertDontSee('Quando este componente faz sentido')
+            ->assertDontSee('Playground')
+            ->assertDontSee('componentPlayground', false);
 
         if (DocumentationGuidance::status(DocumentationComponents::all()[$component]) === 'Planejado') {
             $response
@@ -87,9 +87,19 @@ it('renders a dedicated documentation page for each component', function () {
                 ->assertSee('Componente planejado, ainda não disponível no pacote.')
                 ->assertSee('Planejado');
         } else {
-            $response->assertSee('Preview e implementação');
+            $response->assertSee('Exemplos de uso');
         }
     }
+});
+
+it('documents every component registered by the SampaUI package', function () {
+    $packageComponents = array_keys(ComponentRegistry::all());
+    $documentationComponents = array_keys(DocumentationComponents::all());
+
+    sort($packageComponents);
+    sort($documentationComponents);
+
+    expect($documentationComponents)->toBe($packageComponents);
 });
 
 it('documents the new feedback and surface components', function () {
@@ -150,23 +160,27 @@ it('ships the Alpine controllers required by the documentation shell', function 
         ->toContain("Alpine.data('docsShell'")
         ->toContain("Alpine.data('tableOfContents'")
         ->toContain("Alpine.data('docSearch'")
-        ->toContain("Alpine.data('componentPlayground'");
+        ->not->toContain("Alpine.data('componentPlayground'");
 });
 
-it('renders reusable navigation playground and props patterns', function () {
+it('renders reusable navigation examples and props patterns', function () {
     $this->get(route('documentation.components.show', 'input'))
         ->assertOk()
         ->assertSee('Componentes')
         ->assertSee('Formulários')
         ->assertSee('Input')
         ->assertSee('Nesta página')
-        ->assertSee('Quando usar')
-        ->assertSee('Quando não usar')
-        ->assertSee('Erros comuns')
-        ->assertSee('Playground')
-        ->assertSee('Playground interativo')
-        ->assertSee('Componente real')
-        ->assertSee('componentPlayground', false)
+        ->assertSee('Exemplos')
+        ->assertSee('Boas práticas')
+        ->assertSee('Exemplos de uso')
+        ->assertDontSee('Playground')
+        ->assertDontSee('componentPlayground', false)
+        ->assertDontSee('Cenário')
+        ->assertDontSee('Canvas')
+        ->assertDontSee('Fundo')
+        ->assertSee('Variant')
+        ->assertSee('Placeholder')
+        ->assertSee('Error')
         ->assertSee('Blade')
         ->assertSee('Livewire')
         ->assertSee('Prop')
@@ -180,6 +194,20 @@ it('renders reusable navigation playground and props patterns', function () {
         ->assertSee('Próximo');
 });
 
+it('does not render playground controls on component pages', function () {
+    foreach (array_keys(DocumentationComponents::all()) as $component) {
+        $this->get(route('documentation.components.show', $component))
+            ->assertOk()
+            ->assertSee('Exemplos')
+            ->assertDontSee('Playground')
+            ->assertDontSee('componentPlayground', false)
+            ->assertDontSee('doc-interactive-playground', false)
+            ->assertDontSee('Cenário')
+            ->assertDontSee('Canvas')
+            ->assertDontSee('Fundo');
+    }
+});
+
 it('documents checkbox SampaUI color variants', function () {
     $this->get(route('documentation.components.show', 'checkbox'))
         ->assertOk()
@@ -187,6 +215,18 @@ it('documents checkbox SampaUI color variants', function () {
         ->assertSee('primary|secondary|accent|danger|success|warning|info|purple|muted|light')
         ->assertSee('color=&quot;accent&quot;', false)
         ->assertSee('accent-accent', false);
+});
+
+it('renders the complete sidebar reference with properties active', function () {
+    $this->get(route('documentation.components.show', 'sidebar'))
+        ->assertOk()
+        ->assertSee('h-[62rem]', false)
+        ->assertSee('src')
+        ->assertSee('logo-alt')
+        ->assertSee('Imóveis')
+        ->assertSee('bg-purple/10 text-purple', false)
+        ->assertSee('-right-10 hidden w-10 bg-light', false)
+        ->assertSee('Sair do sistema');
 });
 
 it('documents textarea native usage', function () {
@@ -239,23 +279,23 @@ it('documents input icons badges skeleton and command palette examples', functio
 it('renders real-world examples in the documentation navigation', function () {
     $this->get(route('examples.index'))
         ->assertOk()
-        ->assertSee('Páginas reais para produtos imobiliários')
-        ->assertSee('Exemplos')
+        ->assertSee('Blocks / Templates')
+        ->assertSee('Composições SampaUI')
         ->assertSee('Login completo')
         ->assertSee('Dashboard operacional')
         ->assertSee('CRUD de usuários')
         ->assertSee('Formulário administrativo')
-        ->assertSee('Modal destrutivo')
-        ->assertSee('Drawer de filtros')
-        ->assertSee('Tabela avançada')
-        ->assertSee('Upload e perfil')
-        ->assertSee('Verificação 2FA')
-        ->assertSee('Command palette')
+        ->assertSee('Listagem avançada')
+        ->assertSee('Perfil e arquivos')
         ->assertSee('Configurações em abas')
-        ->assertSee('Estados de feedback')
-        ->assertSee('Chat atendimento')
-        ->assertSee('Bootstrap Icons')
-        ->assertSee('Abrir exemplo');
+        ->assertSee('Central de atendimento')
+        ->assertDontSee(route('examples.destructive-modal'), false)
+        ->assertDontSee(route('examples.filter-drawer'), false)
+        ->assertDontSee(route('examples.verification'), false)
+        ->assertDontSee(route('examples.command-palette'), false)
+        ->assertDontSee(route('examples.feedback'), false)
+        ->assertDontSee(route('examples.icons'), false)
+        ->assertSee('Explorar template');
 });
 
 it('renders the authentication example with SampaUI and Livewire usage', function () {
@@ -273,7 +313,7 @@ it('renders the authentication example with SampaUI and Livewire usage', functio
 it('renders the form profile example with upload contact and password fields', function () {
     $this->get(route('examples.profile'))
         ->assertOk()
-        ->assertSee('Upload e perfil')
+        ->assertSee('Perfil e arquivos')
         ->assertSee('Salvar perfil')
         ->assertSee('Avatar')
         ->assertSee('Documentos do perfil')
@@ -304,12 +344,12 @@ it('renders the new complete example pages', function () {
         'examples.admin-form' => ['Formulário administrativo', 'Cadastro de cliente', 'x-sampaui::select-multiple'],
         'examples.destructive-modal' => ['Modal destrutivo', 'Excluir cliente?', 'x-sampaui::modal'],
         'examples.filter-drawer' => ['Drawer de filtros', 'Listagem comercial', 'x-sampaui::drawer'],
-        'examples.advanced-table' => ['Tabela avançada', 'Clientes', 'x-sampaui::dropdown'],
+        'examples.advanced-table' => ['Listagem avançada', 'Clientes', 'x-sampaui::dropdown'],
         'examples.verification' => ['Verificação 2FA', 'Confirme seu acesso', 'x-sampaui::pin'],
         'examples.command-palette' => ['Command palette', 'Central de comandos', 'x-sampaui::command-palette'],
         'examples.settings' => ['Configurações em abas', 'Configurações da conta', 'x-sampaui::tabs'],
         'examples.feedback' => ['Estados de feedback', 'Ações com toast', 'x-sampaui::toast'],
-        'examples.chat' => ['Chat atendimento', 'Mensagem para Ana', 'x-sampaui::chat-layout'],
+        'examples.chat' => ['Central de atendimento', 'Mensagem para Ana', 'x-sampaui::chat-layout'],
     ];
 
     foreach ($examples as $route => [$heading, $preview, $snippet]) {
@@ -320,6 +360,17 @@ it('renders the new complete example pages', function () {
             ->assertSee('Trecho de uso')
             ->assertSee($snippet, false);
     }
+});
+
+it('renders the advanced table with SampaUI checkboxes filters and numbered pagination', function () {
+    $this->get(route('examples.advanced-table'))
+        ->assertOk()
+        ->assertSee('placeholder="Buscar cliente, email ou valor"', false)
+        ->assertSee('h-5 w-5 cursor-pointer', false)
+        ->assertSee('x-bind:checked="allVisibleSelected()"', false)
+        ->assertSee('x-on:change="toggleRow($el.value, $event.target.checked)"', false)
+        ->assertSee('data-pagination-type="numbers"', false)
+        ->assertSee('aria-current="page"', false);
 });
 
 it('renders chat customer photos and a toggleable context panel', function () {

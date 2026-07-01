@@ -40,23 +40,23 @@ class UsersIndex extends Component
 
     public string $formWhatsapp = '';
 
-    public string $formStatus = 'Ativo';
+    public string $formStatus = '';
 
     public function mount(): void
     {
         $this->users = [
-            ['id' => 1, 'name' => 'Ana Martins', 'email' => 'ana@sampa.dev', 'whatsapp' => '+55 11 99999-1001', 'status' => 'Ativo', 'role' => 'Consultor imobiliário', 'photo' => 'https://i.pravatar.cc/160?img=47'],
-            ['id' => 2, 'name' => 'Bruno Lima', 'email' => 'bruno@sampa.dev', 'whatsapp' => '+55 11 99999-1002', 'status' => 'Pendente', 'role' => 'Consultor imobiliário', 'photo' => 'https://i.pravatar.cc/160?img=12'],
+            ['id' => 1, 'name' => 'Ana Martins', 'email' => 'ana@sampa.dev', 'whatsapp' => '+55 11 99999-1001', 'status' => 'Ativo', 'role' => 'Consultora comercial', 'photo' => 'https://i.pravatar.cc/160?img=47'],
+            ['id' => 2, 'name' => 'Bruno Lima', 'email' => 'bruno@sampa.dev', 'whatsapp' => '+55 11 99999-1002', 'status' => 'Pendente', 'role' => 'Consultor comercial', 'photo' => 'https://i.pravatar.cc/160?img=12'],
             ['id' => 3, 'name' => 'Carla Souza', 'email' => 'carla@sampa.dev', 'whatsapp' => '+55 11 99999-1003', 'status' => 'Inativo', 'role' => 'Coordenadora comercial', 'photo' => 'https://i.pravatar.cc/160?img=32'],
-            ['id' => 4, 'name' => 'Diego Ramos', 'email' => 'diego@sampa.dev', 'whatsapp' => '+55 11 99999-1004', 'status' => 'Ativo', 'role' => 'Consultor imobiliário', 'photo' => 'https://i.pravatar.cc/160?img=68'],
+            ['id' => 4, 'name' => 'Diego Ramos', 'email' => 'diego@sampa.dev', 'whatsapp' => '+55 11 99999-1004', 'status' => 'Ativo', 'role' => 'Consultor comercial', 'photo' => 'https://i.pravatar.cc/160?img=68'],
             ['id' => 5, 'name' => 'Fernanda Costa', 'email' => 'fernanda@sampa.dev', 'whatsapp' => '+55 11 99999-1005', 'status' => 'Pendente', 'role' => 'Atendimento', 'photo' => 'https://i.pravatar.cc/160?img=45'],
             ['id' => 6, 'name' => 'Gabriel Rocha', 'email' => 'gabriel@sampa.dev', 'whatsapp' => '+55 11 99999-1006', 'status' => 'Ativo', 'role' => 'Gerente de contas', 'photo' => 'https://i.pravatar.cc/160?img=59'],
-            ['id' => 7, 'name' => 'Helena Prado', 'email' => 'helena@sampa.dev', 'whatsapp' => '+55 11 99999-1007', 'status' => 'Inativo', 'role' => 'Consultora imobiliária', 'photo' => 'https://i.pravatar.cc/160?img=5'],
+            ['id' => 7, 'name' => 'Helena Prado', 'email' => 'helena@sampa.dev', 'whatsapp' => '+55 11 99999-1007', 'status' => 'Inativo', 'role' => 'Consultora comercial', 'photo' => 'https://i.pravatar.cc/160?img=5'],
             ['id' => 8, 'name' => 'Igor Neves', 'email' => 'igor@sampa.dev', 'whatsapp' => '+55 11 99999-1008', 'status' => 'Ativo', 'role' => 'Pré-vendas', 'photo' => 'https://i.pravatar.cc/160?img=52'],
-            ['id' => 9, 'name' => 'Juliana Alves', 'email' => 'juliana@sampa.dev', 'whatsapp' => '+55 11 99999-1009', 'status' => 'Pendente', 'role' => 'Consultora imobiliária', 'photo' => 'https://i.pravatar.cc/160?img=25'],
-            ['id' => 10, 'name' => 'Lucas Barros', 'email' => 'lucas@sampa.dev', 'whatsapp' => '+55 11 99999-1010', 'status' => 'Ativo', 'role' => 'Consultor imobiliário', 'photo' => 'https://i.pravatar.cc/160?img=60'],
+            ['id' => 9, 'name' => 'Juliana Alves', 'email' => 'juliana@sampa.dev', 'whatsapp' => '+55 11 99999-1009', 'status' => 'Pendente', 'role' => 'Consultora comercial', 'photo' => 'https://i.pravatar.cc/160?img=25'],
+            ['id' => 10, 'name' => 'Lucas Barros', 'email' => 'lucas@sampa.dev', 'whatsapp' => '+55 11 99999-1010', 'status' => 'Ativo', 'role' => 'Consultor comercial', 'photo' => 'https://i.pravatar.cc/160?img=60'],
             ['id' => 11, 'name' => 'Marina Teixeira', 'email' => 'marina@sampa.dev', 'whatsapp' => '+55 11 99999-1011', 'status' => 'Ativo', 'role' => 'Atendimento', 'photo' => 'https://i.pravatar.cc/160?img=41'],
-            ['id' => 12, 'name' => 'Rafael Mendes', 'email' => 'rafael@sampa.dev', 'whatsapp' => '+55 11 99999-1012', 'status' => 'Inativo', 'role' => 'Consultor imobiliário', 'photo' => 'https://i.pravatar.cc/160?img=61'],
+            ['id' => 12, 'name' => 'Rafael Mendes', 'email' => 'rafael@sampa.dev', 'whatsapp' => '+55 11 99999-1012', 'status' => 'Inativo', 'role' => 'Consultor comercial', 'photo' => 'https://i.pravatar.cc/160?img=61'],
         ];
     }
 
@@ -109,7 +109,7 @@ class UsersIndex extends Component
         $this->formName = '';
         $this->formEmail = '';
         $this->formWhatsapp = '';
-        $this->formStatus = 'Ativo';
+        $this->formStatus = '';
         $this->showUserModal = true;
     }
 
@@ -160,7 +160,7 @@ class UsersIndex extends Component
                 'email' => $validated['formEmail'],
                 'whatsapp' => $validated['formWhatsapp'],
                 'status' => $validated['formStatus'],
-                'role' => 'Consultor imobiliário',
+                'role' => 'Consultor comercial',
                 'photo' => 'https://i.pravatar.cc/160?img=65',
             ];
 

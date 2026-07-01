@@ -20,10 +20,10 @@ BLADE;
         ['label' => 'Carla Souza', 'value' => 'carla'],
     ];
     $tags = [
-        ['label' => 'Apartamento', 'value' => 'apartment'],
-        ['label' => 'Casa', 'value' => 'house'],
-        ['label' => 'Alto padrão', 'value' => 'premium'],
-        ['label' => 'Financiamento', 'value' => 'finance'],
+        ['label' => 'Implantação', 'value' => 'implementation'],
+        ['label' => 'Integração', 'value' => 'integration'],
+        ['label' => 'Enterprise', 'value' => 'enterprise'],
+        ['label' => 'Treinamento', 'value' => 'training'],
     ];
 @endphp
 
@@ -65,12 +65,12 @@ BLADE;
 
                 <div class="grid gap-5 lg:grid-cols-2">
                     <x-sampaui::select-search name="owner" label="Responsável" :options="$owners" value="ana" search-placeholder="Buscar consultor" />
-                    <x-sampaui::select-multiple name="interests" label="Interesses" :options="$tags" :value="['apartment', 'finance']" />
+                    <x-sampaui::select-multiple name="interests" label="Interesses" :options="$tags" :value="['implementation', 'training']" />
                 </div>
 
                 <x-sampaui::textarea name="notes" label="Observações" rows="5" placeholder="Detalhe preferências, restrições de agenda e próximos passos." />
 
-                <div class="flex flex-col-reverse gap-3 border-t border-light pt-6 sm:flex-row sm:justify-end">
+                <div class="flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:justify-end">
                     <x-sampaui::button type="button" variant="outline" icon="x-lg">Cancelar</x-sampaui::button>
                     <x-sampaui::button type="submit" icon="check2-circle">Salvar cadastro</x-sampaui::button>
                 </div>

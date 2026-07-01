@@ -1,4 +1,4 @@
-@extends('docs.layout', ['title' => $title ?? 'Chat atendimento · Documentação SampaUI'])
+@extends('docs.layout', ['title' => $title ?? 'Central de atendimento · Documentação SampaUI'])
 
 @php
     $snippet = <<<'BLADE'
@@ -19,9 +19,9 @@
 BLADE;
 
     $conversations = [
-        ['id' => 'ana', 'name' => 'Ana Souza', 'role' => 'Lead comprador', 'preview' => 'Pode me enviar as opções?', 'time' => '09:42', 'status' => 'online', 'unread' => 2, 'tag' => 'Quente', 'photo' => 'https://i.pravatar.cc/160?img=47'],
-        ['id' => 'bruno', 'name' => 'Bruno Lima', 'role' => 'Visita marcada', 'preview' => 'Fechamos a visita para amanhã.', 'time' => '08:17', 'status' => 'away', 'unread' => 0, 'tag' => 'Agenda', 'photo' => 'https://i.pravatar.cc/160?img=12'],
-        ['id' => 'carla', 'name' => 'Carla Martins', 'role' => 'Financiamento', 'preview' => 'Obrigada pelo retorno.', 'time' => 'Ontem', 'status' => 'offline', 'unread' => 0, 'tag' => 'Follow-up', 'photo' => 'https://i.pravatar.cc/160?img=32'],
+        ['id' => 'ana', 'name' => 'Ana Souza', 'role' => 'Conta Enterprise', 'preview' => 'Pode me enviar as opções?', 'time' => '09:42', 'status' => 'online', 'unread' => 2, 'tag' => 'Quente', 'photo' => 'https://i.pravatar.cc/160?img=47'],
+        ['id' => 'bruno', 'name' => 'Bruno Lima', 'role' => 'Onboarding agendado', 'preview' => 'Fechamos a visita para amanhã.', 'time' => '08:17', 'status' => 'away', 'unread' => 0, 'tag' => 'Agenda', 'photo' => 'https://i.pravatar.cc/160?img=12'],
+        ['id' => 'carla', 'name' => 'Carla Martins', 'role' => 'Implantação', 'preview' => 'Obrigada pelo retorno.', 'time' => 'Ontem', 'status' => 'offline', 'unread' => 0, 'tag' => 'Follow-up', 'photo' => 'https://i.pravatar.cc/160?img=32'],
         ['id' => 'diego', 'name' => 'Diego Ramos', 'role' => 'Proposta enviada', 'preview' => 'Vou revisar com minha sócia.', 'time' => 'Seg', 'status' => 'busy', 'unread' => 1, 'tag' => 'Contrato', 'photo' => 'https://i.pravatar.cc/160?img=68'],
     ];
 @endphp
@@ -32,7 +32,7 @@ BLADE;
             <div class="relative z-[1] flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                     <p class="doc-kicker">Exemplo</p>
-                    <h1 class="mt-3 text-3xl font-semibold tracking-tight text-primary md:text-4xl">Chat atendimento</h1>
+                    <h1 class="mt-3 text-3xl font-semibold tracking-tight text-primary md:text-4xl">Central de atendimento</h1>
                     <p class="mt-4 max-w-3xl text-sm leading-6 text-secondary">
                         Experiência de atendimento comercial com inbox, conversa ativa, anexos e painel de contexto usando componentes SampaUI.
                     </p>
@@ -43,14 +43,14 @@ BLADE;
     </section>
 
     <section class="space-y-7">
-        <div class="overflow-x-auto rounded-[1.5rem] border border-light bg-light/70 p-4 shadow-default">
+        <div class="overflow-x-auto rounded-[1.5rem] border border-border bg-light/70 p-4 shadow-default">
             <x-sampaui::chat-layout
                 height="46rem"
                 class="!rounded-[1.25rem] !border-white !shadow-2xl !shadow-primary/10 lg:!grid-cols-[20rem_minmax(0,1fr)] xl:min-w-[72rem] 2xl:min-w-[88rem]"
                 data-chat-example
             >
                 <x-slot:sidebar>
-                    <x-sampaui::chat-sidebar title="Inbox" subtitle="12 atendimentos hoje" search-placeholder="Buscar cliente ou imóvel">
+                    <x-sampaui::chat-sidebar title="Inbox" subtitle="12 atendimentos hoje" search-placeholder="Buscar cliente ou conta">
                         <x-slot:actions>
                             <x-sampaui::button icon="plus" rounded>
                                 <span class="sr-only">Nova conversa</span>
@@ -88,7 +88,7 @@ BLADE;
                                                     <span class="{{ $conversation['id'] === 'ana' ? 'bg-white text-primary' : 'bg-primary text-white' }} inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full px-1.5 text-[0.68rem] font-semibold" data-chat-unread>{{ $conversation['unread'] }}</span>
                                                 @endif
                                             </span>
-                                            <span class="{{ $conversation['id'] === 'ana' ? 'border-white/20 bg-white/10 text-white' : 'border-light bg-light text-secondary' }} mt-3 inline-flex rounded-full border px-2 py-1 text-[0.68rem] font-semibold" data-chat-tag>
+                                            <span class="{{ $conversation['id'] === 'ana' ? 'border-white/20 bg-white/10 text-white' : 'border-border bg-light text-secondary' }} mt-3 inline-flex rounded-full border px-2 py-1 text-[0.68rem] font-semibold" data-chat-tag>
                                                 {{ $conversation['tag'] }}
                                             </span>
                                         </span>
@@ -100,9 +100,9 @@ BLADE;
                 </x-slot:sidebar>
 
                 <div class="doc-chat-context-grid" data-chat-context-grid data-context-open="true">
-                    <div class="min-h-0 min-w-0 border-r border-light bg-white">
+                    <div class="min-h-0 min-w-0 border-r border-border bg-white">
                         <div class="h-full" data-chat-panel="ana">
-                            <x-sampaui::chat-conversation name="Ana Souza" subtitle="Online agora · Lead comprador" avatar="https://i.pravatar.cc/160?img=47" status="online" class="!bg-white">
+                            <x-sampaui::chat-conversation name="Ana Souza" subtitle="Online agora · Conta Enterprise" avatar="https://i.pravatar.cc/160?img=47" status="online" class="!bg-white">
                                 <div class="contents" data-chat-messages>
                                     <x-sampaui::chat-message from="system">Atendimento iniciado pelo site institucional.</x-sampaui::chat-message>
                                     <x-sampaui::chat-message time="09:36">Oi, vi os apartamentos no Jardim Paulista. Quero algo com varanda e duas vagas.</x-sampaui::chat-message>
@@ -115,7 +115,7 @@ BLADE;
                                                     <i class="bi bi-file-earmark-pdf" aria-hidden="true"></i>
                                                 </span>
                                                 <span class="min-w-0 flex-1">
-                                                    <span class="block truncate text-sm font-semibold">simulacao-financiamento.pdf</span>
+                                                    <span class="block truncate text-sm font-semibold">proposta-implantacao.pdf</span>
                                                     <span class="text-xs text-white/70">1.8 MB</span>
                                                 </span>
                                                 <i class="bi bi-download text-white/80" aria-hidden="true"></i>
@@ -152,9 +152,9 @@ BLADE;
                         </div>
 
                         <div class="hidden h-full" data-chat-panel="bruno">
-                            <x-sampaui::chat-conversation name="Bruno Lima" subtitle="Visto por último às 08:17 · Visita marcada" avatar="https://i.pravatar.cc/160?img=12" status="away" class="!bg-white">
+                            <x-sampaui::chat-conversation name="Bruno Lima" subtitle="Visto por último às 08:17 · Onboarding agendado" avatar="https://i.pravatar.cc/160?img=12" status="away" class="!bg-white">
                                 <div class="contents" data-chat-messages>
-                                    <x-sampaui::chat-message time="08:10">Consegue confirmar a visita amanhã?</x-sampaui::chat-message>
+                                    <x-sampaui::chat-message time="08:10">Consegue confirmar o onboarding amanhã?</x-sampaui::chat-message>
                                     <x-sampaui::chat-message from="me" time="08:12" status="Entregue">Sim, deixei reservado às 10h30 e avisei a portaria.</x-sampaui::chat-message>
                                     <x-sampaui::chat-message time="08:17">Perfeito. Vou levar minha esposa.</x-sampaui::chat-message>
                                 </div>
@@ -178,7 +178,7 @@ BLADE;
                         </div>
 
                         <div class="hidden h-full" data-chat-panel="carla">
-                            <x-sampaui::chat-conversation name="Carla Martins" subtitle="Offline · Financiamento" avatar="https://i.pravatar.cc/160?img=32" status="offline" class="!bg-white">
+                            <x-sampaui::chat-conversation name="Carla Martins" subtitle="Offline · Implantação" avatar="https://i.pravatar.cc/160?img=32" status="offline" class="!bg-white">
                                 <div class="contents" data-chat-messages>
                                     <x-sampaui::chat-message from="system">Conversa marcada como oportunidade fria.</x-sampaui::chat-message>
                                     <x-sampaui::chat-message from="me" time="17:22" status="Lida">Enviei a simulação atualizada por aqui.</x-sampaui::chat-message>
@@ -222,7 +222,7 @@ BLADE;
                     </div>
 
                     <aside class="doc-chat-context-panel" data-chat-context-panel>
-                        <div class="border-b border-light p-5 text-center">
+                        <div class="border-b border-border p-5 text-center">
                             <div class="mb-4 flex justify-end">
                                 <x-sampaui::button type="button" size="sm" variant="ghost" icon="x-lg" rounded data-chat-context-toggle>
                                     <span class="sr-only">Fechar dados do cliente</span>
@@ -232,7 +232,7 @@ BLADE;
                                 <x-sampaui::avatar src="https://i.pravatar.cc/160?img=47" name="Ana Souza" status="online" size="2xl" data-chat-detail-avatar />
                             </div>
                             <h3 class="mt-3 text-base font-semibold text-primary" data-chat-detail-name>Ana Souza</h3>
-                            <p class="mt-1 text-xs font-medium text-secondary/70" data-chat-detail-role>Lead comprador</p>
+                            <p class="mt-1 text-xs font-medium text-secondary/70" data-chat-detail-role>Conta Enterprise</p>
                             <div class="mt-4 flex justify-center gap-2">
                                 <x-sampaui::button variant="outline" icon="telephone" rounded><span class="sr-only">Ligar</span></x-sampaui::button>
                                 <x-sampaui::button variant="outline" icon="camera-video" rounded><span class="sr-only">Vídeo</span></x-sampaui::button>
@@ -256,7 +256,7 @@ BLADE;
                                     <h4 class="text-sm font-semibold text-primary">Arquivos recentes</h4>
                                     <div class="mt-3 grid grid-cols-3 gap-2">
                                         @foreach (['PDF', 'IMG', 'DOC', 'KEY', 'XLS', 'URL'] as $asset)
-                                            <span class="flex aspect-square items-center justify-center rounded-default border border-light bg-light text-xs font-semibold text-primary">{{ $asset }}</span>
+                                            <span class="flex aspect-square items-center justify-center rounded-default border border-border bg-light text-xs font-semibold text-primary">{{ $asset }}</span>
                                         @endforeach
                                     </div>
                                 </section>
@@ -264,8 +264,8 @@ BLADE;
                                 <section>
                                     <h4 class="text-sm font-semibold text-primary">Próximas ações</h4>
                                     <div class="mt-3 space-y-2">
-                                        @foreach (['Enviar link do imóvel', 'Agendar visita assistida', 'Atualizar proposta no CRM'] as $task)
-                                            <label class="flex items-start gap-3 rounded-default border border-light bg-white p-3 text-sm text-secondary">
+                                        @foreach (['Enviar material comercial', 'Agendar demonstração assistida', 'Atualizar proposta no CRM'] as $task)
+                                            <label class="flex items-start gap-3 rounded-default border border-border bg-white p-3 text-sm text-secondary">
                                                 <input type="checkbox" class="mt-1 rounded border-secondary/40 text-primary focus:ring-primary/20">
                                                 <span>{{ $task }}</span>
                                             </label>
@@ -293,9 +293,9 @@ BLADE;
                 const activeButtonClasses = ['border-primary/20', 'bg-primary', 'text-white', 'shadow-default'];
                 const inactiveButtonClasses = ['border-transparent', 'bg-white', 'hover:border-primary/20', 'hover:bg-light/70'];
                 const summaries = {
-                    ana: 'Busca apartamento com varanda, duas vagas e lazer completo. Orçamento aprovado para entrada reduzida.',
-                    bruno: 'Visita confirmada para amanhã às 10h30. Cliente quer avaliar a iluminação natural do imóvel.',
-                    carla: 'Cliente em análise de financiamento. Aguardando retorno sobre simulação enviada.',
+                    ana: 'Busca plano com onboarding guiado, suporte prioritário e relatórios executivos. Orçamento aprovado.',
+                    bruno: 'Demonstração confirmada para amanhã às 10h30. Cliente quer avaliar fluxos de atendimento.',
+                    carla: 'Cliente em análise de implantação. Aguardando retorno sobre proposta enviada.',
                     diego: 'Proposta enviada para revisão com sócia. Validade até amanhã às 18h.',
                 };
 
@@ -322,7 +322,7 @@ BLADE;
                         node.classList.toggle('border-white/20', active);
                         node.classList.toggle('bg-white/10', active);
                         node.classList.toggle('text-white', active);
-                        node.classList.toggle('border-light', ! active);
+                        node.classList.toggle('border-border', ! active);
                         node.classList.toggle('bg-light', ! active);
                         node.classList.toggle('text-secondary', ! active);
                     });
