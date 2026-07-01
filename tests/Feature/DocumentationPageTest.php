@@ -224,8 +224,11 @@ it('renders the complete sidebar reference with properties active', function () 
         ->assertSee('src')
         ->assertSee('logo-alt')
         ->assertSee('Imóveis')
-        ->assertSee('bg-purple/10 text-purple', false)
-        ->assertSee('-right-10 hidden w-10 bg-light', false)
+        ->assertSee('gap-3.5 rounded-default !bg-transparent', false)
+        ->assertSee('bg-light text-purple', false)
+        ->assertDontSee('-right-10 hidden w-10 bg-light', false)
+        ->assertSee('border border-danger bg-transparent', false)
+        ->assertSee('text-danger shadow-none', false)
         ->assertSee('Sair do sistema');
 });
 

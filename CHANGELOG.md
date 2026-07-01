@@ -2,6 +2,14 @@
 
 Todas as alterações relevantes da documentação SampaUI são registradas neste arquivo.
 
+## [0.1.21] - 2026-07-01
+
+### Melhorado
+
+- Preview e API da Sidebar atualizados sem faixa externa.
+- Estados hover e ativo usam somente o círculo do ícone, com gap reduzido em 30%.
+- Link de saída documentado como outline danger sem sombra.
+
 ## [0.1.19] - 2026-06-28
 
 ### Adicionado
