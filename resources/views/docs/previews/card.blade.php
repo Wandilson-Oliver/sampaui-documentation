@@ -2,6 +2,7 @@
     title="Publicacao"
     description="Status do componente no pacote"
     variant="primary"
+    overflow="visible"
 >
     <x-slot:actions>
         <x-sampaui::button size="sm" variant="outline" icon="box-arrow-up-right" icon-position="right">
@@ -10,6 +11,12 @@
     </x-slot:actions>
 
     <div class="space-y-3 text-sm text-secondary">
+        <x-sampaui::select
+            label="Canal de publicacao"
+            placeholder="Selecione"
+            :options="['stable' => 'Estavel', 'preview' => 'Preview']"
+        />
+
         <div class="flex items-center justify-between gap-4">
             <span>Build CSS</span>
             <strong class="text-primary">Pronto</strong>

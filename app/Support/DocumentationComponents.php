@@ -145,13 +145,13 @@ BLADE,
                 'name' => 'Input',
                 'tag' => '<x-sampaui::input />',
                 'summary' => 'Campo textual com label opcional, mensagem de erro, estados desabilitados e passthrough total de atributos HTML/Livewire.',
-                'description' => 'Indicado para formularios operacionais, autenticacao e filtros. A borda padrao usa `border-secondary/20`, e `wire:model` inicializa o campo sem exigir a prop `value`.',
+                'description' => 'Indicado para formularios operacionais, autenticacao e filtros. A borda padrao usa `border-secondary/20`; `wire:model` inicializa o campo e identifica automaticamente a chave do ErrorBag sem exigir `name`.',
                 'preview_title' => 'Formulario de contato',
                 'preview_caption' => 'Exemplos de input simples, erro validado e binding Livewire.',
                 'props' => [
                     ['name' => 'type', 'type' => 'string', 'default' => 'text', 'notes' => 'Aceita qualquer tipo suportado por `<input>`.'],
                     ['name' => 'label', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Renderiza `<label>` associado ao campo.'],
-                    ['name' => 'name', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Usado para `name`, `id` fallback e leitura do ErrorBag.'],
+                    ['name' => 'name', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Usado para o atributo `name`; id e ErrorBag tambem podem ser derivados de `wire:model`.'],
                     ['name' => 'value', 'type' => 'mixed', 'default' => 'null', 'notes' => 'Valor inicial opcional para uso sem Livewire.'],
                     ['name' => 'placeholder', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Texto auxiliar dentro do campo.'],
                     ['name' => 'error', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Sobrescreve a mensagem automatica do ErrorBag.'],
@@ -223,13 +223,14 @@ BLADE,
 BLADE,
                     ],
                     [
-                        'title' => 'Erro customizado',
-                        'description' => 'Forca a mensagem de erro sem depender do validator.',
+                        'title' => 'Validacao Livewire',
+                        'description' => 'Depois de `$this->validate()`, a mensagem do ErrorBag aparece sem prop `error` manual.',
                         'code' => <<<'BLADE'
 <x-sampaui::input
-    name="cpf"
-    label="CPF"
-    error="Documento invalido para este cadastro."
+    type="email"
+    label="Email"
+    wire:model.blur="email"
+    required
 />
 BLADE,
                     ],
@@ -325,12 +326,12 @@ BLADE,
                 'name' => 'Select',
                 'tag' => '<x-sampaui::select />',
                 'summary' => 'Select com combobox Alpine, dropdown customizado, placeholder, erro e sombra forte na listagem.',
-                'description' => 'Bom para formularios administrativos e filtros curtos. O componente aceita `options` ou `option`s no slot, preserva `wire:model` no `<select>` real oculto e sincroniza o trigger Alpine pelos eventos nativos.',
+                'description' => 'Bom para formularios administrativos e filtros curtos. O componente aceita `options` ou `option`s no slot e usa `x-modelable` para manter o valor do Livewire, o `<select>` real oculto e o label visivel sincronizados.',
                 'preview_title' => 'Filtro operacional',
                 'preview_caption' => 'Placeholder inicial, opcoes reais e estado com erro.',
                 'props' => [
                     ['name' => 'label', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Renderiza `<label>` associado.'],
-                    ['name' => 'name', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Usado como `name`, `id` fallback e chave de erro.'],
+                    ['name' => 'name', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Usado como atributo `name`; id e erro tambem podem ser derivados de `wire:model`.'],
                     ['name' => 'value', 'type' => 'string|int|null', 'default' => 'null', 'notes' => 'Valor inicial selecionado.'],
                     ['name' => 'options', 'type' => 'array', 'default' => '[]', 'notes' => 'Aceita `valor => label` ou arrays com `value`, `label` e `disabled`.'],
                     ['name' => 'placeholder', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Texto exibido antes de selecionar uma opcao.'],
@@ -380,12 +381,12 @@ BLADE,
                     ],
                     [
                         'title' => 'Livewire',
-                        'description' => 'Binding em filtros de dashboard.',
+                        'description' => 'Binding bidirecional; mudancas feitas pelo servidor atualizam valor e label.',
                         'code' => <<<'BLADE'
 <x-sampaui::select
-    name="city"
     label="Cidade"
     wire:model.live="city"
+    required
     :options="[
         'sp' => 'Sao Paulo',
         'campinas' => 'Campinas',
@@ -619,7 +620,7 @@ BLADE,
                 'name' => 'Checkbox',
                 'tag' => '<x-sampaui::checkbox />',
                 'summary' => 'Controle booleano com label opcional, suporte a slot e integracao direta com validacao.',
-                'description' => 'Use em consentimentos, flags operacionais e configuracoes binarias. O componente usa `border-secondary/40` e cuida de alinhamento, estados desabilitados e vinculo do label.',
+                'description' => 'Use em consentimentos, flags operacionais e configuracoes binarias. O componente usa `border-secondary/40`; em grupos, combina model/nome e valor para manter ids e labels unicos.',
                 'preview_title' => 'Preferencias e opt-in',
                 'preview_caption' => 'Checkbox com label, slot customizado e estado de erro.',
                 'props' => [
@@ -657,6 +658,14 @@ BLADE,
 <x-sampaui::checkbox name="terms">
     Concordo com os <a href="/termos" class="underline">termos de uso</a>.
 </x-sampaui::checkbox>
+BLADE,
+                    ],
+                    [
+                        'title' => 'Grupo Livewire',
+                        'description' => 'Valores diferentes recebem ids unicos mesmo compartilhando o mesmo model.',
+                        'code' => <<<'BLADE'
+<x-sampaui::checkbox label="Administrador" value="admin" wire:model="roles" />
+<x-sampaui::checkbox label="Editor" value="editor" wire:model="roles" />
 BLADE,
                     ],
                     [
@@ -876,7 +885,7 @@ BLADE,
                 'name' => 'Card',
                 'tag' => '<x-sampaui::card />',
                 'summary' => 'Container com header, descricao, actions, footer e variantes discretas para superficies de conteudo.',
-                'description' => 'Use para agrupar dados operacionais, formularios curtos e blocos de resumo sem recriar sombra e espacamento. Quando existe header, o conteudo inicia 15px abaixo dele.',
+                'description' => 'Use para agrupar dados operacionais, formularios curtos e blocos de resumo sem recriar sombra e espacamento. Quando existe header, o conteudo inicia 15px abaixo dele; dropdowns absolutos podem escapar com `overflow="visible"`.',
                 'preview_title' => 'Resumo operacional',
                 'preview_caption' => 'Card com header, conteudo, actions e footer.',
                 'props' => [
@@ -885,6 +894,7 @@ BLADE,
                     ['name' => 'variant', 'type' => 'default|muted|primary|secondary|accent|danger|success|warning|info|purple', 'default' => 'default', 'notes' => 'Define a superficie e a cor de borda com tokens oficiais.'],
                     ['name' => 'padding', 'type' => 'sm|md|lg', 'default' => 'md', 'notes' => 'Controla espacamento interno do header, body e footer.'],
                     ['name' => 'divided', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe divisor entre header e body quando ativado.'],
+                    ['name' => 'overflow', 'type' => 'hidden|visible|auto', 'default' => 'hidden', 'notes' => 'Use `visible` para dropdowns e popovers absolutos; `auto` cria rolagem interna.'],
                     ['name' => '$slot', 'type' => 'Blade slot', 'default' => '-', 'notes' => 'Conteudo principal.'],
                     ['name' => '$header/$actions/$footer', 'type' => 'Named slots', 'default' => '-', 'notes' => 'Substituem ou complementam as regioes do card.'],
                 ],
@@ -914,6 +924,18 @@ BLADE,
     </x-slot:actions>
 
     Proposta em analise juridica.
+</x-sampaui::card>
+BLADE,
+                    ],
+                    [
+                        'title' => 'Dropdown visivel',
+                        'description' => 'Permite que menus absolutos ultrapassem os limites do card.',
+                        'code' => <<<'BLADE'
+<x-sampaui::card title="Filtros" overflow="visible">
+    <x-sampaui::select
+        label="Status"
+        :options="['active' => 'Ativo', 'inactive' => 'Inativo']"
+    />
 </x-sampaui::card>
 BLADE,
                     ],
@@ -1003,7 +1025,7 @@ BLADE,
                 'name' => 'Header',
                 'tag' => '<x-sampaui::header />',
                 'summary' => 'Cabecalho de pagina com titulo, subtitulo, status, acoes e botao mobile para navegacao.',
-                'description' => 'Use no topo de dashboards e telas internas. O componente organiza contexto da pagina e comandos principais sem depender de layout especifico do app consumidor.',
+                'description' => 'Use no topo de dashboards e telas internas. O componente organiza contexto e comandos principais; em desktop, a area de acoes usa largura automatica estrutural para nunca reduzir o titulo a zero.',
                 'preview_title' => 'Cabecalho operacional',
                 'preview_caption' => 'Titulo, status e acoes alinhados em uma unica superficie.',
                 'props' => [
@@ -1072,18 +1094,14 @@ BLADE,
                 'slug' => 'sidebar',
                 'name' => 'Sidebar',
                 'tag' => '<x-sampaui::sidebar />',
-                'summary' => 'Navegacao lateral responsiva com marca, usuario, secoes, links ativos e suporte a `wire:navigate`.',
-                'description' => 'Use em areas autenticadas e dashboards. O componente nao chama rotas nem `auth()` internamente: links, usuario e estado ativo entram por arrays do app consumidor.',
+                'summary' => 'Navegacao lateral responsiva de 18rem com logo do cliente, usuario, secoes, links ativos e suporte a `wire:navigate`.',
+                'description' => 'Use em areas autenticadas e dashboards. O componente nao chama rotas nem `auth()` internamente: a marca entra somente por `logo-src`, e links, usuario e estado ativo entram por arrays do app consumidor.',
                 'preview_title' => 'Navegacao interna',
                 'preview_caption' => 'Menu lateral com secoes e item ativo.',
                 'props' => [
-                    ['name' => 'brand', 'type' => 'string', 'default' => 'SampaUI', 'notes' => 'Nome exibido no topo.'],
+                    ['name' => 'logoSrc', 'type' => 'string|null', 'default' => 'null', 'notes' => 'URL da logo do cliente. Em Blade, use `logo-src`.'],
+                    ['name' => 'logoAlt', 'type' => 'string|null', 'default' => 'Logo', 'notes' => 'Texto alternativo da logo.'],
                     ['name' => 'brandHref', 'type' => 'string', 'default' => '#', 'notes' => 'Destino do link da marca.'],
-                    ['name' => 'brandIcon', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Nome Bootstrap Icon sem `bi-`, exibido sobre a marca abstrata.'],
-                    ['name' => 'src', 'type' => 'string|null', 'default' => 'null', 'notes' => 'URL da imagem que substitui o simbolo oficial no topo.'],
-                    ['name' => 'logo', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Alias legado de `src`, mantido para compatibilidade.'],
-                    ['name' => 'logoAlt', 'type' => 'string|null', 'default' => 'brand', 'notes' => 'Texto alternativo da imagem informada em `src` ou `logo`.'],
-                    ['name' => '$logo', 'type' => 'Named slot', 'default' => '-', 'notes' => 'Substitui `logo` por qualquer markup customizado, como SVG inline ou `<picture>`.'],
                     ['name' => 'items', 'type' => 'array', 'default' => '[]', 'notes' => 'Links principais do menu.'],
                     ['name' => 'sections', 'type' => 'array', 'default' => '[]', 'notes' => 'Grupos adicionais com `label` e `items`.'],
                     ['name' => 'user', 'type' => 'array|null', 'default' => 'null', 'notes' => 'Dados opcionais: `name`, `email`, `avatar`.'],
@@ -1103,7 +1121,7 @@ BLADE,
                 'attributes' => ['class', 'id', 'wire:key', 'x-on:*', 'aria-*', 'data-*'],
                 'accessibility' => [
                     'O componente usa `aria-label` em aside/nav e `aria-current="page"` no item ativo.',
-                    'Quando usar `src` ou `logo`, informe `logo-alt`. Quando usar o slot `logo`, inclua `alt` em imagens ou `aria-hidden="true"` em marcas puramente decorativas.',
+                    'Quando usar `logo-src`, informe `logo-alt` com o nome da marca.',
                     'Mantenha labels textuais mesmo quando iniciar com `initial-state="closed"`; o estado recolhido esconde apenas visualmente no desktop.',
                     'Em layouts com sidebar fixa, escute `sampaui:sidebar-state` e aplique a largura emitida no container de conteudo.',
                     'Evite usar `#` em links reais; envie URLs validas do app consumidor.',
@@ -1114,11 +1132,10 @@ BLADE,
                         'description' => 'Marca, usuario e links principais.',
                         'code' => <<<'BLADE'
 <x-sampaui::sidebar
-    brand="SampaUI"
+    logo-src="/images/logo-liacor.svg"
+    logo-alt="LIACOR"
     initial-state="open"
     brand-href="/dashboard"
-    src="/images/logo-liacor.svg"
-    logo-alt="SampaUI"
     :user="[
         'name' => 'Administrador Lia',
         'email' => 'admin@sampa.dev',
@@ -1138,7 +1155,7 @@ BLADE,
                         'description' => 'Agrupe links por contexto operacional.',
                         'code' => <<<'BLADE'
 <x-sampaui::sidebar
-    brand="Operacao"
+    logo-src="/images/logo-operacao.svg"
     initial-state="closed"
     :items="[
         ['label' => 'Dashboard', 'href' => '/dashboard', 'icon' => 'grid', 'active' => true],
@@ -1157,9 +1174,8 @@ BLADE,
                         'description' => 'Use props simples para logo da marca e avatar do usuario.',
                         'code' => <<<'BLADE'
 <x-sampaui::sidebar
-    brand="SampaUI"
-    src="/images/logo-liacor.svg"
-    logo-alt="SampaUI"
+    logo-src="/images/logo-liacor.svg"
+    logo-alt="LIACOR"
     avatar="/images/admin.jpg"
     avatar-alt="Administrador Lia"
     :user="['name' => 'Administrador Lia', 'email' => 'admin@sampa.dev']"
@@ -1168,28 +1184,6 @@ BLADE,
         ['label' => 'Clientes', 'href' => '/clients', 'icon' => 'people'],
     ]"
 />
-BLADE,
-                    ],
-                    [
-                        'title' => 'Logo via slot',
-                        'description' => 'Use o slot quando precisar de SVG inline, `<picture>` ou markup da marca.',
-                        'code' => <<<'BLADE'
-<x-sampaui::sidebar
-    brand="SampaUI"
-    brand-href="/dashboard"
-    initial-state="open"
-    :items="[
-        ['label' => 'Dashboard', 'href' => '/dashboard', 'icon' => 'grid', 'active' => true],
-    ]"
->
-    <x-slot:logo>
-        <img
-            src="/images/logo-liacor.svg"
-            alt="SampaUI"
-            class="h-11 w-16 shrink-0 object-contain"
-        >
-    </x-slot:logo>
-</x-sampaui::sidebar>
 BLADE,
                     ],
                     [
@@ -1602,6 +1596,7 @@ BLADE,
             'card' => [
                 'Use para agrupar conteudo relacionado, formularios curtos ou resumos operacionais.',
                 'Use slots `header`, `actions` e `footer` para compor estrutura sem recriar bordas.',
+                'Use `overflow="visible"` quando dropdowns ou popovers precisarem escapar dos limites do card.',
                 'Evite aninhar muitos cards; prefira secoes quando o conteudo for uma pagina inteira.',
             ],
             'modal' => [
@@ -1612,11 +1607,12 @@ BLADE,
             'header' => [
                 'Use no topo de paginas internas para titulo, subtitulo, status e acoes principais.',
                 'Mantenha uma acao primaria clara no slot `actions` quando a tela tiver fluxo de criacao.',
+                'A largura estrutural das acoes preserva o titulo em desktop mesmo com CSS compilado em outra ordem.',
                 'Use `menuEvent` para integrar com sidebar ou drawer em layouts responsivos.',
             ],
             'sidebar' => [
                 'Use para navegacao principal persistente em dashboards e sistemas internos.',
-                'Use o slot `logo` quando a aplicacao tiver marca propria em SVG ou imagem.',
+                'Informe a marca do cliente somente por `logo-src` e descreva-a com `logo-alt`.',
                 'Passe `sections` quando houver muitos links; use `items` para menus simples.',
                 'Use `initial-state` para iniciar aberto ou fechado sem depender de JavaScript externo.',
             ],
@@ -2292,6 +2288,27 @@ BLADE,
 
         $components['card']['showcases'] = [
             [
+                'title' => 'Dropdown fora dos limites',
+                'description' => 'Use `overflow="visible"` para menus absolutos nao serem cortados pelo card.',
+                'preview' => <<<'BLADE'
+<x-sampaui::card title="Filtros" overflow="visible">
+    <x-sampaui::select
+        label="Status"
+        placeholder="Selecione"
+        :options="['active' => 'Ativo', 'inactive' => 'Inativo']"
+    />
+</x-sampaui::card>
+BLADE,
+                'code' => <<<'BLADE'
+<x-sampaui::card title="Filtros" overflow="visible">
+    <x-sampaui::select
+        label="Status"
+        :options="['active' => 'Ativo', 'inactive' => 'Inativo']"
+    />
+</x-sampaui::card>
+BLADE,
+            ],
+            [
                 'title' => 'Variantes',
                 'description' => 'Superficies discretas para diferentes contextos.',
                 'code' => <<<'BLADE'
@@ -2609,7 +2626,8 @@ BLADE,
 <div class="doc-sidebar-preview h-[62rem] overflow-visible bg-white">
     <x-sampaui::sidebar
         position="static"
-        brand="SampaUI"
+        logo-src="/images/logo_sampaui.png"
+        logo-alt="Sampa UI"
         brand-href="#"
         :user="[
             'name' => 'Administrador Lia',
@@ -2637,11 +2655,10 @@ BLADE,
 BLADE,
                 'code' => <<<'BLADE'
 <x-sampaui::sidebar
-    brand="SampaUI"
+    logo-src="/images/minha-logo.png"
+    logo-alt="Minha marca"
     initial-state="open"
     brand-href="/dashboard"
-    src="/images/minha-logo.png"
-    logo-alt="Minha marca"
     :user="[
         'name' => 'Administrador Lia',
         'email' => 'admin@sampa.dev',
@@ -2674,7 +2691,8 @@ BLADE,
     <x-sampaui::sidebar
         position="static"
         initial-state="closed"
-        brand="SampaUI"
+        logo-src="/images/logo_sampaui.png"
+        logo-alt="Sampa UI"
         :user="[
             'name' => 'Administrador Lia',
             'email' => 'admin@sampa.dev',
@@ -2701,7 +2719,8 @@ BLADE,
 BLADE,
                 'code' => <<<'BLADE'
 <x-sampaui::sidebar
-    brand="SampaUI"
+    logo-src="/images/minha-logo.png"
+    logo-alt="Minha marca"
     initial-state="closed"
     :user="[
         'name' => 'Administrador Lia',
@@ -2734,7 +2753,8 @@ BLADE,
 <div class="doc-sidebar-preview h-[40rem] overflow-visible bg-white">
     <x-sampaui::sidebar
         position="static"
-        brand="Operacao"
+        logo-src="/images/logo_sampaui.png"
+        logo-alt="Operacao"
         :items="[
             ['label' => 'Dashboard', 'href' => '#', 'icon' => 'grid'],
         ]"
@@ -2749,7 +2769,8 @@ BLADE,
 BLADE,
                 'code' => <<<'BLADE'
 <x-sampaui::sidebar
-    brand="Operacao"
+    logo-src="/images/logo-operacao.svg"
+    logo-alt="Operacao"
     initial-state="open"
     :items="[
         ['label' => 'Dashboard', 'href' => '/dashboard', 'icon' => 'grid', 'active' => true],
@@ -2781,39 +2802,29 @@ BLADE,
             ],
             [
                 'title' => 'Logo customizado',
-                'description' => 'Use o slot `logo` para inserir a marca real do produto.',
+                'description' => 'Use somente `logo-src` para inserir a marca real do produto.',
                 'preview' => <<<'BLADE'
 <div class="doc-sidebar-preview h-[32rem] overflow-visible bg-white">
     <x-sampaui::sidebar
         position="static"
-        brand="SampaUI"
+        logo-src="/images/logo_sampaui.png"
+        logo-alt="Sampa UI"
         :items="[
             ['label' => 'Dashboard', 'href' => '#', 'icon' => 'grid'],
             ['label' => 'Clientes', 'href' => '#', 'icon' => 'people'],
         ]"
-    >
-        <x-slot:logo>
-            <img src="/images/icon_favicon_sampaui.png" alt="SampaUI" class="h-11 w-16 shrink-0 object-contain">
-        </x-slot:logo>
-    </x-sampaui::sidebar>
+    />
 </div>
 BLADE,
                 'code' => <<<'BLADE'
 <x-sampaui::sidebar
-    brand="SampaUI"
+    logo-src="/images/logo-liacor.svg"
+    logo-alt="LIACOR"
     brand-href="/dashboard"
     :items="[
         ['label' => 'Dashboard', 'href' => '/dashboard', 'icon' => 'grid', 'active' => true],
     ]"
->
-    <x-slot:logo>
-        <img
-            src="/images/logo-liacor.svg"
-            alt="SampaUI"
-            class="h-11 w-16 shrink-0 object-contain"
-        >
-    </x-slot:logo>
-</x-sampaui::sidebar>
+/>
 BLADE,
             ],
         ];

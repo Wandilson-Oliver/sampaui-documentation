@@ -40,7 +40,7 @@ class UsersIndex extends Component
 
     public string $formWhatsapp = '';
 
-    public string $formStatus = 'Ativo';
+    public string $formStatus = '';
 
     public function mount(): void
     {
@@ -109,7 +109,7 @@ class UsersIndex extends Component
         $this->formName = '';
         $this->formEmail = '';
         $this->formWhatsapp = '';
-        $this->formStatus = 'Ativo';
+        $this->formStatus = '';
         $this->showUserModal = true;
     }
 

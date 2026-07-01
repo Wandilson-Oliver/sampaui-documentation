@@ -3,7 +3,7 @@
 @php
     $snippet = <<<'BLADE'
 <div class="flex min-h-screen bg-light">
-    <x-sampaui::sidebar :items="$menu" :user="$user" brand="Sampa CRM" />
+    <x-sampaui::sidebar logo-src="/images/logo.svg" :items="$menu" :user="$user" />
 
     <main class="min-w-0 flex-1">
         <x-sampaui::header title="Dashboard" subtitle="Resumo comercial em tempo real">
@@ -54,10 +54,11 @@ BLADE;
 
     <section class="space-y-7">
         <div class="overflow-x-auto rounded-[1.35rem] border border-border bg-light/60 p-4 shadow-default">
-            <div class="grid min-h-[42rem] min-w-[82rem] overflow-hidden rounded-[1.15rem] border border-border bg-white shadow-sm" style="grid-template-columns: 20rem minmax(0, 1fr);">
+            <div class="grid min-h-[42rem] min-w-[82rem] overflow-hidden rounded-[1.15rem] border border-border bg-white shadow-sm" style="grid-template-columns: 18rem minmax(0, 1fr);">
                 <x-sampaui::sidebar
                     position="static"
-                    brand="Sampa CRM"
+                    logo-src="{{ asset('images/logo_sampaui.png') }}"
+                    logo-alt="Sampa UI"
                     :collapsible="false"
                     :items="$menu"
                     :user="['name' => 'Sampa Admin', 'email' => 'admin@sampa.dev']"
