@@ -74,7 +74,7 @@ class DocumentationComponents
                 'name' => 'Button',
                 'tag' => '<x-sampaui::button />',
                 'summary' => 'Acoes primarias, icones, estados de loading e largura total em um unico componente Blade.',
-                'description' => 'Use para CTAs, acoes de formulario, navegacao e controles de fluxo. Quando recebe `href`, o componente renderiza um link com o mesmo visual do botao.',
+                'description' => 'Use para CTAs, acoes de formulario, navegacao e controles de fluxo. Quando recebe `href`, o componente renderiza um link com o mesmo visual do botao; `class` substitui utilitarios visuais conflitantes sem exigir `!important`.',
                 'preview_title' => 'Fluxo de aprovacao',
                 'preview_caption' => 'Estados primario, outline, loading e icon-only no mesmo padrao visual.',
                 'props' => [
@@ -121,6 +121,15 @@ BLADE,
                         'code' => <<<'BLADE'
 <x-sampaui::button href="/clientes" wire:navigate icon="arrow-right">
     Ver clientes
+</x-sampaui::button>
+BLADE,
+                    ],
+                    [
+                        'title' => 'Customizacao por classe',
+                        'description' => 'Substitua cores, espacamento, raio, largura e sombra sem `!important`.',
+                        'code' => <<<'BLADE'
+<x-sampaui::button class="bg-danger text-white px-8 py-4 rounded-full shadow-none">
+    Excluir cliente
 </x-sampaui::button>
 BLADE,
                     ],
@@ -764,7 +773,7 @@ BLADE,
                 'name' => 'DatePicker',
                 'tag' => '<x-sampaui::date-picker />',
                 'summary' => 'Calendario de data apenas, sem hora, com label, min/max, erro, limpeza opcional e atributos Livewire.',
-                'description' => 'Use para datas simples em formularios administrativos. O trigger usa `border-secondary/40`; Alpine com `x-modelable` salva somente `YYYY-MM-DD` e recebe o estado de `wire:model` sem exigir a prop `value`.',
+                'description' => 'Use para datas simples em formularios administrativos. O trigger usa texto neutro `text-slate-600`, com icone e valor na mesma cor; Alpine com `x-modelable` salva somente `YYYY-MM-DD` e recebe o estado de `wire:model` sem exigir a prop `value`.',
                 'preview_title' => 'Agendamento',
                 'preview_caption' => 'Calendario de data com min/max, erro e binding Livewire.',
                 'props' => [
@@ -777,7 +786,7 @@ BLADE,
                     ['name' => 'error', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Mensagem manual ou vinda do ErrorBag.'],
                     ['name' => 'disabled', 'type' => 'bool', 'default' => 'false', 'notes' => 'Bloqueia o campo e reduz contraste.'],
                     ['name' => 'required', 'type' => 'bool', 'default' => 'false', 'notes' => 'Marca o input real como obrigatorio para formularios e validacao.'],
-                    ['name' => 'clearable', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe acao para limpar a data selecionada.'],
+                    ['name' => 'clearable', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe acao para limpar a data selecionada. `class` personaliza o trigger, inclusive cor, fundo, espacamento, largura, raio e sombra.'],
                 ],
                 'attributes' => ['class', 'id', 'wire:model.live', 'x-model', 'aria-*', 'data-*'],
                 'accessibility' => [
@@ -819,6 +828,17 @@ BLADE,
     label="Agendamento"
     error="Escolha uma data valida."
     wire:model.live="scheduledAt"
+/>
+BLADE,
+                    ],
+                    [
+                        'title' => 'Cor customizada',
+                        'description' => 'O texto padrao e `slate-600`; substitua a cor do trigger com `class` quando necessario.',
+                        'code' => <<<'BLADE'
+<x-sampaui::date-picker
+    name="reviewed_at"
+    label="Data de revisao"
+    class="bg-slate-50 text-emerald-600 shadow-none"
 />
 BLADE,
                     ],
@@ -1538,7 +1558,7 @@ BLADE,
     {
         $guidance = [
             'button' => [
-                'Use `variant` para semantica visual e deixe `class` para ajustes pontuais de largura, margem ou alinhamento.',
+                'Use `variant` para semantica visual ou `class` para substituir cores, hover, espacamento, largura, raio, sombra e tipografia.',
                 'Prefira `type="button"` fora de formularios e `type="submit"` somente quando a acao realmente envia dados.',
                 'Use `href` com `wire:navigate` para navegacao e combine `loading` com `wire:loading.attr="disabled"` em acoes.',
             ],
@@ -1586,6 +1606,7 @@ BLADE,
                 'Use para data pura em formato `YYYY-MM-DD`, sem hora e sem timezone.',
                 'Configure `min` e `max` para limitar escolhas e reduzir validacoes frustrantes.',
                 'Com Livewire, use somente `wire:model`; `x-modelable` sincroniza o estado sem prop `value`.',
+                'O trigger usa `text-slate-600`; passe `class` para personalizar o visual sem afetar o valor enviado.',
             ],
             'alert' => [
                 'Use para feedback persistente dentro da pagina, nao para notificacoes temporarias.',
@@ -2223,7 +2244,7 @@ BLADE,
             ],
             [
                 'title' => 'Estados',
-                'description' => 'Erro, disabled e customizacao por class.',
+                'description' => 'Erro, disabled e customizacao por class, com texto neutro slate-600 por padrao.',
                 'code' => <<<'BLADE'
 <x-sampaui::date-picker
     name="scheduled_at"
@@ -2236,6 +2257,12 @@ BLADE,
     label="Data bloqueada"
     value="2026-05-25"
     disabled
+/>
+
+<x-sampaui::date-picker
+    name="reviewed_at"
+    label="Data de revisao"
+    class="bg-slate-50 text-emerald-600 shadow-none"
 />
 BLADE,
             ],
