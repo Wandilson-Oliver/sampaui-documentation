@@ -2,6 +2,17 @@
 
 Todas as alterações relevantes da documentação SampaUI são registradas neste arquivo.
 
+## [0.1.22] - 2026-07-12
+
+### Corrigido
+
+- Documentação do File Upload agora descreve o cleanup seguro de previews apos a destruicao de escopos Alpine.
+- Exemplo Livewire orienta carregar o SampaUI antes de iniciar o Livewire em bundles manuais.
+
+### Documentação
+
+- Preview, API e exemplos deixam explicito que crop e reordenacao de galeria ainda nao fazem parte do componente.
+
 ## [0.1.21] - 2026-07-01
 
 ### Melhorado
