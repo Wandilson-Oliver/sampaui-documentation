@@ -163,6 +163,17 @@ it('ships the Alpine controllers required by the documentation shell', function 
         ->not->toContain("Alpine.data('componentPlayground'");
 });
 
+it('documents the File Upload lifecycle and manual Livewire bootstrap order', function () {
+    $this->get(route('documentation.components.show', 'file-upload'))
+        ->assertOk()
+        ->assertSee('cleanup seguro de previews locais')
+        ->assertSee('libera URLs no destroy/beforeunload')
+        ->assertSee('Crop e reordenacao nao fazem parte da API')
+        ->assertSee('importe o SampaUI antes de iniciar o Livewire')
+        ->assertSee("x-on:beforeunload.window=\"typeof revokePreviewUrls === 'function' && revokePreviewUrls()\"", false)
+        ->assertSee('SampaUI.fileUpload', false);
+});
+
 it('renders reusable navigation examples and props patterns', function () {
     $this->get(route('documentation.components.show', 'input'))
         ->assertOk()

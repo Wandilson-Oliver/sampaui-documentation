@@ -3357,7 +3357,7 @@ BLADE],
     </x-slot:actions>
 </x-sampaui::empty-state>
 BLADE],
-            'file-upload' => ['Upload de arquivo', '<x-sampaui::file-upload />', 'Area de selecao com borda tracejada `border-secondary/40`, label, erro, accept e suporte a multiplos arquivos.', 'Envio de arquivo', '<x-sampaui::file-upload name="contract" label="Contrato" accept=".pdf" />'],
+            'file-upload' => ['Upload de arquivo', '<x-sampaui::file-upload />', 'Area de selecao com borda tracejada `border-secondary/40`, label, erro, accept e suporte a multiplos arquivos, com cleanup seguro de previews locais.', 'Envio de arquivo', '<x-sampaui::file-upload name="contract" label="Contrato" accept=".pdf" />'],
             'progress' => ['Progress', '<x-sampaui::progress />', 'Barra de progresso com label, percentual e variantes.', 'Progresso de envio', '<x-sampaui::progress :value="72" label="Importacao" show-value />'],
             'stepper' => ['Stepper', '<x-sampaui::stepper />', 'Sequencia de etapas para onboarding, checkout e fluxos guiados.', 'Fluxo em etapas', <<<'BLADE'
 <x-sampaui::stepper
@@ -3582,7 +3582,7 @@ BLADE,
             ['name' => 'name', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Nome do campo e chave de erro.'],
             ['name' => 'accept', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Tipos aceitos pelo input nativo.'],
             ['name' => 'multiple', 'type' => 'bool', 'default' => 'false', 'notes' => 'Permite selecionar multiplos arquivos.'],
-            ['name' => 'preview', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe preview local de imagens selecionadas e permite remover itens antes de salvar.'],
+            ['name' => 'preview', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe preview local de imagens selecionadas, libera URLs no destroy/beforeunload e permite remover itens antes de salvar. Crop e reordenacao nao fazem parte da API.'],
             ['name' => 'error', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Mensagem manual ou ErrorBag.'],
             ['name' => 'disabled', 'type' => 'bool', 'default' => 'false', 'notes' => 'Desabilita a selecao.'],
         ];
@@ -3609,7 +3609,7 @@ BLADE,
             ],
             [
                 'title' => 'Upload com Livewire',
-                'description' => 'Use `wire:model` normalmente no input nativo.',
+                'description' => 'Use `wire:model` normalmente no input nativo. Em bundles manuais, importe o SampaUI antes de iniciar o Livewire.',
                 'code' => <<<'BLADE'
 <x-sampaui::file-upload
     name="attachments"
