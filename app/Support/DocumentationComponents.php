@@ -335,7 +335,7 @@ BLADE,
                 'name' => 'Select',
                 'tag' => '<x-sampaui::select />',
                 'summary' => 'Select com combobox Alpine, dropdown customizado, placeholder, erro e sombra forte na listagem.',
-                'description' => 'Bom para formularios administrativos e filtros curtos. O painel e teletransportado para o body, acompanha o trigger e abre acima quando necessario, evitando corte em Modal, Drawer e Card com scroll.',
+                'description' => 'Bom para formularios administrativos e filtros curtos. O painel e teletransportado para o body com IDs estaveis, acompanha o trigger e abre acima quando necessario, evitando corte em Modal, Drawer e Card com scroll.',
                 'preview_title' => 'Filtro operacional',
                 'preview_caption' => 'Placeholder inicial, opcoes reais e estado com erro.',
                 'props' => [
@@ -410,7 +410,7 @@ BLADE,
                 'name' => 'Select com busca',
                 'tag' => '<x-sampaui::select-search />',
                 'summary' => 'Select pesquisavel com busca local, opcoes via array e sincronizacao por input hidden para formularios e Livewire.',
-                'description' => 'Use quando a lista de opcoes e maior que um select simples, mas ainda pequena o suficiente para busca local no navegador. O painel usa teleport, acompanha o trigger e foca a busca ao abrir, sem ser cortado por overlays com scroll.',
+                'description' => 'Use quando a lista de opcoes e maior que um select simples, mas ainda pequena o suficiente para busca local no navegador. O painel usa teleport com IDs estaveis, acompanha o trigger e foca a busca ao abrir, sem ser cortado por overlays com scroll.',
                 'preview_title' => 'Busca de responsavel',
                 'preview_caption' => 'Campo pesquisavel com placeholder, opcao selecionada, erro e binding Livewire.',
                 'props' => [
@@ -484,7 +484,7 @@ BLADE,
                 'name' => 'Select múltiplo',
                 'tag' => '<x-sampaui::select-multiple />',
                 'summary' => 'Select multiplo com busca local, tags removiveis, estados visuais e sincronizacao pelo `<select multiple>` nativo.',
-                'description' => 'Use quando o usuario precisa escolher varias opcoes de uma lista local. O painel teletransportado acompanha o trigger em scroll/resize, evitando corte em Modal e Drawer; tags, busca e Esc permanecem disponiveis.',
+                'description' => 'Use quando o usuario precisa escolher varias opcoes de uma lista local. O painel teletransportado usa IDs estaveis e acompanha o trigger em scroll/resize, evitando corte em Modal e Drawer; tags, busca e Esc permanecem disponiveis.',
                 'preview_title' => 'Perfis de acesso',
                 'preview_caption' => 'Multipla selecao com tags, busca interna, erro, disabled e loading.',
                 'props' => [
@@ -1035,6 +1035,43 @@ BLADE,
     after-close="afterModalClose"
 >
     Dados atualizados no Livewire.
+</x-sampaui::modal>
+BLADE,
+                    ],
+                    [
+                        'title' => 'Formulario completo',
+                        'description' => 'Composicao de inputs, select, toggle e botoes dentro do Modal, pronta para formularios Livewire.',
+                        'code' => <<<'BLADE'
+<x-sampaui::button wire:click="$set('showLeadModal', true)" icon="person-plus">
+    Novo lead
+</x-sampaui::button>
+
+<x-sampaui::modal model="showLeadModal" title="Novo lead" subtitle="Preencha os dados para iniciar o atendimento." size="xl">
+    <div class="grid gap-4 sm:grid-cols-2">
+        <x-sampaui::input name="name" label="Nome" icon="person" wire:model.live="lead.name" required />
+        <x-sampaui::input name="email" type="email" label="Email" icon="envelope" wire:model.live="lead.email" required />
+        <x-sampaui::select
+            name="stage"
+            label="Etapa"
+            placeholder="Selecione uma etapa"
+            wire:model.live="lead.stage"
+            :options="['new' => 'Novo', 'qualified' => 'Qualificado', 'proposal' => 'Proposta']"
+        />
+        <x-sampaui::select-search
+            name="owner"
+            label="Responsavel"
+            placeholder="Selecione uma pessoa"
+            wire:model.live="lead.owner"
+            :options="['ana' => 'Ana Souza', 'bruno' => 'Bruno Lima']"
+        />
+    </div>
+
+    <x-sampaui::toggle name="notify" label="Enviar notificacao por email" wire:model.live="lead.notify" class="mt-5" />
+
+    <x-slot:actions>
+        <x-sampaui::button variant="outline" wire:click="$set('showLeadModal', false)">Cancelar</x-sampaui::button>
+        <x-sampaui::button wire:click="saveLead" icon="check2-circle">Salvar lead</x-sampaui::button>
+    </x-slot:actions>
 </x-sampaui::modal>
 BLADE,
                     ],

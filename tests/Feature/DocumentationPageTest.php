@@ -122,6 +122,10 @@ it('documents the new feedback and surface components', function () {
         ->assertSee('close-event')
         ->assertSee('Abrir modal')
         ->assertSee('Preview Livewire real do SampaUI')
+        ->assertSee('Formulario completo')
+        ->assertSee('Novo lead')
+        ->assertSee('x-sampaui::toggle', false)
+        ->assertSee('x-sampaui::select-search', false)
         ->assertSee('x-sampaui::modal', false);
 
     $this->get(route('documentation.components.show', 'drawer'))

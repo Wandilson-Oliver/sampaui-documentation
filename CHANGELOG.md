@@ -2,6 +2,12 @@
 
 Todas as alterações relevantes da documentação SampaUI são registradas neste arquivo.
 
+## [0.1.25] - 2026-07-12
+
+### Corrigido
+
+- Documentação dos selects esclarece que o portal usa IDs estáveis e estado inicial inline, sem depender de `$refs` ou `x-cloak` após teleport.
+
 ## [0.1.24] - 2026-07-12
 
 ### Corrigido
