@@ -174,6 +174,20 @@ it('documents the File Upload lifecycle and manual Livewire bootstrap order', fu
         ->assertSee('SampaUI.fileUpload', false);
 });
 
+it('documents Button and DatePicker class customizations', function () {
+    $this->get(route('documentation.components.show', 'button'))
+        ->assertOk()
+        ->assertSee('substitui utilitarios visuais conflitantes')
+        ->assertSee('Customizacao por classe')
+        ->assertSee('bg-danger text-white px-8 py-4 rounded-full shadow-none', false);
+
+    $this->get(route('documentation.components.show', 'date-picker'))
+        ->assertOk()
+        ->assertSee('text-slate-600')
+        ->assertSee('Cor customizada')
+        ->assertSee('bg-slate-50 text-emerald-600 shadow-none', false);
+});
+
 it('renders reusable navigation examples and props patterns', function () {
     $this->get(route('documentation.components.show', 'input'))
         ->assertOk()

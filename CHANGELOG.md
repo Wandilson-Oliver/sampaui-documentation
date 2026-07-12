@@ -2,6 +2,13 @@
 
 Todas as alterações relevantes da documentação SampaUI são registradas neste arquivo.
 
+## [0.1.23] - 2026-07-12
+
+### Corrigido
+
+- Documentação do Button esclarece que `class` substitui utilitarios visuais conflitantes sem `!important`.
+- DatePicker passa a documentar `text-slate-600` como cor neutra do trigger e a customizacao por `class`.
+
 ## [0.1.22] - 2026-07-12
 
 ### Corrigido
