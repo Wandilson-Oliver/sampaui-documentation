@@ -2,6 +2,13 @@
 
 Todas as alterações relevantes da documentação SampaUI são registradas neste arquivo.
 
+## [0.1.24] - 2026-07-12
+
+### Corrigido
+
+- Páginas de Select, Select Search e Select Multiple passam a documentar o painel teletransportado, posicionamento adaptativo e uso seguro em Modal e Drawer.
+- Documentação de overlays registra a escala de camadas sem z-index máximo do navegador.
+
 ## [0.1.23] - 2026-07-12
 
 ### Corrigido
