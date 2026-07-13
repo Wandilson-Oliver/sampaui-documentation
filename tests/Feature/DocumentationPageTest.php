@@ -188,6 +188,7 @@ it('documents Button and DatePicker class customizations', function () {
     $this->get(route('documentation.components.show', 'date-picker'))
         ->assertOk()
         ->assertSee('text-slate-600')
+        ->assertSee('teletransportado para o body')
         ->assertSee('Cor customizada')
         ->assertSee('bg-slate-50 text-emerald-600 shadow-none', false);
 });
