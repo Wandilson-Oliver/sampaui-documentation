@@ -773,7 +773,7 @@ BLADE,
                 'name' => 'DatePicker',
                 'tag' => '<x-sampaui::date-picker />',
                 'summary' => 'Calendario de data apenas, sem hora, com label, min/max, erro, limpeza opcional e atributos Livewire.',
-                'description' => 'Use para datas simples em formularios administrativos. O trigger usa texto neutro `text-slate-600`, com icone e valor na mesma cor; Alpine com `x-modelable` salva somente `YYYY-MM-DD` e recebe o estado de `wire:model` sem exigir a prop `value`.',
+                'description' => 'Use para datas simples em formularios administrativos. O trigger usa texto neutro `text-slate-600`, com icone e valor na mesma cor; Alpine com `x-modelable` salva somente `YYYY-MM-DD` e recebe o estado de `wire:model` sem exigir a prop `value`. O calendario e teletransportado para o body com posicao fixa, evitando recorte em Modal, Drawer e containers com scroll.',
                 'preview_title' => 'Agendamento',
                 'preview_caption' => 'Calendario de data com min/max, erro e binding Livewire.',
                 'props' => [

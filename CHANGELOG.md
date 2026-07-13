@@ -2,6 +2,12 @@
 
 Todas as alterações relevantes da documentação SampaUI são registradas neste arquivo.
 
+## [0.1.26] - 2026-07-13
+
+### Corrigido
+
+- A página DatePicker agora documenta o portal com posição fixa, que evita recorte em Modal, Drawer e áreas roláveis.
+
 ## [0.1.25] - 2026-07-12
 
 ### Corrigido
