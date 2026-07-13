@@ -2,7 +2,6 @@
     title="Publicacao"
     description="Status do componente no pacote"
     variant="primary"
-    overflow="visible"
 >
     <x-slot:actions>
         <x-sampaui::button size="sm" variant="outline" icon="box-arrow-up-right" icon-position="right">

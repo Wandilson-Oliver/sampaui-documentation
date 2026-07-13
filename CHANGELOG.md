@@ -2,6 +2,12 @@
 
 Todas as alterações relevantes da documentação SampaUI são registradas neste arquivo.
 
+## [0.1.27] - 2026-07-13
+
+### Corrigido
+
+- Página Card passa a documentar `overflow="visible"` como comportamento padrão e `overflow="hidden"` como opt-in para recortes intencionais.
+
 ## [0.1.26] - 2026-07-13
 
 ### Corrigido

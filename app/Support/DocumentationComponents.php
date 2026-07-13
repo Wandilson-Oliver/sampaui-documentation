@@ -905,7 +905,7 @@ BLADE,
                 'name' => 'Card',
                 'tag' => '<x-sampaui::card />',
                 'summary' => 'Container com header, descricao, actions, footer e variantes discretas para superficies de conteudo.',
-                'description' => 'Use para agrupar dados operacionais, formularios curtos e blocos de resumo sem recriar sombra e espacamento. Quando existe header, o conteudo inicia 15px abaixo dele; dropdowns absolutos podem escapar com `overflow="visible"`.',
+                'description' => 'Use para agrupar dados operacionais, formularios curtos e blocos de resumo sem recriar sombra e espacamento. Quando existe header, o conteudo inicia 15px abaixo dele; dropdowns absolutos abrem integralmente porque o overflow e visivel por padrao.',
                 'preview_title' => 'Resumo operacional',
                 'preview_caption' => 'Card com header, conteudo, actions e footer.',
                 'props' => [
@@ -914,7 +914,7 @@ BLADE,
                     ['name' => 'variant', 'type' => 'default|muted|primary|secondary|accent|danger|success|warning|info|purple', 'default' => 'default', 'notes' => 'Define a superficie e a cor de borda com tokens oficiais.'],
                     ['name' => 'padding', 'type' => 'sm|md|lg', 'default' => 'md', 'notes' => 'Controla espacamento interno do header, body e footer.'],
                     ['name' => 'divided', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe divisor entre header e body quando ativado.'],
-                    ['name' => 'overflow', 'type' => 'hidden|visible|auto', 'default' => 'hidden', 'notes' => 'Use `visible` para dropdowns e popovers absolutos; `auto` cria rolagem interna.'],
+                    ['name' => 'overflow', 'type' => 'visible|hidden|auto', 'default' => 'visible', 'notes' => 'Padrao seguro para dropdowns, DatePicker e popovers absolutos. Use `hidden` para recorte intencional; `auto` cria rolagem interna.'],
                     ['name' => '$slot', 'type' => 'Blade slot', 'default' => '-', 'notes' => 'Conteudo principal.'],
                     ['name' => '$header/$actions/$footer', 'type' => 'Named slots', 'default' => '-', 'notes' => 'Substituem ou complementam as regioes do card.'],
                 ],
@@ -948,10 +948,10 @@ BLADE,
 BLADE,
                     ],
                     [
-                        'title' => 'Dropdown visivel',
-                        'description' => 'Permite que menus absolutos ultrapassem os limites do card.',
+                        'title' => 'Dropdown sem recorte',
+                        'description' => 'Menus absolutos ultrapassam os limites do card por padrao.',
                         'code' => <<<'BLADE'
-<x-sampaui::card title="Filtros" overflow="visible">
+<x-sampaui::card title="Filtros">
     <x-sampaui::select
         label="Status"
         :options="['active' => 'Ativo', 'inactive' => 'Inativo']"
@@ -1653,7 +1653,7 @@ BLADE,
             'card' => [
                 'Use para agrupar conteudo relacionado, formularios curtos ou resumos operacionais.',
                 'Use slots `header`, `actions` e `footer` para compor estrutura sem recriar bordas.',
-                'Use `overflow="visible"` quando dropdowns ou popovers precisarem escapar dos limites do card.',
+                'O overflow e visivel por padrao para dropdowns, DatePicker e popovers; use `overflow="hidden"` apenas quando precisar recortar o conteudo.',
                 'Evite aninhar muitos cards; prefira secoes quando o conteudo for uma pagina inteira.',
             ],
             'modal' => [
@@ -2353,10 +2353,10 @@ BLADE,
 
         $components['card']['showcases'] = [
             [
-                'title' => 'Dropdown fora dos limites',
-                'description' => 'Use `overflow="visible"` para menus absolutos nao serem cortados pelo card.',
+                'title' => 'Dropdown sem recorte',
+                'description' => 'Menus absolutos nao sao cortados pelo card, pois o overflow visivel e o padrao.',
                 'preview' => <<<'BLADE'
-<x-sampaui::card title="Filtros" overflow="visible">
+<x-sampaui::card title="Filtros">
     <x-sampaui::select
         label="Status"
         placeholder="Selecione"
@@ -2365,7 +2365,7 @@ BLADE,
 </x-sampaui::card>
 BLADE,
                 'code' => <<<'BLADE'
-<x-sampaui::card title="Filtros" overflow="visible">
+<x-sampaui::card title="Filtros">
     <x-sampaui::select
         label="Status"
         :options="['active' => 'Ativo', 'inactive' => 'Inativo']"

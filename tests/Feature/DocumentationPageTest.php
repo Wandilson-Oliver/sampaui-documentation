@@ -113,6 +113,8 @@ it('documents the new feedback and surface components', function () {
         ->assertOk()
         ->assertSee('actions')
         ->assertSee('footer')
+        ->assertSee('overflow visivel e o padrao')
+        ->assertSee('visible|hidden|auto')
         ->assertSee('variant=&quot;primary&quot;', false);
 
     $this->get(route('documentation.components.show', 'modal'))
