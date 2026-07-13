@@ -3380,7 +3380,7 @@ PHP,
             'phone' => ['Phone', '<x-sampaui::phone />', 'Campo de telefone com mascara, icone Bootstrap e suporte direto a Livewire.', 'Telefone com mascara', '<x-sampaui::phone name="phone" label="Telefone" wire:model.live="phone" />'],
             'currency-br' => ['Currency BR', '<x-sampaui::currency-br />', 'Campo monetario em reais com formatacao brasileira e prefixo customizavel.', 'Valor em reais', '<x-sampaui::currency-br name="price" label="Valor" wire:model.live="price" />'],
             'cep' => ['CEP', '<x-sampaui::cep />', 'Campo de CEP com mascara `99999-999`, autocomplete postal e suporte direto a Livewire.', 'Endereco postal', '<x-sampaui::cep name="postal_code" label="CEP" wire:model.live="postal_code" />'],
-            'dropdown' => ['Dropdown', '<x-sampaui::dropdown />', 'Menu de acoes com trigger customizavel, alinhamento e itens clicaveis.', 'Acoes contextuais', <<<'BLADE'
+            'dropdown' => ['Dropdown', '<x-sampaui::dropdown />', 'Menu de acoes com trigger customizavel, alinhamento e portal fixo que evita recorte em Cards, Modals, Drawers e areas rolaveis.', 'Acoes contextuais', <<<'BLADE'
 <x-sampaui::dropdown label="Acoes" align="right">
     <x-sampaui::dropdown-item href="/editar" icon="pencil">Editar</x-sampaui::dropdown-item>
     <x-sampaui::dropdown-item icon="trash" danger>Remover</x-sampaui::dropdown-item>
@@ -4055,7 +4055,7 @@ BLADE,
         $components['dropdown']['showcases'] = [
             [
                 'title' => 'Padrao',
-                'description' => 'Menu alinhado ao trigger, sem ocupar a largura total do preview.',
+                'description' => 'Menu teletransportado e alinhado ao trigger, sem recorte em containers rolaveis.',
                 'code' => <<<'BLADE'
 <x-sampaui::dropdown label="Acoes">
     <x-sampaui::dropdown-item href="/editar" icon="pencil">Editar</x-sampaui::dropdown-item>
@@ -4065,7 +4065,7 @@ BLADE,
             ],
             [
                 'title' => 'Alinhado a direita',
-                'description' => 'Use `align="right"` quando o trigger estiver no canto direito da interface.',
+                'description' => 'Use `align="right"` quando o trigger estiver no canto direito; o portal preserva esse alinhamento no viewport.',
                 'code' => <<<'BLADE'
 <x-sampaui::dropdown label="Mais" align="right" width="12rem">
     <x-sampaui::dropdown-item icon="eye">Visualizar</x-sampaui::dropdown-item>
