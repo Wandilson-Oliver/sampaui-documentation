@@ -117,6 +117,11 @@ it('documents the new feedback and surface components', function () {
         ->assertSee('visible|hidden|auto')
         ->assertSee('variant=&quot;primary&quot;', false);
 
+    $this->get(route('documentation.components.show', 'dropdown'))
+        ->assertOk()
+        ->assertSee('portal fixo que evita recorte')
+        ->assertSee('Menu teletransportado e alinhado ao trigger');
+
     $this->get(route('documentation.components.show', 'modal'))
         ->assertOk()
         ->assertSee('model')
