@@ -125,7 +125,7 @@ export function registerPlayground(Alpine) {
         compileAbortController: null,
 
         init() {
-            const saved = localStorage.getItem('sampaui_playground_state_v22');
+            const saved = localStorage.getItem('sampaui_playground_state_v23');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -666,7 +666,7 @@ export function registerPlayground(Alpine) {
                 currentDevice: this.currentDevice,
                 splitPercent: this.splitPercent,
             };
-            localStorage.setItem('sampaui_playground_state_v22', JSON.stringify(state));
+            localStorage.setItem('sampaui_playground_state_v23', JSON.stringify(state));
         },
 
         async compileBladeCode(code) {
@@ -868,10 +868,17 @@ export function registerPlayground(Alpine) {
 
     // Interceptar cliques em gatilhos wire:click para modais, drawers e propriedades reativas
     document.addEventListener('click', (e) => {
-      const wireEl = e.target.closest('[wire\\:click]');
-      if (wireEl) {
-        const action = wireEl.getAttribute('wire:click').trim();
+      let wireEl = e.target;
+      let action = null;
+      while (wireEl && wireEl !== document && wireEl !== window) {
+        if (wireEl.hasAttribute && wireEl.hasAttribute('wire:click')) {
+          action = (wireEl.getAttribute('wire:click') || '').trim();
+          break;
+        }
+        wireEl = wireEl.parentElement;
+      }
 
+      if (action) {
         // Atribuição direta: wire:click="showModal = true"
         if (action.includes('=')) {
           const parts = action.split('=');
@@ -928,11 +935,34 @@ export function registerPlayground(Alpine) {
           window.dispatchEvent(new CustomEvent(val ? 'open-drawer' : 'close-drawer', { detail: action }));
           return;
         }
+
+        // Método genérico no wire:click (ex: wire:click="save")
+        if (action.toLowerCase().includes('save') || action.toLowerCase().includes('submit')) {
+          const parentOverlay = wireEl.closest('[data-sampaui-overlay]');
+          const overlayId = parentOverlay ? parentOverlay.id : null;
+          const toastData = {
+            type: 'success',
+            title: 'Salvo com sucesso!',
+            message: 'As alterações foram processadas.'
+          };
+          window.dispatchEvent(new CustomEvent('toast', { detail: toastData }));
+          window.dispatchEvent(new CustomEvent('close-modal', { detail: overlayId }));
+          window.dispatchEvent(new CustomEvent('close-drawer', { detail: overlayId }));
+          return;
+        }
       }
 
       // Interceptar botões de cancelar/fechar de forma agnóstica a qualquer modal
-      const btn = e.target.closest('button, [role="button"], a');
-      if (btn) {
+      let btn = e.target;
+      while (btn && btn !== document && btn !== window) {
+        const tag = (btn.tagName || '').toLowerCase();
+        if (tag === 'button' || tag === 'a' || btn.getAttribute('role') === 'button') {
+          break;
+        }
+        btn = btn.parentElement;
+      }
+
+      if (btn && btn !== document && btn !== window) {
         const text = (btn.textContent || '').trim().toLowerCase();
         if (text === 'cancelar' || text === 'fechar' || text === 'cancel' || text === 'close') {
           const parentOverlay = btn.closest('[data-sampaui-overlay]');
