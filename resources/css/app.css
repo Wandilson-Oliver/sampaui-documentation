@@ -1312,17 +1312,15 @@ details[open] .doc-menu-chevron {
 /* Home Page Specifics */
 .doc-home-hero {
     position: relative;
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 2.5rem;
     padding: 2.5rem 0 3.5rem;
     border-bottom: 1px solid var(--doc-border);
 }
 
-@media (min-width: 64rem) {
-    .doc-home-hero {
-        grid-template-columns: 1.1fr 0.9fr;
-        align-items: center;
-    }
+.doc-home-hero-copy {
+    max-width: 56rem;
 }
 
 .doc-home-logo-frame img {

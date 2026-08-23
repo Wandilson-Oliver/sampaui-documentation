@@ -64,20 +64,23 @@
 
             <div class="doc-home-eyebrow">
                 <span class="doc-version-pill"><i class="bi bi-stars" aria-hidden="true"></i> Docs v{{ $sampaVersion }}</span>
-                <span>Documentação SampaUI</span>
+                <span class="text-xs font-semibold text-secondary/70">Pacote Oficial de Componentes Blade & Livewire</span>
             </div>
 
             <h1 id="home-title">Componentes Blade para produtos digitais <span>profissionais.</span></h1>
             <p>
-                Um kit completo para acelerar CRMs, dashboards, portais e sistemas internos com Laravel, Livewire e Tailwind — mantendo cada tela consistente, acessível e pronta para produção.
+                Um ecossistema completo de componentes modernos, consistentes, acessíveis (WAI-ARIA) e de alta performance para acelerar CRMs, dashboards, portais e sistemas administrativos em Laravel e Livewire.
             </p>
 
             <div class="doc-home-actions">
-                <x-sampaui::button size="sm" icon="grid" onclick="document.getElementById('componentes').scrollIntoView({behavior: 'smooth'})">
-                    Ver componentes
+                <x-sampaui::button size="md" icon="grid" onclick="document.getElementById('componentes').scrollIntoView({behavior: 'smooth'})">
+                    Explorar componentes ({{ $componentTotal }})
                 </x-sampaui::button>
-                <x-sampaui::button size="sm" variant="outline" icon="window-sidebar" onclick="window.location='{{ route('examples.index') }}'">
-                    Explorar exemplos
+                <x-sampaui::button size="md" variant="secondary" icon="code-square" onclick="window.location='{{ route('playground') }}'">
+                    Playground Interativo
+                </x-sampaui::button>
+                <x-sampaui::button size="md" variant="outline" icon="window-sidebar" onclick="window.location='{{ route('examples.index') }}'">
+                    Templates & Blocks
                 </x-sampaui::button>
             </div>
 
@@ -97,55 +100,73 @@
                     ['label' => 'Livewire 4', 'icon' => 'lightning-charge'],
                     ['label' => 'Tailwind 4', 'icon' => 'wind'],
                     ['label' => 'Alpine.js', 'icon' => 'code-slash'],
+                    ['label' => 'WAI-ARIA 1.2', 'icon' => 'universal-access'],
                 ] as $technology)
                     <span><i class="bi bi-{{ $technology['icon'] }}" aria-hidden="true"></i>{{ $technology['label'] }}</span>
                 @endforeach
             </div>
         </div>
 
-        {{-- Preview ao Vivo em Mockup de Janela --}}
-        <div class="doc-browser-window" aria-label="Prévia com componentes reais do SampaUI">
-            <div class="doc-browser-header">
-                <div class="doc-browser-dots" aria-hidden="true">
-                    <span class="doc-browser-dot bg-rose-400"></span>
-                    <span class="doc-browser-dot bg-amber-400"></span>
-                    <span class="doc-browser-dot bg-emerald-400"></span>
+        {{-- 4 Pilares de Engenharia do SampaUI --}}
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 pt-2">
+            <div class="rounded-xl border border-border bg-surface p-4 shadow-xs transition hover:border-primary/40">
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        <i class="bi bi-universal-access text-lg"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-sm font-bold text-heading">Acessibilidade Nativa</h3>
+                        <p class="text-[11px] text-secondary/60 font-semibold">WAI-ARIA 1.2 Compliant</p>
+                    </div>
                 </div>
-                <span class="doc-browser-title">painel.empresa.com.br</span>
-                <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                <p class="mt-3 text-xs leading-relaxed text-secondary/80 border-t border-border/60 pt-2.5">
+                    Focus trap nativo em modais, IDs automáticos vinculando labels e papéis semânticos.
+                </p>
             </div>
 
-            <div class="doc-home-product-preview">
-                <x-sampaui::header
-                    title="Dashboard"
-                    subtitle="Resumo do dia"
-                    search
-                    notifications
-                    notification-count="3"
-                />
-
-                <div class="doc-home-metric-grid">
-                    <x-sampaui::card title="Novos clientes" description="Últimos 30 dias">
-                        <strong class="doc-home-metric-value">248</strong>
-                        <x-sampaui::badge variant="success" size="sm">+18%</x-sampaui::badge>
-                    </x-sampaui::card>
-                    <x-sampaui::card title="Conversão" description="Meta mensal">
-                        <strong class="doc-home-metric-value">32,4%</strong>
-                        <x-sampaui::progress value="72" />
-                    </x-sampaui::card>
+            <div class="rounded-xl border border-border bg-surface p-4 shadow-xs transition hover:border-primary/40">
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                        <i class="bi bi-lightning-charge-fill text-lg"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-sm font-bold text-heading">Client-First Performance</h3>
+                        <p class="text-[11px] text-secondary/60 font-semibold">Zero Network Overhead</p>
+                    </div>
                 </div>
+                <p class="mt-3 text-xs leading-relaxed text-secondary/80 border-t border-border/60 pt-2.5">
+                    Modais, abas, selects e drawers 100% rápidos no cliente com Alpine.js sem round-trips desnecessários.
+                </p>
+            </div>
 
-                <x-sampaui::table
-                    title="Atividade recente"
-                    description="Listagem simples"
-                    compact
-                    :columns="['name' => 'Cliente', 'status' => 'Status', 'owner' => 'Responsável']"
-                    :rows="[
-                        ['name' => 'Ana Souza', 'status' => 'Ativo', 'owner' => 'Comercial'],
-                        ['name' => 'Bruno Lima', 'status' => 'Pendente', 'owner' => 'Suporte'],
-                        ['name' => 'Carla Martins', 'status' => 'Ativo', 'owner' => 'Implantação'],
-                    ]"
-                />
+            <div class="rounded-xl border border-border bg-surface p-4 shadow-xs transition hover:border-primary/40">
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple/10 text-purple">
+                        <i class="bi bi-palette2 text-lg"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-sm font-bold text-heading">Theming & sampaui_cn</h3>
+                        <p class="text-[11px] text-secondary/60 font-semibold">Tailwind CSS v4</p>
+                    </div>
+                </div>
+                <p class="mt-3 text-xs leading-relaxed text-secondary/80 border-t border-border/60 pt-2.5">
+                    Design tokens via <code>@theme</code>, dark mode instantâneo e resolução de conflitos de classes.
+                </p>
+            </div>
+
+            <div class="rounded-xl border border-border bg-surface p-4 shadow-xs transition hover:border-primary/40">
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-success/10 text-success">
+                        <i class="bi bi-terminal-fill text-lg"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-sm font-bold text-heading">CLI de Ejeção</h3>
+                        <p class="text-[11px] text-secondary/60 font-semibold">php artisan sampaui:add</p>
+                    </div>
+                </div>
+                <p class="mt-3 text-xs leading-relaxed text-secondary/80 border-t border-border/60 pt-2.5">
+                    Use como dependência ou copie o código-fonte Blade diretamente para o seu projeto.
+                </p>
             </div>
         </div>
     </section>
