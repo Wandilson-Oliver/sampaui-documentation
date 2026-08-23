@@ -125,7 +125,7 @@ export function registerPlayground(Alpine) {
         compileAbortController: null,
 
         init() {
-            const saved = localStorage.getItem('sampaui_playground_state_v25');
+            const saved = localStorage.getItem('sampaui_playground_state_v26');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -666,7 +666,7 @@ export function registerPlayground(Alpine) {
                 currentDevice: this.currentDevice,
                 splitPercent: this.splitPercent,
             };
-            localStorage.setItem('sampaui_playground_state_v25', JSON.stringify(state));
+            localStorage.setItem('sampaui_playground_state_v26', JSON.stringify(state));
         },
 
         async compileBladeCode(code) {
@@ -730,6 +730,7 @@ export function registerPlayground(Alpine) {
             const livewireStateJson = JSON.stringify(this.parseLivewireState(this.livewire || ''));
             const sampauiJsUrl = (this.config?.assetsUrl ? this.config.assetsUrl + '/sampaui.js' : '/vendor/sampaui/sampaui.js');
             const sampauiCssUrl = (this.config?.assetsUrl ? this.config.assetsUrl + '/sampaui.css' : '/vendor/sampaui/sampaui.css');
+            const bridgeJsUrl = (this.config?.assetsUrl ? this.config.assetsUrl + '/playground-bridge.js' : '/vendor/sampaui/playground-bridge.js');
 
             const isDark = this.canvasBg === 'dark';
             const isLight = this.canvasBg === 'light';
@@ -767,6 +768,9 @@ export function registerPlayground(Alpine) {
     })();
   </script>
 
+  <!-- SampaUI CSS Pré-compilado -->
+  <link rel="stylesheet" href="${sampauiCssUrl}">
+
   <!-- Tailwind CSS CDN para utilitários dinâmicos -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -802,61 +806,12 @@ export function registerPlayground(Alpine) {
     }
   </script>
 
-  <!-- SampaUI Runtime -->
+  <!-- SampaUI Runtime & Livewire Bridge Plugin -->
   <script src="${sampauiJsUrl}"></script>
-
-  <!-- Livewire / Alpine $wire Emulator registrado antes do Alpine.js -->
   <script>
     window.rawWireState = Object.assign(${livewireStateJson}, window.rawWireState || {});
-    window.wireState = window.rawWireState;
-
-    window.$wire = new Proxy({}, {
-      get(target, prop) {
-        if (prop === 'entangle') {
-          return (name) => ({
-            get live() { return Boolean(window.wireState[name]); },
-            set live(val) {
-              window.wireState[name] = Boolean(val);
-              window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: name }));
-              window.dispatchEvent(new CustomEvent(val ? 'open-drawer' : 'close-drawer', { detail: name }));
-            }
-          });
-        }
-        if (prop === '$set' || prop === 'set') {
-          return (key, val) => {
-            window.wireState[key] = Boolean(val);
-            window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: key }));
-            window.dispatchEvent(new CustomEvent(val ? 'open-drawer' : 'close-drawer', { detail: key }));
-          };
-        }
-        if (prop === '$toggle' || prop === 'toggle') {
-          return (key) => {
-            window.wireState[key] = !window.wireState[key];
-            const val = window.wireState[key];
-            window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: key }));
-            window.dispatchEvent(new CustomEvent(val ? 'open-drawer' : 'close-drawer', { detail: key }));
-          };
-        }
-        if (prop === 'dispatch' || prop === '$dispatch') {
-          return (eventName, payload) => {
-            window.dispatchEvent(new CustomEvent(eventName, { detail: payload }));
-          };
-        }
-        if (prop in window.wireState) return window.wireState[prop];
-        return (...args) => {};
-      },
-      set(target, prop, val) {
-        window.wireState[prop] = val;
-        return true;
-      }
-    });
-
-    document.addEventListener('alpine:init', () => {
-      if (window.Alpine) {
-        window.Alpine.magic('wire', () => window.$wire);
-      }
-    });
   </script>
+  <script src="${bridgeJsUrl}"></script>
 
   <!-- Alpine.js -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
@@ -879,190 +834,6 @@ export function registerPlayground(Alpine) {
   ${compiledHtml}
 
   <script>
-    function openMatchingOverlays(key) {
-      const candidates = [key, 'sampaui-modal-standalone-' + key, 'sampaui-drawer-standalone-' + key].filter(Boolean);
-      window.dispatchEvent(new CustomEvent('open-modal', { detail: key }));
-      window.dispatchEvent(new CustomEvent('open-drawer', { detail: key }));
-
-      document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
-        if (el._x_dataStack) {
-          el._x_dataStack.forEach((scope) => {
-            if (scope && typeof scope.openOverlay === 'function' && !scope.visible) {
-              const elId = el.getAttribute('id') || '';
-              if (!key || candidates.includes(elId) || elId.endsWith('-' + key) || elId.includes(key)) {
-                scope.openOverlay();
-              }
-            }
-          });
-        }
-      });
-    }
-
-    function closeMatchingOverlays(key) {
-      const candidates = [key, 'sampaui-modal-standalone-' + key, 'sampaui-drawer-standalone-' + key].filter(Boolean);
-      window.dispatchEvent(new CustomEvent('close-modal', { detail: key }));
-      window.dispatchEvent(new CustomEvent('close-drawer', { detail: key }));
-
-      document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
-        if (el._x_dataStack) {
-          el._x_dataStack.forEach((scope) => {
-            if (scope && typeof scope.close === 'function' && scope.visible) {
-              const elId = el.getAttribute('id') || '';
-              if (!key || candidates.includes(elId) || elId.endsWith('-' + key) || elId.includes(key)) {
-                scope.close();
-              }
-            }
-          });
-        }
-      });
-    }
-
-    // Interceptar cliques em gatilhos wire:click para modais, drawers e propriedades reativas
-    document.addEventListener('click', (e) => {
-      let wireEl = e.target;
-      let action = null;
-      while (wireEl && wireEl !== document && wireEl !== window) {
-        if (wireEl.hasAttribute && wireEl.hasAttribute('wire:click')) {
-          action = (wireEl.getAttribute('wire:click') || '').trim();
-          break;
-        }
-        wireEl = wireEl.parentElement;
-      }
-
-      if (action) {
-        // Atribuição direta: wire:click="showModal = true" ou $wire.showModal = true
-        if (action.includes('=')) {
-          const parts = action.replace(/^\$wire\./, '').split('=');
-          const prop = parts[0].trim();
-          const val = parts[1].trim().toLowerCase() === 'true' || parts[1].trim() === '1';
-          window.wireState[prop] = val;
-          if (val) openMatchingOverlays(prop);
-          else closeMatchingOverlays(prop);
-          return;
-        }
-
-        // $set / set: wire:click="$set('showModal', true)" ou $wire.$set(...)
-        if (action.includes('$set(') || action.includes('.set(') || action.startsWith('set(')) {
-          const match = action.match(/(?:\$set|set)\(\s*['"]([^'"]+)['"]\s*,\s*(true|false|1|0|'[^']*'|"[^"]*")\s*\)/i);
-          if (match) {
-            const prop = match[1];
-            const val = match[2].toLowerCase() === 'true' || match[2] === '1';
-            window.wireState[prop] = val;
-            if (val) openMatchingOverlays(prop);
-            else closeMatchingOverlays(prop);
-            return;
-          }
-        }
-
-        // $toggle / toggle: wire:click="$toggle('showModal')" ou $wire.$toggle(...)
-        if (action.includes('$toggle(') || action.includes('.toggle(') || action.startsWith('toggle(')) {
-          const match = action.match(/(?:\$toggle|toggle)\(\s*['"]([^'"]+)['"]\s*\)/i);
-          if (match) {
-            const prop = match[1];
-            window.wireState[prop] = !window.wireState[prop];
-            const val = window.wireState[prop];
-            if (val) openMatchingOverlays(prop);
-            else closeMatchingOverlays(prop);
-            return;
-          }
-        }
-
-        // $dispatch / dispatch: wire:click="$dispatch('open-modal', 'meu-modal')"
-        if (action.includes('$dispatch(') || action.includes('dispatch(')) {
-          const match = action.match(/(?:\$)?dispatch\(\s*['"]([^'"]+)['"](?:\s*,\s*['"]?([^'")]+)['"]?)?\s*\)/i);
-          if (match) {
-            const ev = match[1];
-            const detail = match[2] || '';
-            if (ev === 'open-modal' || ev === 'open-drawer') openMatchingOverlays(detail);
-            else if (ev === 'close-modal' || ev === 'close-drawer') closeMatchingOverlays(detail);
-            else window.dispatchEvent(new CustomEvent(ev, { detail }));
-            return;
-          }
-        }
-
-        // Propriedade booleana direta ou método no wireState
-        if (action in window.wireState || typeof window.wireState[action] === 'boolean') {
-          window.wireState[action] = !window.wireState[action];
-          const val = window.wireState[action];
-          if (val) openMatchingOverlays(action);
-          else closeMatchingOverlays(action);
-          return;
-        }
-
-        // Método genérico no wire:click (ex: wire:click="save")
-        if (action.toLowerCase().includes('save') || action.toLowerCase().includes('submit')) {
-          const parentOverlay = wireEl.closest('[data-sampaui-overlay]');
-          const overlayId = parentOverlay ? parentOverlay.id : null;
-          const toastData = {
-            type: 'success',
-            title: 'Salvo com sucesso!',
-            message: 'As alterações foram processadas.'
-          };
-          window.dispatchEvent(new CustomEvent('toast', { detail: toastData }));
-          closeMatchingOverlays(overlayId);
-          return;
-        }
-      }
-
-      // Interceptar botões de cancelar/fechar de forma agnóstica a qualquer modal
-      let btn = e.target;
-      while (btn && btn !== document && btn !== window) {
-        const tag = (btn.tagName || '').toLowerCase();
-        if (tag === 'button' || tag === 'a' || btn.getAttribute('role') === 'button') {
-          break;
-        }
-        btn = btn.parentElement;
-      }
-
-      if (btn && btn !== document && btn !== window) {
-        const text = (btn.textContent || '').trim().toLowerCase();
-        if (text === 'cancelar' || text === 'fechar' || text === 'cancel' || text === 'close') {
-          const parentOverlay = btn.closest('[data-sampaui-overlay]');
-          const overlayId = parentOverlay ? parentOverlay.id : null;
-          closeMatchingOverlays(overlayId);
-        }
-      }
-    }, true);
-
-    // Interceptar formulários submit simulando ciclo de loading e fechamento automático com Toast
-    document.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const form = e.target;
-      const submitBtn = form.querySelector('button[type="submit"]') || form.querySelector('button:not([type="button"])');
-      const parentOverlay = form.closest('[data-sampaui-overlay]');
-      const overlayId = parentOverlay ? parentOverlay.id : null;
-
-      if (submitBtn) {
-        const descendants = Array.from(submitBtn.querySelectorAll('*'));
-        const loadingIcon = descendants.find((el) => el.hasAttribute('wire:loading') || el.classList.contains('animate-spin') || el.classList.contains('bi-arrow-repeat'));
-        const normalIcon = descendants.find((el) => el.hasAttribute('wire:loading.remove') || el.classList.contains('bi-check2') || el.classList.contains('bi-check') || el.classList.contains('bi-save'));
-
-        submitBtn.disabled = true;
-        submitBtn.classList.add('opacity-75', 'cursor-wait');
-
-        if (loadingIcon) loadingIcon.style.setProperty('display', 'inline-block', 'important');
-        if (normalIcon) normalIcon.style.setProperty('display', 'none', 'important');
-
-        setTimeout(() => {
-          submitBtn.disabled = false;
-          submitBtn.classList.remove('opacity-75', 'cursor-wait');
-
-          if (loadingIcon) loadingIcon.style.setProperty('display', 'none', 'important');
-          if (normalIcon) normalIcon.style.setProperty('display', 'inline-block', 'important');
-
-          const toastData = {
-            type: 'success',
-            title: 'Salvo com sucesso!',
-            message: 'As alterações foram processadas.'
-          };
-
-          window.dispatchEvent(new CustomEvent('toast', { detail: toastData }));
-          window.dispatchEvent(new CustomEvent('close-modal', { detail: overlayId }));
-          window.dispatchEvent(new CustomEvent('close-drawer', { detail: overlayId }));
-        }, 500);
-      }
-    }, true);
-
     try {
       ${jsContent}
     } catch (err) {
