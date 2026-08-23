@@ -1,4 +1,3 @@
-(() => {
 const focusableSelector = [
   'a[href]',
   'button:not([disabled])',
@@ -827,5 +826,5 @@ if (typeof window !== 'undefined') {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = SampaUI;
 }
-})();
 
+export default SampaUI;

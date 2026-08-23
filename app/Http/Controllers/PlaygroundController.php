@@ -612,7 +612,7 @@ PHP,
                     Subcomponentes atômicos com gerenciamento de estado local via Alpine.js e sincronização Livewire sob demanda.
                 </x-sampaui::alert>
 
-                <!-- Abas com navegação nativa -->
+                <!-- Abas com navegação nativa e painéis reativos -->
                 <x-sampaui::tabs
                     :tabs="[
                         'overview' => 'Visão Geral',
@@ -620,26 +620,55 @@ PHP,
                         'cli' => 'CLI & DX',
                     ]"
                     active="overview"
-                />
+                >
+                    <!-- Aba 1: Visão Geral -->
+                    <x-sampaui::tab-panel name="overview">
+                        <div class="rounded-xl border border-border/80 bg-surface-subtle p-4 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-bold text-heading text-sm">Controle de Sessão Rápida</h4>
+                                <x-sampaui::badge variant="success" icon="check-circle">Pronto para Produção</x-sampaui::badge>
+                            </div>
+                            <p class="text-xs text-secondary/80 leading-relaxed">
+                                Abra o modal abaixo para testar o foco cíclico (focus trap), tecla Escape e teleport sem acionar requisições backend.
+                            </p>
 
-                <div class="rounded-xl border border-border/80 bg-surface-subtle p-4 space-y-3">
-                    <h4 class="font-bold text-heading text-sm">Controle de Sessão Rápida</h4>
-                    <p class="text-xs text-secondary/80 leading-relaxed">
-                        Abra o modal abaixo para testar o foco cíclico (focus trap), tecla Escape e teleport sem acionar requisições backend.
-                    </p>
+                            <div class="pt-2">
+                                <x-sampaui::button
+                                    variant="primary"
+                                    icon="sliders"
+                                    x-on:click="$dispatch('open-modal', 'edit-profile')"
+                                >
+                                    Abrir Configurações
+                                </x-sampaui::button>
+                            </div>
+                        </div>
+                    </x-sampaui::tab-panel>
 
-                    <div class="pt-2 flex items-center gap-3">
-                        <x-sampaui::button
-                            variant="primary"
-                            icon="sliders"
-                            x-on:click="$dispatch('open-modal-edit-profile')"
-                        >
-                            Abrir Configurações
-                        </x-sampaui::button>
+                    <!-- Aba 2: Segurança & A11y -->
+                    <x-sampaui::tab-panel name="security">
+                        <div class="rounded-xl border border-border/80 bg-surface-subtle p-4 space-y-3">
+                            <h4 class="font-bold text-heading text-sm">Acessibilidade WAI-ARIA 1.2</h4>
+                            <p class="text-xs text-secondary/80 leading-relaxed">
+                                Modais e Drawers capturam o foco do teclado (Tab / Shift+Tab) e restauram para o botão de origem ao fechar.
+                            </p>
+                            <div class="flex items-center gap-2 pt-1">
+                                <x-sampaui::badge variant="primary" icon="shield-check">Focus Trap Ativo</x-sampaui::badge>
+                                <x-sampaui::badge variant="purple" icon="keyboard">Escape Listener</x-sampaui::badge>
+                            </div>
+                        </div>
+                    </x-sampaui::tab-panel>
 
-                        <x-sampaui::badge variant="success" icon="check-circle">Pronto para Produção</x-sampaui::badge>
-                    </div>
-                </div>
+                    <!-- Aba 3: CLI & DX -->
+                    <x-sampaui::tab-panel name="cli">
+                        <div class="rounded-xl border border-border/80 bg-surface-subtle p-4 space-y-3">
+                            <h4 class="font-bold text-heading text-sm">Comandos de Ejeção (shadcn style)</h4>
+                            <pre class="overflow-x-auto rounded-lg bg-secondary p-2.5 text-[11px] font-mono text-white"><code>php artisan sampaui:add button modal tabs</code></pre>
+                            <p class="text-xs text-secondary/80 leading-relaxed">
+                                Copie o código-fonte Blade diretamente para <code>resources/views/components/sampaui</code>.
+                            </p>
+                        </div>
+                    </x-sampaui::tab-panel>
+                </x-sampaui::tabs>
             </div>
         </x-sampaui::card>
 

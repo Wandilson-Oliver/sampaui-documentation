@@ -122,7 +122,7 @@ export function registerPlayground(Alpine) {
         ],
 
         init() {
-            const saved = localStorage.getItem('sampaui_playground_state_v8') || localStorage.getItem('sampaui_playground_state_v7');
+            const saved = localStorage.getItem('sampaui_playground_state_v9');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -658,7 +658,7 @@ export function registerPlayground(Alpine) {
                 currentDevice: this.currentDevice,
                 splitPercent: this.splitPercent,
             };
-            localStorage.setItem('sampaui_playground_state_v8', JSON.stringify(state));
+            localStorage.setItem('sampaui_playground_state_v9', JSON.stringify(state));
         },
 
         async compileBladeCode(code) {
@@ -793,12 +793,16 @@ export function registerPlayground(Alpine) {
     });
 
     function dispatchOverlayOpen(key) {
-      const candidates = [key, 'sampaui-modal-standalone-' + key, 'sampaui-drawer-standalone-' + key];
+      const candidates = [key, 'sampaui-modal-standalone-' + key, 'sampaui-drawer-standalone-' + key].filter(Boolean);
       candidates.forEach((name) => {
         window.dispatchEvent(new CustomEvent('open-modal', { detail: name }));
         document.dispatchEvent(new CustomEvent('open-modal', { detail: name }));
+        window.dispatchEvent(new CustomEvent('open-modal-' + name));
+        document.dispatchEvent(new CustomEvent('open-modal-' + name));
         window.dispatchEvent(new CustomEvent('open-drawer', { detail: name }));
         document.dispatchEvent(new CustomEvent('open-drawer', { detail: name }));
+        window.dispatchEvent(new CustomEvent('open-drawer-' + name));
+        document.dispatchEvent(new CustomEvent('open-drawer-' + name));
       });
 
       // Acionamento direto de componentes Alpine na árvore DOM (com validação de escopo)
@@ -820,12 +824,16 @@ export function registerPlayground(Alpine) {
     }
 
     function dispatchOverlayClose(key) {
-      const candidates = [key, 'sampaui-modal-standalone-' + key, 'sampaui-drawer-standalone-' + key];
+      const candidates = [key, 'sampaui-modal-standalone-' + key, 'sampaui-drawer-standalone-' + key].filter(Boolean);
       candidates.forEach((name) => {
         window.dispatchEvent(new CustomEvent('close-modal', { detail: name }));
         document.dispatchEvent(new CustomEvent('close-modal', { detail: name }));
+        window.dispatchEvent(new CustomEvent('close-modal-' + name));
+        document.dispatchEvent(new CustomEvent('close-modal-' + name));
         window.dispatchEvent(new CustomEvent('close-drawer', { detail: name }));
         document.dispatchEvent(new CustomEvent('close-drawer', { detail: name }));
+        window.dispatchEvent(new CustomEvent('close-drawer-' + name));
+        document.dispatchEvent(new CustomEvent('close-drawer-' + name));
       });
 
       // Fechamento direto de componentes Alpine na árvore DOM (com validação de escopo)
