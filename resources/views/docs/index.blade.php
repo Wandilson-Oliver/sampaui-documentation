@@ -206,22 +206,214 @@
         </div>
     </section>
 
-    {{-- Seção de Instalação --}}
-    <section id="instalacao" class="doc-install-section" aria-labelledby="install-title">
-        <div>
-            <span class="doc-kicker">Instalação</span>
-            <h2 id="install-title">Quatro comandos até o primeiro componente.</h2>
-            <p>Instale o pacote, publique configuração e assets, depois compile o app consumidor. Sem dependências adicionais no projeto.</p>
-            
-            <div class="doc-install-features">
-                <span class="doc-install-feature-pill"><i class="bi bi-check-circle-fill"></i> Zero JS pesado</span>
-                <span class="doc-install-feature-pill"><i class="bi bi-check-circle-fill"></i> @theme Tailwind v4</span>
-                <span class="doc-install-feature-pill"><i class="bi bi-check-circle-fill"></i> Livewire 4 First</span>
+    {{-- Seção de Instalação Completa & Recursos --}}
+    <section id="instalacao" class="doc-home-section" aria-labelledby="install-title" x-data="{ installTab: 'artisan' }">
+        <div class="doc-home-section-heading">
+            <span class="doc-kicker">Instalação & Configuração</span>
+            <h2 id="install-title">Integração completa com todos os recursos do ecossistema.</h2>
+            <p>Escolha o fluxo ideal para o seu projeto: instalação automática via Composer ou ejeção seletiva de componentes Blade (estilo shadcn add) para controle total do código.</p>
+        </div>
+
+        {{-- Abas de Métodos de Instalação --}}
+        <div class="mt-6">
+            <div class="flex flex-wrap gap-2 border-b border-border pb-2" role="tablist" aria-label="Opções de instalação">
+                <button
+                    type="button"
+                    role="tab"
+                    x-on:click="installTab = 'artisan'"
+                    x-bind:aria-selected="(installTab === 'artisan').toString()"
+                    class="cursor-pointer rounded-xl px-4 py-2 text-xs font-bold transition-all"
+                    x-bind:class="installTab === 'artisan' ? 'bg-primary text-white shadow-xs' : 'bg-surface border border-border text-secondary/80 hover:border-primary/40 hover:text-primary'"
+                >
+                    <i class="bi bi-magic me-1.5"></i> Instalação Automática
+                </button>
+
+                <button
+                    type="button"
+                    role="tab"
+                    x-on:click="installTab = 'ejection'"
+                    x-bind:aria-selected="(installTab === 'ejection').toString()"
+                    class="cursor-pointer rounded-xl px-4 py-2 text-xs font-bold transition-all"
+                    x-bind:class="installTab === 'ejection' ? 'bg-primary text-white shadow-xs' : 'bg-surface border border-border text-secondary/80 hover:border-primary/40 hover:text-primary'"
+                >
+                    <i class="bi bi-box-arrow-in-down me-1.5"></i> CLI de Ejeção (sampaui:add)
+                </button>
+
+                <button
+                    type="button"
+                    role="tab"
+                    x-on:click="installTab = 'tailwind'"
+                    x-bind:aria-selected="(installTab === 'tailwind').toString()"
+                    class="cursor-pointer rounded-xl px-4 py-2 text-xs font-bold transition-all"
+                    x-bind:class="installTab === 'tailwind' ? 'bg-primary text-white shadow-xs' : 'bg-surface border border-border text-secondary/80 hover:border-primary/40 hover:text-primary'"
+                >
+                    <i class="bi bi-wind me-1.5"></i> Tailwind CSS v4
+                </button>
+
+                <button
+                    type="button"
+                    role="tab"
+                    x-on:click="installTab = 'manual'"
+                    x-bind:aria-selected="(installTab === 'manual').toString()"
+                    class="cursor-pointer rounded-xl px-4 py-2 text-xs font-bold transition-all"
+                    x-bind:class="installTab === 'manual' ? 'bg-primary text-white shadow-xs' : 'bg-surface border border-border text-secondary/80 hover:border-primary/40 hover:text-primary'"
+                >
+                    <i class="bi bi-folder2-open me-1.5"></i> Publicação Manual
+                </button>
+
+                <button
+                    type="button"
+                    role="tab"
+                    x-on:click="installTab = 'doctor'"
+                    x-bind:aria-selected="(installTab === 'doctor').toString()"
+                    class="cursor-pointer rounded-xl px-4 py-2 text-xs font-bold transition-all"
+                    x-bind:class="installTab === 'doctor' ? 'bg-primary text-white shadow-xs' : 'bg-surface border border-border text-secondary/80 hover:border-primary/40 hover:text-primary'"
+                >
+                    <i class="bi bi-heart-pulse me-1.5"></i> Diagnóstico & CLI
+                </button>
             </div>
 
-            <a href="{{ route('documentation.pages.show', 'design-system') }}">Ver guia de configuração <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+            {{-- Painel 1: Instalação Automática --}}
+            <div x-show="installTab === 'artisan'" x-cloak class="mt-6 space-y-6">
+                <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] items-start">
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-heading flex items-center gap-2">
+                            <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary text-xs font-bold">1</span>
+                            Instale via Composer e execute o instalador oficial
+                        </h3>
+                        <p class="text-sm text-secondary/80 leading-relaxed">
+                            O comando <code>sampaui:install</code> publica automaticamente as configurações, os assets compilados (CSS, JS, fontes e ícones) e insere as importações necessárias em seus arquivos de frontend.
+                        </p>
+
+                        <div class="grid gap-3 sm:grid-cols-3 pt-2">
+                            <div class="rounded-lg border border-border bg-surface-subtle p-3 text-xs">
+                                <strong class="block text-heading font-bold mb-1"><i class="bi bi-check2 text-primary me-1"></i> Config</strong>
+                                <code>config/sampaui.php</code>
+                            </div>
+                            <div class="rounded-lg border border-border bg-surface-subtle p-3 text-xs">
+                                <strong class="block text-heading font-bold mb-1"><i class="bi bi-check2 text-primary me-1"></i> Assets</strong>
+                                <code>public/vendor/sampaui</code>
+                            </div>
+                            <div class="rounded-lg border border-border bg-surface-subtle p-3 text-xs">
+                                <strong class="block text-heading font-bold mb-1"><i class="bi bi-check2 text-primary me-1"></i> Frontend</strong>
+                                <code>resources/css & js</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <x-docs.code-block :code="'# 1. Requisite o pacote'.PHP_EOL.'composer require sampaui/sampaui'.PHP_EOL.PHP_EOL.'# 2. Execute o instalador automático'.PHP_EOL.'php artisan sampaui:install'.PHP_EOL.PHP_EOL.'# 3. Compile os assets do seu app'.PHP_EOL.'npm run build'" label="Terminal" />
+                </div>
+            </div>
+
+            {{-- Painel 2: CLI de Ejeção Seletiva (shadcn style) --}}
+            <div x-show="installTab === 'ejection'" x-cloak class="mt-6 space-y-6">
+                <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] items-start">
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-heading flex items-center gap-2">
+                            <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary text-xs font-bold">2</span>
+                            Copie componentes diretamente para o seu projeto
+                        </h3>
+                        <p class="text-sm text-secondary/80 leading-relaxed">
+                            Inspirado no <strong>shadcn/ui</strong>, você pode ejetar componentes específicos diretamente para <code>resources/views/components/sampaui</code>. Tenha total liberdade para customizar o markup Blade sem depender de overrides na pasta <code>vendor/</code>.
+                        </p>
+
+                        <div class="rounded-xl border border-primary/20 bg-primary/5 p-4 text-xs text-secondary/90 space-y-2">
+                            <p class="font-bold text-heading flex items-center gap-1.5 text-primary">
+                                <i class="bi bi-info-circle-fill"></i> Vantagem do Modo Ejeção
+                            </p>
+                            <p>O componente passa a pertencer ao seu repositório Git, permitindo refatorações, adição de novos slots e regras de negócio sob medida.</p>
+                        </div>
+                    </div>
+
+                    <x-docs.code-block :code="'# Copiar componentes específicos para o projeto'.PHP_EOL.'php artisan sampaui:add button modal table select-search'.PHP_EOL.PHP_EOL.'# Copiar todos os 48 componentes oficiais'.PHP_EOL.'php artisan sampaui:add --all'.PHP_EOL.PHP_EOL.'# Sobrescrever componentes já existentes'.PHP_EOL.'php artisan sampaui:add button --force'" label="Terminal Artisan" />
+                </div>
+            </div>
+
+            {{-- Painel 3: Tailwind CSS v4 --}}
+            <div x-show="installTab === 'tailwind'" x-cloak class="mt-6 space-y-6">
+                <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] items-start">
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-heading flex items-center gap-2">
+                            <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary text-xs font-bold">3</span>
+                            Importações no Tailwind CSS v4 e Vite
+                        </h3>
+                        <p class="text-sm text-secondary/80 leading-relaxed">
+                            O SampaUI utiliza a arquitetura moderna do Tailwind CSS v4. As importações de CSS e JS integram automaticamente as fontes oficiais (Plus Jakarta Sans e Outfit), ícones e utilitários sem conflitos.
+                        </p>
+
+                        <div class="space-y-2 text-xs">
+                            <strong class="text-heading block font-bold">Em resources/css/app.css:</strong>
+                            <pre class="overflow-x-auto rounded-lg bg-secondary p-3 text-white font-mono"><code>@import "tailwindcss";
+@import "../../vendor/sampaui/sampaui/dist/sampaui.css";</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="space-y-2 text-xs">
+                            <strong class="text-heading block font-bold">Em resources/js/app.js:</strong>
+                            <pre class="overflow-x-auto rounded-lg bg-secondary p-3 text-white font-mono"><code>import './bootstrap';
+import '../../vendor/sampaui/sampaui/dist/sampaui.js';</code></pre>
+                        </div>
+
+                        <div class="rounded-xl border border-border bg-surface p-4 text-xs text-secondary/80 space-y-2">
+                            <strong class="text-heading block font-bold text-primary">Helper sampaui_cn() Disponível</strong>
+                            <p>Utilize <code>sampaui_cn('p-4 bg-primary', $customClass)</code> para mesclar classes Tailwind resolvendo conflitos automaticamente.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Painel 4: Publicação Manual --}}
+            <div x-show="installTab === 'manual'" x-cloak class="mt-6 space-y-6">
+                <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] items-start">
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-heading flex items-center gap-2">
+                            <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary text-xs font-bold">4</span>
+                            Publicação seletiva por tags do Laravel
+                        </h3>
+                        <p class="text-sm text-secondary/80 leading-relaxed">
+                            Se preferir publicar manualmente os recursos do pacote em vez de usar o instalador automático, utilize as tags de publicação oficiais:
+                        </p>
+
+                        <ul class="space-y-2 text-xs text-secondary/80 list-disc list-inside">
+                            <li><code>sampaui-config</code>: Arquivo de configuração de temas e prefixo de tags.</li>
+                            <li><code>sampaui-assets</code>: Arquivos CSS, JS e fontes em <code>public/vendor/sampaui</code>.</li>
+                            <li><code>sampaui-views</code>: Todos os 48 templates Blade em <code>resources/views/vendor/sampaui</code>.</li>
+                        </ul>
+                    </div>
+
+                    <x-docs.code-block :code="'# Publicar arquivo de configuração'.PHP_EOL.'php artisan vendor:publish --tag=sampaui-config'.PHP_EOL.PHP_EOL.'# Publicar assets (CSS, JS, fontes)'.PHP_EOL.'php artisan vendor:publish --tag=sampaui-assets --force'.PHP_EOL.PHP_EOL.'# Publicar views para customização'.PHP_EOL.'php artisan vendor:publish --tag=sampaui-views'" label="Terminal Artisan" />
+                </div>
+            </div>
+
+            {{-- Painel 5: Diagnóstico & Comandos --}}
+            <div x-show="installTab === 'doctor'" x-cloak class="mt-6 space-y-6">
+                <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] items-start">
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-heading flex items-center gap-2">
+                            <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary text-xs font-bold">5</span>
+                            Diagnóstico e catálogo pelo terminal
+                        </h3>
+                        <p class="text-sm text-secondary/80 leading-relaxed">
+                            O SampaUI inclui ferramentas de diagnóstico para validar a saúde do ambiente, verificar dependências e inspecionar os componentes disponíveis.
+                        </p>
+
+                        <div class="grid gap-3 sm:grid-cols-2 pt-2">
+                            <div class="rounded-xl border border-border bg-surface p-4 text-xs">
+                                <strong class="text-heading block font-bold text-primary mb-1">sampaui:doctor</strong>
+                                <p class="text-secondary/70">Testa a presença dos assets compilados, fontes, extensões e versões do Laravel/Livewire.</p>
+                            </div>
+                            <div class="rounded-xl border border-border bg-surface p-4 text-xs">
+                                <strong class="text-heading block font-bold text-primary mb-1">sampaui:list</strong>
+                                <p class="text-secondary/70">Lista todos os 48 componentes registrados com suas tags Blade e categorias.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <x-docs.code-block :code="'# Diagnosticar saúde da instalação'.PHP_EOL.'php artisan sampaui:doctor'.PHP_EOL.PHP_EOL.'# Listar todos os 48 componentes'.PHP_EOL.'php artisan sampaui:list'.PHP_EOL.PHP_EOL.'# Informações do pacote'.PHP_EOL.'php artisan sampaui:about'" label="Comandos Utilitários" />
+                </div>
+            </div>
         </div>
-        <x-docs.code-block :code="'composer require sampaui/sampaui'.PHP_EOL.'php artisan package:discover --ansi'.PHP_EOL.'php artisan sampaui:install --force --no-interaction'.PHP_EOL.'npm run build'" label="Terminal" />
     </section>
 
     {{-- Templates e Blocks em Destaque --}}

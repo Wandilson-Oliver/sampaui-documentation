@@ -14,7 +14,7 @@ it('renders the overview with installation guidance and component links', functi
         ->assertSee('Documentação SampaUI')
         ->assertSee('Componentes Blade para produtos digitais')
         ->assertSee('profissionais.')
-        ->assertSee('Quatro comandos até o primeiro componente.')
+        ->assertSee('Integração completa com todos os recursos do ecossistema.')
         ->assertSee('Todos os componentes')
         ->assertSee('Componentes organizados para acelerar CRMs, ERPs e sistemas internos em Laravel.')
         ->assertSee('Roadmap')
