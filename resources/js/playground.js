@@ -125,7 +125,7 @@ export function registerPlayground(Alpine) {
         compileAbortController: null,
 
         init() {
-            const saved = localStorage.getItem('sampaui_playground_state_v20');
+            const saved = localStorage.getItem('sampaui_playground_state_v21');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -666,7 +666,7 @@ export function registerPlayground(Alpine) {
                 currentDevice: this.currentDevice,
                 splitPercent: this.splitPercent,
             };
-            localStorage.setItem('sampaui_playground_state_v20', JSON.stringify(state));
+            localStorage.setItem('sampaui_playground_state_v21', JSON.stringify(state));
         },
 
         async compileBladeCode(code) {
@@ -883,8 +883,9 @@ export function registerPlayground(Alpine) {
       const submitBtn = form.querySelector('button[type="submit"]') || form.querySelector('button:not([type="button"])');
 
       if (submitBtn) {
-        const loadingIcon = submitBtn.querySelector('[wire\\:loading]') || submitBtn.querySelector('.animate-spin');
-        const normalIcon = submitBtn.querySelector('[wire\\:loading\\.remove]') || submitBtn.querySelector('.bi-check2') || submitBtn.querySelector('.bi-check');
+        const descendants = Array.from(submitBtn.querySelectorAll('*'));
+        const loadingIcon = descendants.find((el) => el.hasAttribute('wire:loading') || el.classList.contains('animate-spin') || el.classList.contains('bi-arrow-repeat'));
+        const normalIcon = descendants.find((el) => el.hasAttribute('wire:loading.remove') || el.classList.contains('bi-check2') || el.classList.contains('bi-check') || el.classList.contains('bi-save'));
 
         submitBtn.disabled = true;
         submitBtn.classList.add('opacity-75', 'cursor-wait');
