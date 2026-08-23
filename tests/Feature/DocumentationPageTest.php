@@ -572,3 +572,26 @@ BLADE;
         ->assertSee('Ativo')
         ->assertSee('Nome do Lead');
 });
+
+it('compiles Blade code with undeclared variables safely without throwing undefined variable errors', function () {
+    $bladeCode = <<<'BLADE'
+<div>
+    @if ($hasError)
+        <x-sampaui::alert variant="danger" title="Erro">Falha no login</x-sampaui::alert>
+    @endif
+    <x-sampaui::input name="email" label="Email" :disabled="$isAuthenticating" />
+</div>
+BLADE;
+
+    $response = $this->postJson(route('playground.compile'), [
+        'code' => $bladeCode,
+    ]);
+
+    $response
+        ->assertOk()
+        ->assertJson([
+            'success' => true,
+        ])
+        ->assertDontSee('Undefined variable', false)
+        ->assertSee('Email');
+});

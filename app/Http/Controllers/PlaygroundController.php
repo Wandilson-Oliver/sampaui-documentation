@@ -420,24 +420,60 @@ PHP,
                 'name' => 'Formulário de Autenticação',
                 'description' => 'Card de login elegante com validações, revealable password e botão de submissão.',
                 'html' => <<<'BLADE'
-<div class="flex min-h-screen items-center justify-center bg-slate-100 p-4 font-sans">
-  <x-sampaui::card title="Acesse sua Conta" description="Entre com suas credenciais para acessar o painel" class="w-full max-w-md shadow-2xl">
-    <div class="space-y-4">
-      <x-sampaui::input name="email" type="email" label="Email Corporativo" placeholder="seu.email@empresa.com" icon="envelope" required />
-      <x-sampaui::input name="password" type="password" label="Senha de Acesso" placeholder="••••••••" icon="lock" revealable required />
-      
-      <div class="flex items-center justify-between text-xs">
-        <x-sampaui::checkbox name="remember" label="Lembrar deste dispositivo" />
-        <a href="#" class="font-medium text-primary hover:underline">Esqueceu a senha?</a>
-      </div>
-    </div>
+<div class="mx-auto flex min-h-screen max-w-lg items-center justify-center p-4">
+    <x-sampaui::card padding="lg" class="w-full shadow-default">
+        <div class="mb-8 text-center">
+            <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-default bg-light">
+                <x-sampaui::brand-mark />
+            </div>
+            <p class="mt-5 text-sm font-semibold uppercase tracking-[0.24em] text-primary">SampaUI</p>
+            <h2 class="mt-3 text-3xl font-semibold tracking-tight text-primary">Acesse sua conta</h2>
+            <p class="mt-2 text-sm text-secondary">Entre no painel operacional.</p>
+        </div>
 
-    <x-slot:actions>
-      <x-sampaui::button class="w-full" size="lg" icon="box-arrow-in-right" wire:click="authenticate">
-        Entrar na Plataforma
-      </x-sampaui::button>
-    </x-slot:actions>
-  </x-sampaui::card>
+        <form class="space-y-5" wire:submit.prevent="authenticate">
+            @if ($hasError)
+                <x-sampaui::alert variant="danger" title="Credenciais inválidas" wire:dirty.remove>
+                    Confira seu e-mail e senha antes de tentar novamente.
+                </x-sampaui::alert>
+            @endif
+
+            <x-sampaui::input
+                name="email"
+                type="email"
+                label="Email"
+                icon="envelope"
+                placeholder="admin@sampa.dev"
+                wire:model.live="email"
+                required
+            />
+
+            <x-sampaui::input
+                name="password"
+                type="password"
+                label="Senha"
+                icon="lock"
+                revealable
+                placeholder="Digite sua senha"
+                wire:model="password"
+                required
+            />
+
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <x-sampaui::checkbox name="remember" label="Lembrar de mim" color="primary" wire:model="remember" />
+                <a href="#" class="text-sm font-semibold text-primary transition hover:text-primary/80">Esqueceu a senha?</a>
+            </div>
+
+            <x-sampaui::button type="submit" icon="box-arrow-in-right" :loading="$isAuthenticating" full>
+                Entrar
+            </x-sampaui::button>
+        </form>
+
+        <p class="mt-7 text-center text-sm text-secondary">
+            Novo por aqui?
+            <a href="#" class="font-semibold text-primary">Criar conta</a>
+        </p>
+    </x-sampaui::card>
 </div>
 BLADE,
                 'css' => '',
@@ -457,10 +493,15 @@ class Login extends Component
     public string $password = '';
 
     public bool $remember = false;
+    public bool $isAuthenticating = false;
+    public bool $hasError = false;
 
     public function authenticate(): void
     {
         $this->validate();
+
+        $this->isAuthenticating = true;
+        $this->hasError = false;
 
         $this->dispatch('toast', [
             'type' => 'success',
@@ -565,7 +606,7 @@ PHP,
         $code = (string) $request->input('code', '');
         $livewire = (string) $request->input('livewire', '');
 
-        if (! str_contains($code, '<x-') && ! str_contains($code, '@') && ! str_contains($code, '$this')) {
+        if (! str_contains($code, '<x-') && ! str_contains($code, '@') && ! str_contains($code, '$this') && ! str_contains($code, '$')) {
             return response()->json([
                 'success' => true,
                 'html' => $code,
@@ -574,6 +615,29 @@ PHP,
 
         try {
             $data = $this->extractLivewireProperties($livewire);
+
+            // Injetar variáveis essenciais do ecossistema Blade/Laravel
+            $data['errors'] = $data['errors'] ?? new \Illuminate\Support\ViewErrorBag();
+            $data['slot'] = $data['slot'] ?? new \Illuminate\Support\HtmlString('');
+            $data['attributes'] = $data['attributes'] ?? new \Illuminate\View\ComponentAttributeBag();
+
+            // Identificar automaticamente todas as variáveis $nomeVar usadas no template Blade
+            if (preg_match_all('/\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/', $code, $matches)) {
+                $builtinVars = ['this', 'errors', 'slot', 'attributes', 'loop', '__env', 'app', '_instance', '_currentLoopData'];
+                foreach ($matches[1] as $varName) {
+                    if (! in_array($varName, $builtinVars, true) && ! array_key_exists($varName, $data)) {
+                        $lower = strtolower($varName);
+                        if (in_array($lower, ['users', 'items', 'rows', 'options', 'clients', 'customers', 'products', 'steps', 'tabs', 'list', 'data'], true) || str_ends_with($lower, 's')) {
+                            $data[$varName] = [];
+                        } elseif (str_starts_with($varName, 'is') || str_starts_with($varName, 'has') || str_starts_with($varName, 'show') || str_starts_with($varName, 'can')) {
+                            $data[$varName] = false;
+                        } else {
+                            $data[$varName] = false;
+                        }
+                    }
+                }
+            }
+
             $normalizedCode = preg_replace('/\$this->([a-zA-Z0-9_]+)/', '$$1', $code);
             $rendered = Blade::render($normalizedCode, $data);
 
