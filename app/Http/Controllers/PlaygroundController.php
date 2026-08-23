@@ -590,6 +590,143 @@ class Playground extends Component
 }
 PHP,
             ],
+            'architecture' => [
+                'name' => 'Composabilidade & A11y',
+                'description' => 'Arquitetura composável estilo Radix/shadcn com modal acessível, abas, badge e utilitário de classes.',
+                'html' => <<<'BLADE'
+<div class="flex min-h-screen items-center justify-center bg-slate-50 p-6 font-sans">
+    <div class="w-full max-w-xl space-y-6">
+        <!-- Card de Apresentação da Arquitetura -->
+        <x-sampaui::card
+            title="Arquitetura Composável & Acessível"
+            description="Exemplo de composabilidade, foco acessível e performance client-first."
+            padding="lg"
+            class="shadow-xl"
+        >
+            <x-slot:actions>
+                <x-sampaui::badge variant="primary" icon="universal-access">WAI-ARIA 1.2</x-sampaui::badge>
+            </x-slot:actions>
+
+            <div class="space-y-4">
+                <x-sampaui::alert variant="info" title="Padrão Radix / shadcn">
+                    Subcomponentes atômicos com gerenciamento de estado local via Alpine.js e sincronização Livewire sob demanda.
+                </x-sampaui::alert>
+
+                <!-- Abas com navegação nativa -->
+                <x-sampaui::tabs
+                    :tabs="[
+                        'overview' => 'Visão Geral',
+                        'security' => 'Segurança & A11y',
+                        'cli' => 'CLI & DX',
+                    ]"
+                    active="overview"
+                />
+
+                <div class="rounded-xl border border-border/80 bg-surface-subtle p-4 space-y-3">
+                    <h4 class="font-bold text-heading text-sm">Controle de Sessão Rápida</h4>
+                    <p class="text-xs text-secondary/80 leading-relaxed">
+                        Abra o modal abaixo para testar o foco cíclico (focus trap), tecla Escape e teleport sem acionar requisições backend.
+                    </p>
+
+                    <div class="pt-2 flex items-center gap-3">
+                        <x-sampaui::button
+                            variant="primary"
+                            icon="sliders"
+                            x-on:click="$dispatch('open-modal-edit-profile')"
+                        >
+                            Abrir Configurações
+                        </x-sampaui::button>
+
+                        <x-sampaui::badge variant="success" icon="check-circle">Pronto para Produção</x-sampaui::badge>
+                    </div>
+                </div>
+            </div>
+        </x-sampaui::card>
+
+        <!-- Modal Acessível com Focus Trap e Teleport -->
+        <x-sampaui::modal
+            id="edit-profile"
+            title="Configurações da Conta"
+            size="md"
+        >
+            <form wire:submit="saveSettings" class="space-y-4 py-2">
+                <x-sampaui::input
+                    name="account_name"
+                    label="Nome da Organização"
+                    placeholder="Sampa Tecnologia"
+                    wire:model="accountName"
+                    required
+                />
+
+                <x-sampaui::select-search
+                    name="theme_mode"
+                    label="Modo de Visualização"
+                    placeholder="Selecione o tema"
+                    :options="[
+                        'system' => 'Automático (Sistema)',
+                        'light' => 'Claro (Light)',
+                        'dark' => 'Escuro (Dark Mode)',
+                    ]"
+                />
+
+                <x-sampaui::toggle
+                    name="two_factor"
+                    label="Autenticação em Duas Etapas (2FA)"
+                    checked
+                />
+
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-border/60">
+                    <x-sampaui::button
+                        type="button"
+                        variant="light"
+                        x-on:click="open = false"
+                    >
+                        Cancelar
+                    </x-sampaui::button>
+
+                    <x-sampaui::button
+                        type="submit"
+                        variant="primary"
+                        icon="check2"
+                        loading
+                    >
+                        Salvar Alterações
+                    </x-sampaui::button>
+                </div>
+            </form>
+        </x-sampaui::modal>
+    </div>
+</div>
+BLADE,
+                'css' => '',
+                'js' => '',
+                'livewire' => <<<'PHP'
+namespace App\Livewire;
+
+use Livewire\Component;
+
+class Playground extends Component
+{
+    public string $accountName = 'Sampa Tecnologia';
+    public string $themeMode = 'system';
+    public bool $twoFactor = true;
+
+    public function saveSettings(): void
+    {
+        $this->dispatch('toast', [
+            'type' => 'success',
+            'title' => 'Configurações salvas!',
+            'message' => 'As preferências foram atualizadas com sucesso.',
+        ]);
+    }
+
+    public function render()
+    {
+        return view('livewire.playground');
+    }
+}
+PHP,
+            ],
         ];
 
         return view('docs.playground', [

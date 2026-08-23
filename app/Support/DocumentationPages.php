@@ -265,12 +265,140 @@ BLADE,
     <h3 class="text-lg font-bold text-heading">Card Semântico</h3>
     <p class="text-sm text-secondary/80 mt-1">Utiliza superfícies e bordas oficiais.</p>
 </x-sampaui::card>
-
-{{-- 3. Exemplo de Badge de Status com token Success --}}
-<x-sampaui::badge variant="success">
-    Aprovado
-</x-sampaui::badge>
 BLADE,
+            ],
+            'cli' => [
+                'slug' => 'cli',
+                'name' => 'CLI & Ejeção',
+                'icon' => 'terminal',
+                'tag' => 'Developer Experience',
+                'summary' => 'Comandos Artisan oficiais do SampaUI para instalação, cópia seletiva de componentes (estilo shadcn add), diagnóstico e catálogo.',
+                'description' => 'Aprenda a utilizar os comandos de console do SampaUI para gerenciar e ejetar componentes diretamente para o seu projeto com controle total.',
+                'preview' => <<<'BLADE'
+<div class="space-y-8">
+    <div class="rounded-2xl border border-border bg-surface p-6 md:p-8 shadow-sm">
+        <div class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary mb-3">
+            <i class="bi bi-terminal-fill"></i> CLI de Alta Produtividade
+        </div>
+        <h2 class="text-2xl font-extrabold tracking-tight text-heading">Comandos Artisan do SampaUI</h2>
+        <p class="mt-2 text-sm leading-relaxed text-secondary/80">
+            Inspirado na experiência de ferramentas modernas como <strong>shadcn/ui</strong>, o SampaUI oferece comandos CLI nativos para instalação completa ou cópia seletiva do código-fonte Blade para o seu projeto.
+        </p>
+    </div>
+
+    <!-- 1. sampaui:add -->
+    <div class="rounded-xl border border-border bg-surface p-6 space-y-4 shadow-sm">
+        <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold text-heading flex items-center gap-2">
+                <i class="bi bi-box-arrow-in-down text-primary"></i> 1. Adicionar Componentes Seletivamente
+            </h3>
+            <span class="rounded-full bg-primary/10 text-primary px-3 py-1 text-xs font-semibold">Novo</span>
+        </div>
+        <p class="text-sm text-secondary/80">
+            Copia o código-fonte Blade dos componentes especificados para <code>resources/views/components/sampaui</code>, permitindo total customização sem mexer na pasta <code>vendor/</code>.
+        </p>
+        <pre class="overflow-x-auto rounded-lg bg-secondary p-4 text-xs font-mono text-white"><code># Copiar componentes específicos
+php artisan sampaui:add button modal table select-search
+
+# Copiar todos os 48 componentes oficiais
+php artisan sampaui:add --all
+
+# Sobrescrever componentes já existentes
+php artisan sampaui:add button --force</code></pre>
+    </div>
+
+    <!-- 2. Outros comandos úteis -->
+    <div class="grid gap-4 md:grid-cols-2">
+        <div class="rounded-xl border border-border bg-surface p-5 space-y-3">
+            <h4 class="font-bold text-heading text-base flex items-center gap-2">
+                <i class="bi bi-list-columns text-primary"></i> php artisan sampaui:list
+            </h4>
+            <p class="text-xs text-secondary/80 leading-relaxed">
+                Lista todos os 48 componentes registrados, suas tags Blade correspondentes e categorias no terminal.
+            </p>
+        </div>
+
+        <div class="rounded-xl border border-border bg-surface p-5 space-y-3">
+            <h4 class="font-bold text-heading text-base flex items-center gap-2">
+                <i class="bi bi-heart-pulse text-success"></i> php artisan sampaui:doctor
+            </h4>
+            <p class="text-xs text-secondary/80 leading-relaxed">
+                Diagnostica a instalação e verifica assets compilados, dependências Livewire e fontes.
+            </p>
+        </div>
+    </div>
+</div>
+BLADE,
+                'code' => <<<'BLADE'
+# Instalar componentes diretamente no projeto:
+php artisan sampaui:add button modal table-search
+
+# Diagnosticar saúde da instalação:
+php artisan sampaui:doctor
+BLADE,
+            ],
+            'architecture' => [
+                'slug' => 'architecture',
+                'name' => 'Arquitetura & DX',
+                'icon' => 'diagram-3',
+                'tag' => 'Architecture',
+                'summary' => 'Diretrizes arquiteturais do SampaUI: Acessibilidade WAI-ARIA, Performance sem requisições desnecessárias e Utilitário cn().',
+                'description' => 'Conheça os padrões arquiteturais do SampaUI inspirados em Radix UI e shadcn/ui para máxima performance, composabilidade e segurança.',
+                'preview' => <<<'BLADE'
+<div class="space-y-8">
+    <div class="rounded-2xl border border-border bg-surface p-6 md:p-8 shadow-sm">
+        <div class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary mb-3">
+            <i class="bi bi-cpu"></i> Engenharia & Padrões
+        </div>
+        <h2 class="text-2xl font-extrabold tracking-tight text-heading">Padrões de Alta Performance & DX</h2>
+        <p class="mt-2 text-sm leading-relaxed text-secondary/80">
+            O SampaUI foi projetado com três pilares fundamentais: <strong>Acessibilidade WAI-ARIA 1.2</strong>, <strong>Zero Network Overhead</strong> via Alpine.js e <strong>Theming sem conflitos</strong> via Tailwind CSS v4.
+        </p>
+    </div>
+
+    <div class="grid gap-5 md:grid-cols-3">
+        <div class="rounded-xl border border-border bg-surface p-5 space-y-3">
+            <div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-lg">
+                <i class="bi bi-universal-access"></i>
+            </div>
+            <h3 class="font-bold text-heading text-base">Acessibilidade Nativa</h3>
+            <p class="text-xs text-secondary/80 leading-relaxed">
+                Focus trap nativo em modais e drawers, IDs automáticos vinculando labels a inputs e papéis semânticos (<code>role="dialog"</code>, <code>role="listbox"</code>).
+            </p>
+        </div>
+
+        <div class="rounded-xl border border-border bg-surface p-5 space-y-3">
+            <div class="h-10 w-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center font-bold text-lg">
+                <i class="bi bi-lightning-charge-fill"></i>
+            </div>
+            <h3 class="font-bold text-heading text-base">Client-First Performance</h3>
+            <p class="text-xs text-secondary/80 leading-relaxed">
+                Abertura, fechamento, filtragem local de selects e trocas de abas rodam 100% no cliente com Alpine.js, sem disparar requisições HTTP desnecessárias.
+            </p>
+        </div>
+
+        <div class="rounded-xl border border-border bg-surface p-5 space-y-3">
+            <div class="h-10 w-10 rounded-xl bg-purple/10 text-purple flex items-center justify-center font-bold text-lg">
+                <i class="bi bi-code-slash"></i>
+            </div>
+            <h3 class="font-bold text-heading text-base">Helper sampaui_cn()</h3>
+            <p class="text-xs text-secondary/80 leading-relaxed">
+                Utilitário de mesclagem inteligente inspirado no <code>cn()</code> do shadcn para resolver conflitos de classes Tailwind CSS sem quebrar o layout.
+            </p>
+        </div>
+    </div>
+</div>
+BLADE,
+                'code' => <<<'PHP'
+// Mesclar classes com resolução inteligente de conflitos Tailwind:
+$classes = sampaui_cn(
+    'p-4 bg-primary text-white',
+    ['font-bold' => true, 'opacity-50' => false],
+    'p-8 bg-danger' // p-8 sobrepõe p-4 e bg-danger sobrepõe bg-primary sem conflito
+);
+
+// Resultado: 'text-white font-bold p-8 bg-danger'
+PHP,
             ],
         ];
 
