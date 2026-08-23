@@ -125,7 +125,7 @@ export function registerPlayground(Alpine) {
         compileAbortController: null,
 
         init() {
-            const saved = localStorage.getItem('sampaui_playground_state_v23');
+            const saved = localStorage.getItem('sampaui_playground_state_v24');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -666,7 +666,7 @@ export function registerPlayground(Alpine) {
                 currentDevice: this.currentDevice,
                 splitPercent: this.splitPercent,
             };
-            localStorage.setItem('sampaui_playground_state_v23', JSON.stringify(state));
+            localStorage.setItem('sampaui_playground_state_v24', JSON.stringify(state));
         },
 
         async compileBladeCode(code) {
@@ -802,8 +802,63 @@ export function registerPlayground(Alpine) {
     }
   </script>
 
-  <!-- SampaUI Runtime & Alpine.js -->
+  <!-- SampaUI Runtime -->
   <script src="${sampauiJsUrl}"></script>
+
+  <!-- Livewire / Alpine $wire Emulator registrado antes do Alpine.js -->
+  <script>
+    window.rawWireState = Object.assign(${livewireStateJson}, window.rawWireState || {});
+    window.wireState = window.rawWireState;
+
+    window.$wire = new Proxy({}, {
+      get(target, prop) {
+        if (prop === 'entangle') {
+          return (name) => ({
+            get live() { return Boolean(window.wireState[name]); },
+            set live(val) {
+              window.wireState[name] = Boolean(val);
+              window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: name }));
+              window.dispatchEvent(new CustomEvent(val ? 'open-drawer' : 'close-drawer', { detail: name }));
+            }
+          });
+        }
+        if (prop === '$set' || prop === 'set') {
+          return (key, val) => {
+            window.wireState[key] = Boolean(val);
+            window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: key }));
+            window.dispatchEvent(new CustomEvent(val ? 'open-drawer' : 'close-drawer', { detail: key }));
+          };
+        }
+        if (prop === '$toggle' || prop === 'toggle') {
+          return (key) => {
+            window.wireState[key] = !window.wireState[key];
+            const val = window.wireState[key];
+            window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: key }));
+            window.dispatchEvent(new CustomEvent(val ? 'open-drawer' : 'close-drawer', { detail: key }));
+          };
+        }
+        if (prop === 'dispatch' || prop === '$dispatch') {
+          return (eventName, payload) => {
+            window.dispatchEvent(new CustomEvent(eventName, { detail: payload }));
+          };
+        }
+        if (prop in window.wireState) return window.wireState[prop];
+        return (...args) => {};
+      },
+      set(target, prop, val) {
+        window.wireState[prop] = val;
+        return true;
+      }
+    });
+
+    document.addEventListener('alpine:init', () => {
+      if (window.Alpine) {
+        window.Alpine.magic('wire', () => window.$wire);
+      }
+    });
+  </script>
+
+  <!-- Alpine.js -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 
   <style>
@@ -823,48 +878,7 @@ export function registerPlayground(Alpine) {
 <body class="h-full ${bodyBg} antialiased selection:bg-primary/30">
   ${compiledHtml}
 
-  <!-- Estado Livewire para o Preview -->
   <script>
-    window.rawWireState = Object.assign(${livewireStateJson}, window.rawWireState || {});
-    window.wireState = window.rawWireState;
-
-    // Livewire / Alpine $wire Emulator
-    window.$wire = new Proxy({}, {
-      get(target, prop) {
-        if (prop === 'entangle') {
-          return (name) => ({
-            get live() { return window.wireState[name]; },
-            set live(val) {
-              window.wireState[name] = val;
-              window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: name }));
-            }
-          });
-        }
-        if (prop === '$set') {
-          return (key, val) => {
-            window.wireState[key] = val;
-            window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: key }));
-          };
-        }
-        if (prop === '$toggle') {
-          return (key) => {
-            window.wireState[key] = !window.wireState[key];
-            window.dispatchEvent(new CustomEvent(window.wireState[key] ? 'open-modal' : 'close-modal', { detail: key }));
-          };
-        }
-        if (prop === 'dispatch' || prop === '$dispatch') {
-          return (eventName, payload) => {
-            window.dispatchEvent(new CustomEvent(eventName, { detail: payload }));
-          };
-        }
-        if (prop in window.wireState) return window.wireState[prop];
-        return (...args) => {};
-      },
-      set(target, prop, val) {
-        window.wireState[prop] = val;
-        return true;
-      }
-    });
 
     // Interceptar cliques em gatilhos wire:click para modais, drawers e propriedades reativas
     document.addEventListener('click', (e) => {
