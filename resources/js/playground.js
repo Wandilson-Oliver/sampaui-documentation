@@ -125,7 +125,7 @@ export function registerPlayground(Alpine) {
         compileAbortController: null,
 
         init() {
-            const saved = localStorage.getItem('sampaui_playground_state_v15');
+            const saved = localStorage.getItem('sampaui_playground_state_v16');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -666,7 +666,7 @@ export function registerPlayground(Alpine) {
                 currentDevice: this.currentDevice,
                 splitPercent: this.splitPercent,
             };
-            localStorage.setItem('sampaui_playground_state_v15', JSON.stringify(state));
+            localStorage.setItem('sampaui_playground_state_v16', JSON.stringify(state));
         },
 
         async compileBladeCode(code) {
@@ -779,13 +779,40 @@ export function registerPlayground(Alpine) {
 
   <!-- SampaUI Runtime & Alpine.js -->
   <script src="${sampauiJsUrl}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js" onload="if (window.Alpine && typeof window.Alpine.start === 'function') { try { window.Alpine.start(); } catch (_) {} }"></script>
 
   <script>
     if (window.Alpine && typeof window.Alpine.start === 'function' && !window.Alpine.initialized) {
       window.Alpine.initialized = true;
-      window.Alpine.start();
+      try { window.Alpine.start(); } catch (_) {}
     }
+
+    // Ouvintes explícitos para window open-modal e close-modal
+    window.addEventListener('open-modal', (e) => {
+      const modalId = typeof e.detail === 'string' ? e.detail : (e.detail?.id || e.detail?.name || 'edit-profile');
+      document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
+        if (el._x_dataStack) {
+          el._x_dataStack.forEach((scope) => {
+            if (scope && typeof scope.openOverlay === 'function' && (el.id === modalId || !modalId)) {
+              scope.openOverlay();
+            }
+          });
+        }
+      });
+    });
+
+    window.addEventListener('close-modal', (e) => {
+      const modalId = typeof e.detail === 'string' ? e.detail : (e.detail?.id || e.detail?.name);
+      document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
+        if (el._x_dataStack) {
+          el._x_dataStack.forEach((scope) => {
+            if (scope && typeof scope.close === 'function' && (el.id === modalId || !modalId)) {
+              scope.close();
+            }
+          });
+        }
+      });
+    });
 
     // Livewire / Alpine $wire Emulator
     window.$wire = new Proxy({}, {
