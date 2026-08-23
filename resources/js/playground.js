@@ -122,7 +122,7 @@ export function registerPlayground(Alpine) {
         ],
 
         init() {
-            const saved = localStorage.getItem('sampaui_playground_state_v11');
+            const saved = localStorage.getItem('sampaui_playground_state_v12');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -658,7 +658,7 @@ export function registerPlayground(Alpine) {
                 currentDevice: this.currentDevice,
                 splitPercent: this.splitPercent,
             };
-            localStorage.setItem('sampaui_playground_state_v11', JSON.stringify(state));
+            localStorage.setItem('sampaui_playground_state_v12', JSON.stringify(state));
         },
 
         async compileBladeCode(code) {
