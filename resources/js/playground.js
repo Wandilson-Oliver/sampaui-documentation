@@ -125,7 +125,7 @@ export function registerPlayground(Alpine) {
         compileAbortController: null,
 
         init() {
-            const saved = localStorage.getItem('sampaui_playground_state_v21');
+            const saved = localStorage.getItem('sampaui_playground_state_v22');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -666,7 +666,7 @@ export function registerPlayground(Alpine) {
                 currentDevice: this.currentDevice,
                 splitPercent: this.splitPercent,
             };
-            localStorage.setItem('sampaui_playground_state_v21', JSON.stringify(state));
+            localStorage.setItem('sampaui_playground_state_v22', JSON.stringify(state));
         },
 
         async compileBladeCode(code) {
@@ -866,13 +866,80 @@ export function registerPlayground(Alpine) {
       }
     });
 
-    // Interceptar cliques no botão Cancelar / Fechar para fechar o modal
+    // Interceptar cliques em gatilhos wire:click para modais, drawers e propriedades reativas
     document.addEventListener('click', (e) => {
+      const wireEl = e.target.closest('[wire\\:click]');
+      if (wireEl) {
+        const action = wireEl.getAttribute('wire:click').trim();
+
+        // Atribuição direta: wire:click="showModal = true"
+        if (action.includes('=')) {
+          const parts = action.split('=');
+          const prop = parts[0].trim();
+          const val = parts[1].trim().toLowerCase() === 'true' || parts[1].trim() === '1';
+          window.wireState[prop] = val;
+          window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: prop }));
+          window.dispatchEvent(new CustomEvent(val ? 'open-drawer' : 'close-drawer', { detail: prop }));
+          return;
+        }
+
+        // $set: wire:click="$set('showModal', true)"
+        if (action.startsWith('$set(')) {
+          const match = action.match(/\$set\(\s*['"]([^'"]+)['"]\s*,\s*(true|false|1|0|'[^']*'|"[^"]*")\s*\)/i);
+          if (match) {
+            const prop = match[1];
+            const val = match[2].toLowerCase() === 'true' || match[2] === '1';
+            window.wireState[prop] = val;
+            window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: prop }));
+            window.dispatchEvent(new CustomEvent(val ? 'open-drawer' : 'close-drawer', { detail: prop }));
+            return;
+          }
+        }
+
+        // $toggle: wire:click="$toggle('showModal')"
+        if (action.startsWith('$toggle(')) {
+          const match = action.match(/\$toggle\(\s*['"]([^'"]+)['"]\s*\)/i);
+          if (match) {
+            const prop = match[1];
+            window.wireState[prop] = !window.wireState[prop];
+            const val = window.wireState[prop];
+            window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: prop }));
+            window.dispatchEvent(new CustomEvent(val ? 'open-drawer' : 'close-drawer', { detail: prop }));
+            return;
+          }
+        }
+
+        // $dispatch: wire:click="$dispatch('open-modal', 'meu-modal')"
+        if (action.includes('$dispatch(') || action.includes('dispatch(')) {
+          const match = action.match(/(?:\$)?dispatch\(\s*['"]([^'"]+)['"](?:\s*,\s*['"]?([^'")]+)['"]?)?\s*\)/i);
+          if (match) {
+            const ev = match[1];
+            const detail = match[2] || '';
+            window.dispatchEvent(new CustomEvent(ev, { detail }));
+            return;
+          }
+        }
+
+        // Propriedade booleana direta ou método no wireState
+        if (action in window.wireState || typeof window.wireState[action] === 'boolean') {
+          window.wireState[action] = !window.wireState[action];
+          const val = window.wireState[action];
+          window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: action }));
+          window.dispatchEvent(new CustomEvent(val ? 'open-drawer' : 'close-drawer', { detail: action }));
+          return;
+        }
+      }
+
+      // Interceptar botões de cancelar/fechar de forma agnóstica a qualquer modal
       const btn = e.target.closest('button, [role="button"], a');
-      if (!btn) return;
-      const text = (btn.textContent || '').trim().toLowerCase();
-      if (text === 'cancelar' || text === 'fechar' || text === 'cancel' || text === 'close') {
-        window.dispatchEvent(new CustomEvent('close-modal', { detail: 'edit-profile' }));
+      if (btn) {
+        const text = (btn.textContent || '').trim().toLowerCase();
+        if (text === 'cancelar' || text === 'fechar' || text === 'cancel' || text === 'close') {
+          const parentOverlay = btn.closest('[data-sampaui-overlay]');
+          const overlayId = parentOverlay ? parentOverlay.id : null;
+          window.dispatchEvent(new CustomEvent('close-modal', { detail: overlayId }));
+          window.dispatchEvent(new CustomEvent('close-drawer', { detail: overlayId }));
+        }
       }
     });
 
@@ -881,6 +948,8 @@ export function registerPlayground(Alpine) {
       e.preventDefault();
       const form = e.target;
       const submitBtn = form.querySelector('button[type="submit"]') || form.querySelector('button:not([type="button"])');
+      const parentOverlay = form.closest('[data-sampaui-overlay]');
+      const overlayId = parentOverlay ? parentOverlay.id : null;
 
       if (submitBtn) {
         const descendants = Array.from(submitBtn.querySelectorAll('*'));
@@ -902,12 +971,13 @@ export function registerPlayground(Alpine) {
 
           const toastData = {
             type: 'success',
-            title: 'Configurações salvas!',
-            message: 'As preferências foram atualizadas com sucesso.'
+            title: 'Salvo com sucesso!',
+            message: 'As alterações foram processadas.'
           };
 
           window.dispatchEvent(new CustomEvent('toast', { detail: toastData }));
-          window.dispatchEvent(new CustomEvent('close-modal', { detail: 'edit-profile' }));
+          window.dispatchEvent(new CustomEvent('close-modal', { detail: overlayId }));
+          window.dispatchEvent(new CustomEvent('close-drawer', { detail: overlayId }));
         }, 500);
       }
     }, true);
