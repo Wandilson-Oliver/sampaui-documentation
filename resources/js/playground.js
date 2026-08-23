@@ -922,6 +922,46 @@ export function registerPlayground(Alpine) {
       }
     });
 
+    // Interceptar cliques em botões de fechar, cancelar ou com x-on:click="close()" no preview
+    document.addEventListener('click', (e) => {
+      let target = e.target;
+      let closeTrigger = null;
+      while (target && target !== document && target.nodeType === 1) {
+        const text = (target.textContent || '').trim().toLowerCase();
+        const onclick = (target.getAttribute('x-on:click') || target.getAttribute('@click') || target.getAttribute('onclick') || '').toLowerCase();
+        const ariaLabel = (target.getAttribute('aria-label') || '').toLowerCase();
+
+        if (
+          text === 'cancelar' ||
+          text === 'fechar' ||
+          ariaLabel.includes('fechar') ||
+          ariaLabel.includes('close') ||
+          onclick.includes('close(') ||
+          onclick.includes('open = false') ||
+          onclick.includes('open=false') ||
+          onclick.includes('close-modal') ||
+          onclick.includes('close-drawer')
+        ) {
+          closeTrigger = target;
+          break;
+        }
+        target = target.parentElement;
+      }
+
+      if (closeTrigger) {
+        document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
+          if (el._x_dataStack) {
+            el._x_dataStack.forEach((scope) => {
+              if (scope && typeof scope.close === 'function') {
+                scope.close();
+              }
+            });
+          }
+        });
+        dispatchOverlayClose();
+      }
+    }, true);
+
     // Interceptar cliques em wire:click no preview interativo (fase de captura)
     document.addEventListener('click', (e) => {
       let target = e.target;
