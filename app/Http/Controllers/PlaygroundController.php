@@ -708,7 +708,7 @@ PHP,
                     <x-sampaui::button
                         type="button"
                         variant="light"
-                        x-on:click="open = false"
+                        x-on:click="close()"
                     >
                         Cancelar
                     </x-sampaui::button>
@@ -742,6 +742,8 @@ class Playground extends Component
 
     public function saveSettings(): void
     {
+        $this->dispatch('close-modal', 'edit-profile');
+
         $this->dispatch('toast', [
             'type' => 'success',
             'title' => 'Configurações salvas!',

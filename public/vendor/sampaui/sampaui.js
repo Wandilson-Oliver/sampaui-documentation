@@ -577,6 +577,13 @@ const SampaUI = {
       opener: null,
       scrollLocked: false,
       layer: 200,
+      get open() {
+        return this.visible;
+      },
+      set open(val) {
+        if (val) this.openOverlay();
+        else this.close();
+      },
       init() {
         if (this.serverOpen) this.openOverlay();
         this.$watch('serverOpen', (value) => value ? this.openOverlay() : this.close(false));
