@@ -125,7 +125,7 @@ export function registerPlayground(Alpine) {
         compileAbortController: null,
 
         init() {
-            const saved = localStorage.getItem('sampaui_playground_state_v18');
+            const saved = localStorage.getItem('sampaui_playground_state_v19');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -666,7 +666,7 @@ export function registerPlayground(Alpine) {
                 currentDevice: this.currentDevice,
                 splitPercent: this.splitPercent,
             };
-            localStorage.setItem('sampaui_playground_state_v18', JSON.stringify(state));
+            localStorage.setItem('sampaui_playground_state_v19', JSON.stringify(state));
         },
 
         async compileBladeCode(code) {
@@ -792,6 +792,10 @@ export function registerPlayground(Alpine) {
     }
   </script>
 
+  <!-- SampaUI Runtime & Alpine.js -->
+  <script src="${sampauiJsUrl}"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+
   <style>
     [x-cloak] {
       display: none !important;
@@ -909,17 +913,6 @@ export function registerPlayground(Alpine) {
         dispatchOverlayClose();
       }
     }, true);
-  </script>
-
-  <!-- SampaUI Runtime & Alpine.js -->
-  <script src="${sampauiJsUrl}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js" onload="if (window.Alpine && typeof window.Alpine.start === 'function') { try { window.Alpine.start(); } catch (_) {} }"></script>
-
-  <script>
-    if (window.Alpine && typeof window.Alpine.start === 'function' && !window.Alpine.initialized) {
-      window.Alpine.initialized = true;
-      try { window.Alpine.start(); } catch (_) {}
-    }
 
     // Livewire / Alpine $wire Emulator
     window.$wire = new Proxy({}, {

@@ -828,10 +828,10 @@ const SampaUI = {
 
 if (typeof window !== 'undefined') {
   window.SampaUI = { ...(window.SampaUI ?? {}), ...SampaUI };
+} else if (typeof globalThis !== 'undefined') {
+  globalThis.SampaUI = { ...(globalThis.SampaUI ?? {}), ...SampaUI };
 }
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = SampaUI;
 }
-
-export default SampaUI;
