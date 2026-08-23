@@ -77,7 +77,6 @@ it('renders a dedicated documentation page for each component', function () {
             ->assertSee('x-sampaui::'.$component, false)
             ->assertDontSee('Decisão de uso')
             ->assertDontSee('Quando este componente faz sentido')
-            ->assertDontSee('Playground')
             ->assertDontSee('componentPlayground', false);
 
         if (DocumentationGuidance::status(DocumentationComponents::all()[$component]) === 'Planejado') {
@@ -210,7 +209,6 @@ it('renders reusable navigation examples and props patterns', function () {
         ->assertSee('Exemplos')
         ->assertSee('Boas práticas')
         ->assertSee('Exemplos de uso')
-        ->assertDontSee('Playground')
         ->assertDontSee('componentPlayground', false)
         ->assertDontSee('Cenário')
         ->assertDontSee('Canvas')
@@ -236,7 +234,6 @@ it('does not render playground controls on component pages', function () {
         $this->get(route('documentation.components.show', $component))
             ->assertOk()
             ->assertSee('Exemplos')
-            ->assertDontSee('Playground')
             ->assertDontSee('componentPlayground', false)
             ->assertDontSee('doc-interactive-playground', false)
             ->assertDontSee('Cenário')
@@ -485,4 +482,93 @@ it('runs the users listing interactions through Livewire', function () {
 it('returns not found for unknown components', function () {
     $this->get(route('documentation.components.show', 'unknown-component'))
         ->assertNotFound();
+});
+
+it('renders the interactive playground with split view tabs and live preview', function () {
+    $this->get(route('playground'))
+        ->assertOk()
+        ->assertSee('Voltar para documentação')
+        ->assertSee(route('documentation'), false)
+        ->assertDontSee('doc-sidebar-nav', false)
+        ->assertSee('Playground')
+        ->assertSee('Componentes SampaUI')
+        ->assertSee('Card de Perfil')
+        ->assertSee('HTML')
+        ->assertSee('CSS')
+        ->assertSee('JavaScript')
+        ->assertSee('Livewire')
+        ->assertSee('Desktop')
+        ->assertSee('Tablet')
+        ->assertSee('playgroundShell', false)
+        ->assertSee('x-ref="previewFrame"', false)
+        ->assertSee('sandbox="allow-scripts', false);
+});
+
+it('compiles SampaUI Blade components dynamically via playground compile endpoint', function () {
+    $response = $this->postJson(route('playground.compile'), [
+        'code' => '<x-sampaui::button variant="primary" icon="check2">Confirmar</x-sampaui::button>',
+    ]);
+
+    $response
+        ->assertOk()
+        ->assertJson([
+            'success' => true,
+        ])
+        ->assertSee('Confirmar')
+        ->assertSee('bi bi-check2', false)
+        ->assertSee('bg-primary', false);
+});
+
+it('compiles Blade code with $this object context from Livewire class', function () {
+    $bladeCode = <<<'BLADE'
+<x-sampaui::button type="submit" icon="box-arrow-in-right" :loading="$this->isAuthenticating">
+    Entrar
+</x-sampaui::button>
+BLADE;
+
+    $livewireCode = <<<'PHP'
+namespace App\Livewire;
+
+use Livewire\Component;
+
+class Playground extends Component
+{
+    public bool $isAuthenticating = true;
+}
+PHP;
+
+    $response = $this->postJson(route('playground.compile'), [
+        'code' => $bladeCode,
+        'livewire' => $livewireCode,
+    ]);
+
+    $response
+        ->assertOk()
+        ->assertJson([
+            'success' => true,
+        ])
+        ->assertSee('animate-spin', false)
+        ->assertSee('Entrar');
+});
+
+it('compiles complex SampaUI cards and selects dynamically', function () {
+    $bladeCode = <<<'BLADE'
+<x-sampaui::card title="Oportunidade" padding="md">
+    <x-sampaui::badge variant="success">Ativo</x-sampaui::badge>
+    <x-sampaui::input name="lead" label="Nome do Lead" />
+</x-sampaui::card>
+BLADE;
+
+    $response = $this->postJson(route('playground.compile'), [
+        'code' => $bladeCode,
+    ]);
+
+    $response
+        ->assertOk()
+        ->assertJson([
+            'success' => true,
+        ])
+        ->assertSee('Oportunidade')
+        ->assertSee('Ativo')
+        ->assertSee('Nome do Lead');
 });

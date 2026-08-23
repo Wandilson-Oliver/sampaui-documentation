@@ -64,6 +64,16 @@
                     'recent' => in_array($example['route'] ?? '', ['examples.chat', 'examples.users.index'], true),
                     'search' => implode(' ', [$example['name'] ?? '', $example['slug'] ?? '', $example['tag'] ?? '', $example['summary'] ?? '']),
                 ]))
+                ->push([
+                    'type' => 'Ferramenta',
+                    'title' => 'Playground',
+                    'subtitle' => 'Editor de código interativo com Live Preview e Tailwind CSS em tempo real.',
+                    'tag' => 'Playground',
+                    'url' => route('playground'),
+                    'popular' => true,
+                    'recent' => true,
+                    'search' => 'playground editor live preview codepen tailwind play html css js',
+                ])
                 ->values();
 
             $tableOfContents = $tableOfContents ?? match (true) {

@@ -2,21 +2,137 @@
 
 @php
     $snippet = <<<'BLADE'
-<x-sampaui::chat-layout height="44rem">
+<x-sampaui::chat-layout height="46rem">
+    {{-- Sidebar com Lista de Conversas e Busca --}}
     <x-slot:sidebar>
-        <x-sampaui::chat-sidebar title="Atendimento" :conversations="$conversations" />
+        <x-sampaui::chat-sidebar
+            title="Atendimento"
+            subtitle="12 conversas ativas hoje"
+            search-placeholder="Buscar contato ou empresa"
+        >
+            <x-slot:actions>
+                <x-sampaui::button icon="plus" rounded size="sm" aria-label="Nova conversa" />
+            </x-slot:actions>
+
+            <div class="space-y-1">
+                @foreach ($conversations as $item)
+                    <button
+                        type="button"
+                        wire:click="selectConversation('{{ $item['id'] }}')"
+                        @class([
+                            'flex w-full items-center gap-3 rounded-xl p-3 text-left transition',
+                            'bg-primary/10 text-primary font-semibold' => $selectedId === $item['id'],
+                            'hover:bg-light text-secondary' => $selectedId !== $item['id'],
+                        ])
+                    >
+                        <div class="relative">
+                            <img src="{{ $item['photo'] }}" class="h-10 w-10 rounded-full object-cover" />
+                            <span @class([
+                                'absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white',
+                                'bg-success' => $item['status'] === 'online',
+                                'bg-amber-400' => $item['status'] === 'away',
+                                'bg-danger' => $item['status'] === 'busy',
+                                'bg-muted' => $item['status'] === 'offline',
+                            ])></span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center justify-between">
+                                <p class="truncate font-semibold text-heading text-sm">{{ $item['name'] }}</p>
+                                <span class="text-xs text-secondary/60">{{ $item['time'] }}</span>
+                            </div>
+                            <p class="truncate text-xs text-secondary/70">{{ $item['preview'] }}</p>
+                        </div>
+                        @if ($item['unread'] > 0)
+                            <x-sampaui::badge variant="primary" size="sm">{{ $item['unread'] }}</x-sampaui::badge>
+                        @endif
+                    </button>
+                @endforeach
+            </div>
+        </x-sampaui::chat-sidebar>
     </x-slot:sidebar>
 
-    <x-sampaui::chat-conversation name="Ana Souza" subtitle="Online agora">
-        <x-sampaui::chat-message time="09:40">Bom dia.</x-sampaui::chat-message>
-        <x-sampaui::chat-message from="me" time="09:41" status="Lida">Bom dia, Ana.</x-sampaui::chat-message>
+    {{-- Janela da Conversa Selecionada --}}
+    <x-sampaui::chat-conversation
+        name="Ana Souza"
+        subtitle="Online agora · Conta Enterprise"
+    >
+        <x-slot:actions>
+            <x-sampaui::button variant="outline" size="sm" icon="telephone" rounded />
+            <x-sampaui::button variant="outline" size="sm" icon="info-circle" rounded />
+        </x-slot:actions>
 
+        {{-- Histórico de Mensagens --}}
+        <div class="space-y-4 p-4">
+            <x-sampaui::chat-message time="09:40" user="Ana Souza" avatar="https://i.pravatar.cc/160?img=47">
+                Olá! Gostaria de entender mais sobre as condições do plano Enterprise.
+            </x-sampaui::chat-message>
+
+            <x-sampaui::chat-message from="me" time="09:41" status="Lida">
+                Bom dia, Ana! Com certeza. Temos SLA garantido, suporte prioritário 24/7 e onboarding dedicado.
+            </x-sampaui::chat-message>
+
+            <x-sampaui::chat-message time="09:42" user="Ana Souza" avatar="https://i.pravatar.cc/160?img=47">
+                Perfeito. Pode me enviar a proposta formalizada em PDF?
+            </x-sampaui::chat-message>
+        </div>
+
+        {{-- Composer para envio de novas mensagens --}}
         <x-slot:composer>
-            <x-sampaui::chat-composer wire:submit.prevent="sendMessage" wire:model.live="message" />
+            <x-sampaui::chat-composer
+                wire:submit.prevent="sendMessage"
+                wire:model.live="messageText"
+                placeholder="Escreva sua mensagem..."
+            />
         </x-slot:composer>
     </x-sampaui::chat-conversation>
 </x-sampaui::chat-layout>
 BLADE;
+
+    $livewireSnippet = <<<'PHP'
+namespace App\Livewire;
+
+use Livewire\Component;
+
+class ChatCenter extends Component
+{
+    public string $selectedId = 'ana';
+    public string $messageText = '';
+    public array $conversations = [];
+    public array $messages = [];
+
+    public function mount(): void
+    {
+        $this->conversations = [
+            ['id' => 'ana', 'name' => 'Ana Souza', 'role' => 'Conta Enterprise', 'preview' => 'Pode me enviar as opções?', 'time' => '09:42', 'status' => 'online', 'unread' => 2, 'photo' => 'https://i.pravatar.cc/160?img=47'],
+            ['id' => 'bruno', 'name' => 'Bruno Lima', 'role' => 'Onboarding', 'preview' => 'Fechamos a visita amanhã.', 'time' => '08:17', 'status' => 'away', 'unread' => 0, 'photo' => 'https://i.pravatar.cc/160?img=12'],
+        ];
+    }
+
+    public function selectConversation(string $id): void
+    {
+        $this->selectedId = $id;
+    }
+
+    public function sendMessage(): void
+    {
+        if (trim($this->messageText) === '') return;
+
+        $this->messages[] = [
+            'from' => 'me',
+            'text' => $this->messageText,
+            'time' => now()->format('H:i'),
+            'status' => 'Enviada',
+        ];
+
+        $this->reset('messageText');
+    }
+
+    public function render()
+    {
+        return view('livewire.chat-center');
+    }
+}
+PHP;
 
     $conversations = [
         ['id' => 'ana', 'name' => 'Ana Souza', 'role' => 'Conta Enterprise', 'preview' => 'Pode me enviar as opções?', 'time' => '09:42', 'status' => 'online', 'unread' => 2, 'tag' => 'Quente', 'photo' => 'https://i.pravatar.cc/160?img=47'],
@@ -279,7 +395,13 @@ BLADE;
             </x-sampaui::chat-layout>
         </div>
 
-        @include('pages.examples.partials.code', ['snippet' => $snippet])
+        @include('pages.examples.partials.code', [
+            'snippet' => $snippet,
+            'livewireSnippet' => $livewireSnippet,
+            'codeTitle' => 'Código da Central de Atendimento',
+            'description' => 'Layout responsivo para conversas com inbox lateral, timeline de mensagens e composer com submit reativo.',
+            'components' => ['chat-layout', 'chat-sidebar', 'chat-conversation', 'chat-message', 'chat-composer', 'badge', 'button'],
+        ])
     </section>
 
     <script>

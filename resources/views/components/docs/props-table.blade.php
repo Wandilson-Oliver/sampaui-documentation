@@ -22,11 +22,11 @@
                     };
                 @endphp
                 <tr>
-                    <td><code>{{ $prop['name'] }}</code></td>
-                    <td>{{ $prop['type'] }}</td>
-                    <td><code>{{ $default }}</code></td>
-                    <td>{{ $prop['notes'] }}</td>
-                    <td><code>{{ $example }}</code></td>
+                    <td class="doc-prop-name"><code>{{ $prop['name'] }}</code></td>
+                    <td><span class="doc-prop-type-tag">{{ $prop['type'] }}</span></td>
+                    <td class="doc-prop-default"><code>{{ $default }}</code></td>
+                    <td class="doc-prop-notes">{{ $prop['notes'] }}</td>
+                    <td class="doc-prop-example"><code>{{ $example }}</code></td>
                 </tr>
             @endforeach
         </tbody>

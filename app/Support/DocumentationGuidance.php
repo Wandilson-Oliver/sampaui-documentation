@@ -46,7 +46,7 @@ final class DocumentationGuidance
     {
         return match (true) {
             in_array($slug, ['input', 'phone', 'currency-br', 'cep', 'pin', 'select', 'select-multiple', 'select-search', 'textarea', 'checkbox', 'radio', 'toggle', 'date-picker', 'file-upload', 'avatar-upload'], true) => 'Formulários',
-            in_array($slug, ['table', 'table-search', 'pagination'], true) => 'Data',
+            in_array($slug, ['table', 'pagination'], true) => 'Data',
             in_array($slug, ['modal', 'drawer', 'dropdown', 'tooltip', 'command-palette'], true) => 'Overlay',
             in_array($slug, ['breadcrumb', 'sidebar', 'header', 'tabs', 'tab-panel', 'accordion', 'stepper'], true) => 'Navigation',
             in_array($slug, ['alert', 'toast', 'badge', 'indicator', 'progress', 'skeleton', 'empty-state'], true) => 'Feedback',
@@ -86,7 +86,6 @@ final class DocumentationGuidance
             'drawer' => 'layout-sidebar-inset-reverse',
             'dropdown' => 'menu-button',
             'table' => 'table',
-            'table-search' => 'search',
             'card' => 'window',
             'field' => 'input-cursor',
             'chat-layout', 'chat-sidebar', 'chat-conversation', 'chat-message', 'chat-composer' => 'chat-dots',
@@ -103,7 +102,7 @@ final class DocumentationGuidance
 
     public static function isPopular(string $slug): bool
     {
-        return in_array($slug, ['button', 'input', 'select', 'badge', 'table', 'table-search', 'modal'], true);
+        return in_array($slug, ['button', 'input', 'select', 'badge', 'table', 'modal'], true);
     }
 
     public static function isNew(string $slug): bool

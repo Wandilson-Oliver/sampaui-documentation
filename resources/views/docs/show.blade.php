@@ -25,25 +25,32 @@
         ]" />
 
         <div class="doc-page-hero-copy">
-            <span class="doc-component-tag">{{ $componentDoc['tag'] }}</span>
+            <div class="doc-component-tag-wrap" x-data="copyCode()">
+                <span class="doc-component-tag" x-ref="code">{{ $componentDoc['tag'] }}</span>
+                <button type="button" class="doc-copy-tag-btn" x-on:click="copy($refs.code.innerText)" title="Copiar tag">
+                    <i class="bi" x-bind:class="copied ? 'bi-check2 text-emerald-500' : 'bi-copy'" aria-hidden="true"></i>
+                    <span x-text="copied ? 'Copiado!' : 'Copiar'"></span>
+                </button>
+            </div>
             <h1>{{ $componentDoc['name'] }}</h1>
-            <p>{{ $componentDoc['summary'] }}</p>
-            <p>{{ $componentDoc['description'] }}</p>
+            @php
+                $summary = trim($componentDoc['summary'] ?? '');
+                $description = trim($componentDoc['description'] ?? '');
+                $hasDifferentDescription = $description && strtolower($summary) !== strtolower($description) && ! str_starts_with(strtolower($description), strtolower($summary));
+            @endphp
+            <p class="doc-hero-summary">{{ $summary }}</p>
+            @if ($hasDifferentDescription)
+                <p class="doc-hero-description">{{ $description }}</p>
+            @endif
             <div class="doc-component-badges" aria-label="Metadados do componente">
-                <span><i class="bi bi-folder" aria-hidden="true"></i>{{ $category }}</span>
-                <span><i class="bi bi-sliders" aria-hidden="true"></i>{{ count($componentDoc['props']) }} props</span>
-                <span><i class="bi bi-{{ $isPlanned ? 'clock-history' : 'check2-circle' }}" aria-hidden="true"></i>{{ $status }}</span>
+                <span class="doc-badge-pill"><i class="bi bi-folder" aria-hidden="true"></i>{{ $category }}</span>
+                <span class="doc-badge-pill"><i class="bi bi-sliders" aria-hidden="true"></i>{{ count($componentDoc['props']) }} props</span>
+                <span class="doc-badge-pill"><i class="bi bi-{{ $isPlanned ? 'clock-history' : 'check2-circle' }}" aria-hidden="true"></i>{{ $status }}</span>
                 @if (\App\Support\DocumentationGuidance::isPopular($componentDoc['slug']))
-                    <span><i class="bi bi-star-fill" aria-hidden="true"></i>Popular</span>
+                    <span class="doc-badge-pill doc-badge-popular"><i class="bi bi-star-fill" aria-hidden="true"></i>Popular</span>
                 @endif
             </div>
         </div>
-
-        <dl class="doc-page-facts">
-            <div><dt>Categoria</dt><dd>{{ $category }}</dd></div>
-            <div><dt>Props</dt><dd>{{ count($componentDoc['props']) }}</dd></div>
-            <div><dt>Status</dt><dd>{{ $status }}</dd></div>
-        </dl>
     </section>
 
     @if ($isPlanned)

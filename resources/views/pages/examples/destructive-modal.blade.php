@@ -2,28 +2,94 @@
 
 @php
     $snippet = <<<'BLADE'
-<x-sampaui::button variant="danger" icon="trash3" wire:click="$set('confirmingDelete', true)">
-    Excluir cliente
-</x-sampaui::button>
+<div class="space-y-6">
+    {{-- Card com Detalhes e Botão de Ação Crítica --}}
+    <x-sampaui::card title="Cliente selecionado" description="Gerencie o cadastro e ações críticas" padding="lg">
+        <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center gap-4">
+                <x-sampaui::avatar name="Mariana Oliveira" size="lg" status="online" />
+                <div>
+                    <h2 class="text-xl font-semibold text-primary">Mariana Oliveira</h2>
+                    <p class="text-sm text-secondary">Contrato ativo · mariana@email.com</p>
+                </div>
+            </div>
+            <x-sampaui::button variant="danger" icon="trash3" wire:click="$set('confirmingDelete', true)">
+                Excluir cliente
+            </x-sampaui::button>
+        </div>
+    </x-sampaui::card>
 
-<x-sampaui::modal
-    model="confirmingDelete"
-    title="Excluir cliente?"
-    subtitle="Esta ação não poderá ser desfeita."
-    size="md"
-    variant="danger"
-    persistent
->
-    <x-sampaui::alert variant="danger" title="Atenção">
-        Todos os dados associados serão removidos permanentemente.
-    </x-sampaui::alert>
+    {{-- Modal Destrutivo Persistente com Confirmação --}}
+    <x-sampaui::modal
+        model="confirmingDelete"
+        title="Excluir cliente?"
+        subtitle="Esta ação não poderá ser desfeita e removerá os dados permanentemente."
+        size="md"
+        persistent
+    >
+        <div class="space-y-4">
+            <x-sampaui::alert variant="danger" title="Atenção Crítica">
+                Todos os contratos, histórico de mensagens e faturas vinculadas serão excluídos do sistema.
+            </x-sampaui::alert>
 
-    <x-slot:actions>
-        <x-sampaui::button variant="outline" wire:click="$set('confirmingDelete', false)">Cancelar</x-sampaui::button>
-        <x-sampaui::button variant="danger" icon="trash3" wire:click="delete" wire:loading.attr="disabled">Excluir</x-sampaui::button>
-    </x-slot:actions>
-</x-sampaui::modal>
+            <x-sampaui::input
+                name="confirmText"
+                label="Digite EXCLUIR para confirmar"
+                placeholder="EXCLUIR"
+                wire:model.live="confirmText"
+            />
+        </div>
+
+        <x-slot:actions>
+            <x-sampaui::button variant="outline" wire:click="$set('confirmingDelete', false)">
+                Cancelar
+            </x-sampaui::button>
+
+            <x-sampaui::button
+                variant="danger"
+                icon="trash3"
+                wire:click="deleteCustomer"
+                :disabled="$confirmText !== 'EXCLUIR'"
+                wire:loading.attr="disabled"
+            >
+                Confirmar exclusão
+            </x-sampaui::button>
+        </x-slot:actions>
+    </x-sampaui::modal>
+</div>
 BLADE;
+
+    $livewireSnippet = <<<'PHP'
+namespace App\Livewire;
+
+use Livewire\Component;
+
+class CustomerDetails extends Component
+{
+    public bool $confirmingDelete = false;
+    public string $confirmText = '';
+    public int $customerId = 12;
+
+    public function deleteCustomer(): void
+    {
+        if ($this->confirmText !== 'EXCLUIR') {
+            return;
+        }
+
+        // Executar remoção no banco de dados...
+        $this->confirmingDelete = false;
+        $this->reset('confirmText');
+
+        session()->flash('success', 'Cliente excluído com sucesso!');
+        $this->redirect(route('customers.index'));
+    }
+
+    public function render()
+    {
+        return view('livewire.customer-details');
+    }
+}
+PHP;
 @endphp
 
 @section('content')
@@ -75,7 +141,7 @@ BLADE;
 
         <dialog
             x-ref="deleteDialog"
-            class="fixed inset-0 z-[2147483647] m-0 h-screen min-h-dvh w-screen max-h-none max-w-none overflow-y-auto bg-transparent p-0 text-secondary outline-none backdrop:bg-primary/40 backdrop:backdrop-blur-[2px]"
+            class="fixed inset-0 z-[2147483647] m-0 h-screen min-h-dvh w-screen max-h-none max-w-none overflow-y-auto bg-transparent p-0 text-secondary outline-none backdrop:bg-secondary/25 backdrop:backdrop-blur-[2px]"
             x-on:cancel.prevent
         >
             <div class="flex min-h-dvh items-center justify-center p-4 sm:p-6">
@@ -105,6 +171,12 @@ BLADE;
             </div>
         </dialog>
 
-        @include('pages.examples.partials.code', ['snippet' => $snippet])
+        @include('pages.examples.partials.code', [
+            'snippet' => $snippet,
+            'livewireSnippet' => $livewireSnippet,
+            'codeTitle' => 'Código do Modal Destrutivo',
+            'description' => 'Modal de confirmação crítica com bloqueio de backdrop, alerta e botão condicionado a texto de confirmação.',
+            'components' => ['card', 'button', 'modal', 'alert', 'input', 'avatar'],
+        ])
     </section>
 @endsection

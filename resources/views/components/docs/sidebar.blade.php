@@ -75,6 +75,18 @@
             </a>
         @endif
 
+        <a
+            href="{{ route('playground') }}"
+            @class([
+                'doc-menu-link',
+                'doc-menu-link-active' => request()->routeIs('playground'),
+            ])
+        >
+            <i class="bi bi-code-slash" aria-hidden="true"></i>
+            <span>Playground</span>
+            <small class="doc-menu-badge doc-menu-badge-new">Novo</small>
+        </a>
+
         @foreach ($componentGroups as $groupName => $groupComponents)
             @if ($groupComponents->isNotEmpty())
                 @php($groupIsActive = $groupComponents->contains(fn (array $component): bool => $component['slug'] === $activeComponent))

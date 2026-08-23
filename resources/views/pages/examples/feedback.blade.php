@@ -78,6 +78,11 @@ BLADE;
             </x-sampaui::empty-state>
         </x-sampaui::card>
 
-        @include('pages.examples.partials.code', ['snippet' => $snippet])
+        @include('pages.examples.partials.code', [
+            'snippet' => $snippet,
+            'codeTitle' => 'Código dos Estados de Feedback',
+            'description' => 'Componentes de toast, alertas contextuais, progresso, skeleton loaders e empty state para comunicação clara.',
+            'components' => ['toast', 'alert', 'progress', 'skeleton', 'empty-state', 'button', 'card'],
+        ])
     </section>
 @endsection

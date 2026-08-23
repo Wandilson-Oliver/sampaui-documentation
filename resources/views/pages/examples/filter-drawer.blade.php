@@ -2,21 +2,126 @@
 
 @php
     $snippet = <<<'BLADE'
-<x-sampaui::button variant="outline" icon="sliders2" wire:click="$set('showFilters', true)">
-    Filtros
-</x-sampaui::button>
+<div class="space-y-6">
+    {{-- Card com Botão de Abertura do Drawer --}}
+    <x-sampaui::card title="Listagem comercial" description="Use o drawer lateral para filtrar oportunidades" padding="lg">
+        <x-slot:actions>
+            <x-sampaui::button variant="outline" icon="sliders2" wire:click="$set('showFilters', true)">
+                Filtros avançados
+            </x-sampaui::button>
+        </x-slot:actions>
 
-<x-sampaui::drawer model="showFilters" title="Filtros" subtitle="Refine a listagem" placement="right" size="lg">
-    <x-sampaui::select name="status" label="Status" :options="$statusOptions" wire:model.live="status" />
-    <x-sampaui::date-picker name="start" label="Data inicial" wire:model.live="start" clearable />
-    <x-sampaui::checkbox name="only_hot" label="Somente leads quentes" wire:model.live="onlyHot" />
+        {{-- Badges de Filtros Ativos --}}
+        <div class="flex flex-wrap gap-2">
+            <x-sampaui::badge variant="primary" icon="funnel">Status: ativo</x-sampaui::badge>
+            <x-sampaui::badge variant="accent" icon="calendar-event">Últimos 30 dias</x-sampaui::badge>
+            <x-sampaui::badge variant="success" icon="stars">Leads quentes</x-sampaui::badge>
+        </div>
+    </x-sampaui::card>
 
-    <x-slot:actions>
-        <x-sampaui::button variant="outline" wire:click="resetFilters">Limpar</x-sampaui::button>
-        <x-sampaui::button wire:click="applyFilters">Aplicar filtros</x-sampaui::button>
-    </x-slot:actions>
-</x-sampaui::drawer>
+    {{-- Gaveta Lateral (Drawer) com Formulário de Filtros --}}
+    <x-sampaui::drawer
+        model="showFilters"
+        title="Filtros avançados"
+        subtitle="Refine a listagem de oportunidades em tempo real"
+        placement="right"
+        size="lg"
+    >
+        <div class="space-y-5">
+            <x-sampaui::select
+                name="status"
+                label="Status do lead"
+                :options="[
+                    ['label' => 'Todos os status', 'value' => ''],
+                    ['label' => 'Ativo', 'value' => 'active'],
+                    ['label' => 'Pendente', 'value' => 'pending'],
+                    ['label' => 'Convertido', 'value' => 'converted'],
+                ]"
+                wire:model.live="status"
+            />
+
+            <div class="grid gap-4 sm:grid-cols-2">
+                <x-sampaui::date-picker
+                    name="start_date"
+                    label="Data inicial"
+                    placeholder="dd/mm/aaaa"
+                    clearable
+                    wire:model.live="startDate"
+                />
+                <x-sampaui::date-picker
+                    name="end_date"
+                    label="Data final"
+                    placeholder="dd/mm/aaaa"
+                    clearable
+                    wire:model.live="endDate"
+                />
+            </div>
+
+            <x-sampaui::checkbox
+                name="only_hot"
+                label="Somente leads com alta prioridade"
+                wire:model.live="onlyHot"
+            />
+
+            <x-sampaui::checkbox
+                name="with_visit"
+                label="Com reunião/visita agendada"
+                wire:model.live="withVisit"
+            />
+
+            <x-sampaui::select-multiple
+                name="channels"
+                label="Canais de aquisição"
+                :options="[
+                    ['label' => 'WhatsApp', 'value' => 'whatsapp'],
+                    ['label' => 'Site Orgânico', 'value' => 'site'],
+                    ['label' => 'Indicação', 'value' => 'referral'],
+                    ['label' => 'Google Ads', 'value' => 'ads'],
+                ]"
+                wire:model.live="channels"
+            />
+        </div>
+
+        <x-slot:actions>
+            <x-sampaui::button variant="outline" wire:click="resetFilters">Limpar</x-sampaui::button>
+            <x-sampaui::button wire:click="applyFilters">Aplicar filtros</x-sampaui::button>
+        </x-slot:actions>
+    </x-sampaui::drawer>
+</div>
 BLADE;
+
+    $livewireSnippet = <<<'PHP'
+namespace App\Livewire;
+
+use Livewire\Component;
+
+class OpportunitiesList extends Component
+{
+    public bool $showFilters = false;
+    public string $status = '';
+    public string $startDate = '';
+    public string $endDate = '';
+    public bool $onlyHot = true;
+    public bool $withVisit = false;
+    public array $channels = ['whatsapp'];
+
+    public function applyFilters(): void
+    {
+        // Aplicar filtros na consulta...
+        $this->showFilters = false;
+    }
+
+    public function resetFilters(): void
+    {
+        $this->reset(['status', 'startDate', 'endDate', 'onlyHot', 'withVisit', 'channels']);
+    }
+
+    public function render()
+    {
+        return view('livewire.opportunities-list');
+    }
+}
+PHP;
 @endphp
 
 @section('content')
@@ -73,7 +178,7 @@ BLADE;
 
         <dialog
             x-ref="filterDrawer"
-            class="fixed inset-0 z-[2147483647] m-0 h-screen min-h-dvh w-screen max-h-none max-w-none overflow-hidden bg-transparent p-0 text-secondary outline-none backdrop:bg-primary/40 backdrop:backdrop-blur-[2px]"
+            class="fixed inset-0 z-[2147483647] m-0 h-screen min-h-dvh w-screen max-h-none max-w-none overflow-hidden bg-transparent p-0 text-secondary outline-none backdrop:bg-secondary/25 backdrop:backdrop-blur-[2px]"
         >
             <div class="flex min-h-dvh justify-end">
                 <section class="flex h-dvh w-full max-w-lg flex-col rounded-l-default border-l border-border bg-white">
@@ -114,6 +219,12 @@ BLADE;
             </div>
         </dialog>
 
-        @include('pages.examples.partials.code', ['snippet' => $snippet])
+        @include('pages.examples.partials.code', [
+            'snippet' => $snippet,
+            'livewireSnippet' => $livewireSnippet,
+            'codeTitle' => 'Código do Drawer de Filtros',
+            'description' => 'Gaveta lateral deslizante integrada ao Livewire com seletores de data, checkboxes e múltiplos canais.',
+            'components' => ['card', 'button', 'drawer', 'select', 'date-picker', 'checkbox', 'select-multiple', 'badge'],
+        ])
     </section>
 @endsection

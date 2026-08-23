@@ -84,6 +84,7 @@ class DocumentationComponents
                     ['name' => 'iconPosition', 'type' => 'left|right', 'default' => 'left', 'notes' => 'Posiciona o icone antes ou depois do slot.'],
                     ['name' => 'rounded', 'type' => 'bool', 'default' => 'false', 'notes' => 'Troca o raio padrao por pill shape.'],
                     ['name' => 'loading', 'type' => 'bool', 'default' => 'false', 'notes' => 'Desabilita o botao e ativa `aria-busy`.'],
+                    ['name' => 'loadingTarget', 'type' => 'string|bool|null', 'default' => 'null', 'notes' => 'Alvo de carregamento do Livewire. Aplica `wire:loading.attr="disabled"`, `wire:target`, `aria-busy` e spinner dinâmico.'],
                     ['name' => 'disabled', 'type' => 'bool', 'default' => 'false', 'notes' => 'Aplica bloqueio de interacao sem spinner.'],
                     ['name' => 'full', 'type' => 'bool', 'default' => 'false', 'notes' => 'Expande o botao para `w-full`.'],
                     ['name' => 'type', 'type' => 'string', 'default' => 'button', 'notes' => 'Mantem compatibilidade com botoes submit/reset.'],
@@ -559,65 +560,91 @@ BLADE,
                 'slug' => 'textarea',
                 'name' => 'Textarea',
                 'tag' => '<x-sampaui::textarea />',
-                'summary' => 'Campo multiline nativo com `rows`, label opcional, slot para conteudo inicial e tratamento padrao de validacao.',
-                'description' => 'Indicado para observacoes de atendimento, briefings e descricoes de produto. Mantem a mesma linguagem visual do `input` e repassa atributos HTML, Alpine e Livewire para o textarea.',
+                'summary' => 'Campo de texto multilinha avançado com auto-redimensionamento dinâmico (auto-resize), contador de caracteres em tempo real e suporte completo ao Livewire e Alpine.',
+                'description' => 'Ideal para observações de atendimento, redação de mensagens, descrições de produtos e campos de formulário extensos. Possui redimensionamento automático via Alpine.js, contagem progressiva/regressiva de caracteres, botão de limpeza rápida (clearable) e estilização refinada com dark mode.',
                 'preview_title' => 'Resumo do atendimento',
-                'preview_caption' => 'Textarea nativo para anotacoes, valor inicial, retorno com erro e binding Livewire.',
+                'preview_caption' => 'Textarea com auto-resize, contador de caracteres, suporte a valor inicial e validação.',
                 'props' => [
-                    ['name' => 'label', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Renderiza legenda visivel do campo.'],
-                    ['name' => 'name', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Serve para `name`, `id` fallback e ErrorBag.'],
-                    ['name' => 'rows', 'type' => 'int|string', 'default' => '4', 'notes' => 'Define a altura inicial do campo.'],
-                    ['name' => 'placeholder', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Ajuda textual para formulario vazio.'],
-                    ['name' => 'error', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Mensagem de erro manual ou automatica.'],
-                    ['name' => 'disabled', 'type' => 'bool', 'default' => 'false', 'notes' => 'Aplica `disabled` e reduz contraste.'],
-                    ['name' => '$slot', 'type' => 'Blade slot', 'default' => '-', 'notes' => 'Conteudo inicial do textarea.'],
+                    ['name' => 'label', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Legenda visual do campo de texto.'],
+                    ['name' => 'name', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Atributo `name`, fallback de `id` e vinculação ao ErrorBag.'],
+                    ['name' => 'value', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Valor textual inicial (também aceita conteúdo via `$slot`).'],
+                    ['name' => 'rows', 'type' => 'int|string', 'default' => '4', 'notes' => 'Quantidade de linhas visíveis iniciais do campo.'],
+                    ['name' => 'minRows', 'type' => 'int|string|null', 'default' => 'null', 'notes' => 'Quantidade mínima de linhas visíveis.'],
+                    ['name' => 'maxRows', 'type' => 'int|string|null', 'default' => 'null', 'notes' => 'Limite máximo de linhas para expansão no auto-resize antes de rolar.'],
+                    ['name' => 'autoResize', 'type' => 'bool', 'default' => 'false', 'notes' => 'Ajusta automaticamente a altura conforme o usuário digita.'],
+                    ['name' => 'counter', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe contador de caracteres em tempo real.'],
+                    ['name' => 'maxlength', 'type' => 'int|string|null', 'default' => 'null', 'notes' => 'Limite máximo de caracteres com exibição no formato `atual / max`.'],
+                    ['name' => 'clearable', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe botão para limpar todo o conteúdo em 1 clique.'],
+                    ['name' => 'clearLabel', 'type' => 'string', 'default' => "'Limpar'", 'notes' => 'Texto do botão de limpeza rápida.'],
+                    ['name' => 'copyable', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe botão para copiar o texto do campo para a área de transferência.'],
+                    ['name' => 'copyLabel', 'type' => 'string', 'default' => "'Copiar'", 'notes' => 'Texto do botão de cópia rápida.'],
+                    ['name' => 'resize', 'type' => 'string', 'default' => "'vertical'", 'notes' => "Direção de redimensionamento manual ('vertical', 'none', 'both', 'horizontal')."],
+                    ['name' => 'placeholder', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Texto de orientação quando o campo está vazio.'],
+                    ['name' => 'hint', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Instrução ou texto de apoio abaixo do rótulo.'],
+                    ['name' => 'error', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Mensagem de erro de validação manual ou vinda da ErrorBag.'],
+                    ['name' => 'disabled', 'type' => 'bool', 'default' => 'false', 'notes' => 'Desabilita interação e aplica opacidade de bloqueio.'],
+                    ['name' => 'readonly', 'type' => 'bool', 'default' => 'false', 'notes' => 'Impede edição mantendo o texto selecionável.'],
+                    ['name' => 'loading', 'type' => 'bool', 'default' => 'false', 'notes' => 'Aplica estado de carregamento e `aria-busy`.'],
+                    ['name' => 'loadingTarget', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Alvo de ação assíncrona para desabilitar via `wire:loading`.'],
+                    ['name' => 'required', 'type' => 'bool', 'default' => 'false', 'notes' => 'Marca campo como obrigatório com asterisco vermelho.'],
+                    ['name' => '$slot', 'type' => 'Blade slot', 'default' => '-', 'notes' => 'Conteúdo inicial do textarea.'],
+                    ['name' => 'header', 'type' => 'Blade slot', 'default' => '-', 'notes' => 'Slot para ações ou elementos acima do textarea.'],
+                    ['name' => 'footer', 'type' => 'Blade slot', 'default' => '-', 'notes' => 'Slot para ações ou badges abaixo do textarea.'],
                 ],
-                'attributes' => ['class', 'id', 'maxlength', 'wire:model.live', 'x-model', 'aria-*', 'data-*'],
+                'attributes' => ['class', 'id', 'wire:model', 'wire:model.live', 'x-model', 'aria-*', 'data-*'],
                 'accessibility' => [
-                    'Considere `maxlength` e contadores auxiliares para textos longos.',
-                    'Prefira `rows` compatível com o contexto, evitando campos excessivamente altos em mobile.',
-                    'Use `label` visivel ou `aria-label` quando o contexto visual ja identifica claramente o campo.',
+                    'O componente vincula automaticamente `aria-describedby` quando há `hint` ou `error`.',
+                    'O contador de caracteres utiliza `aria-live="polite"` para notificar tecnologias assistivas de forma não intrusiva.',
+                    'Campos desabilitados recebem `aria-disabled="true"` e campos com falha de validação recebem `aria-invalid="true"`.',
                 ],
                 'examples' => [
                     [
-                        'title' => 'Basico',
-                        'description' => 'Textarea nativo para observacoes curtas.',
+                        'title' => 'Auto-resize com Contador, Limpeza e Cópia',
+                        'description' => 'Expande dinamicamente a altura e exibe contagem, botão de limpar e botão de copiar.',
+                        'code' => <<<'BLADE'
+<x-sampaui::textarea
+    name="feedback"
+    label="Seu depoimento"
+    placeholder="Conte em detalhes sua experiência com a plataforma..."
+    auto-resize
+    counter
+    clearable
+    copyable
+    maxlength="300"
+    max-rows="8"
+    hint="Máximo de 300 caracteres com auto-expansão até 8 linhas."
+/>
+BLADE,
+                    ],
+                    [
+                        'title' => 'Básico com Rows',
+                        'description' => 'Textarea padrão com altura fixa inicial e placeholder.',
                         'code' => <<<'BLADE'
 <x-sampaui::textarea
     name="notes"
-    label="Observacoes"
-    rows="5"
+    label="Observações"
+    rows="4"
     placeholder="Descreva o contexto do atendimento"
 />
 BLADE,
                     ],
                     [
                         'title' => 'Com valor inicial',
-                        'description' => 'Slot para popular o campo em modo de edicao.',
+                        'description' => 'Utilize a prop `value` ou o `$slot` para preencher o campo em modo de edição.',
                         'code' => <<<'BLADE'
-<x-sampaui::textarea name="briefing" label="Briefing">
-Cliente precisa priorizar lancamento mobile no proximo trimestre.
+<x-sampaui::textarea name="briefing" label="Briefing do Projeto">
+Cliente precisa priorizar o lançamento mobile no próximo trimestre.
 </x-sampaui::textarea>
 BLADE,
                     ],
                     [
-                        'title' => 'Erro de validacao',
-                        'description' => 'Mensagem manual ou vinda do ErrorBag.',
-                        'code' => <<<'BLADE'
-<x-sampaui::textarea
-    name="notes"
-    label="Observacoes"
-    error="Inclua uma observacao antes de continuar."
-/>
-BLADE,
-                    ],
-                    [
-                        'title' => 'Livewire',
-                        'description' => 'Binding em rascunho de comentario.',
+                        'title' => 'Validação e Livewire',
+                        'description' => 'Tratamento visual de erro e sincronização reativa com Livewire.',
                         'code' => <<<'BLADE'
 <x-sampaui::textarea
     name="message"
     label="Mensagem"
+    error="Por favor, preencha a mensagem antes de enviar."
     wire:model.live.debounce.500ms="message"
 />
 BLADE,
@@ -912,7 +939,7 @@ BLADE,
                     ['name' => 'title', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Titulo padrao do header.'],
                     ['name' => 'description', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Texto auxiliar abaixo do titulo.'],
                     ['name' => 'variant', 'type' => 'default|muted|primary|secondary|accent|danger|success|warning|info|purple', 'default' => 'default', 'notes' => 'Define a superficie e a cor de borda com tokens oficiais.'],
-                    ['name' => 'padding', 'type' => 'sm|md|lg', 'default' => 'md', 'notes' => 'Controla espacamento interno do header, body e footer.'],
+                    ['name' => 'padding', 'type' => 'none|sm|md|lg', 'default' => 'md', 'notes' => 'Controla espacamento interno do header, body e footer. Use `none` para remover padding (`p-0`).'],
                     ['name' => 'divided', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe divisor entre header e body quando ativado.'],
                     ['name' => 'overflow', 'type' => 'visible|hidden|auto', 'default' => 'visible', 'notes' => 'Padrao seguro para dropdowns, DatePicker e popovers absolutos. Use `hidden` para recorte intencional; `auto` cria rolagem interna.'],
                     ['name' => '$slot', 'type' => 'Blade slot', 'default' => '-', 'notes' => 'Conteudo principal.'],
@@ -993,6 +1020,7 @@ BLADE,
                     ['name' => 'closeEvent', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Evento browser que fecha o modal, como `customer-saved`.'],
                     ['name' => 'afterClose', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Metodo Livewire chamado apos a animacao de fechamento.'],
                     ['name' => 'panelClass', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Classes extras aplicadas ao painel interno, uteis para trocar ou remover a borda.'],
+                    ['name' => 'backdropClass', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Classes Tailwind para customizar o fundo escurecido (backdrop), ex: `bg-black/50` ou `bg-slate-900/40`.'],
                     ['name' => '$header/$actions', 'type' => 'Named slots', 'default' => '-', 'notes' => 'Permitem substituir o header e adicionar acoes no rodape.'],
                 ],
                 'attributes' => ['class', 'id', 'wire:key', 'x-on:*', 'data-*', 'aria-*'],
@@ -1276,6 +1304,7 @@ BLADE,
                     ['name' => 'closeEvent', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Evento browser que fecha o drawer, como `filters-applied`.'],
                     ['name' => 'afterClose', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Metodo Livewire chamado apos a animacao de fechamento.'],
                     ['name' => 'panelClass', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Classes extras aplicadas ao painel interno, uteis para trocar ou remover a borda.'],
+                    ['name' => 'backdropClass', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Classes Tailwind para customizar o fundo escurecido (backdrop), ex: `bg-black/50` ou `bg-slate-900/40`.'],
                     ['name' => '$header/$actions', 'type' => 'Named slots', 'default' => '-', 'notes' => 'Permitem substituir o header e adicionar acoes no rodape.'],
                 ],
                 'attributes' => ['class', 'id', 'wire:key', 'x-on:*', 'data-*', 'aria-*'],
@@ -1767,54 +1796,62 @@ BLADE,
                 'title' => 'Com icones',
                 'description' => 'Use `icon` para icones Bootstrap simples ou slots internos quando precisar controlar o markup.',
                 'code' => <<<'BLADE'
-<x-sampaui::input
-    name="email"
-    type="email"
-    label="Email"
-    icon="envelope"
-    placeholder="voce@empresa.com"
-/>
+<div class="grid gap-5 sm:grid-cols-2 w-full items-start">
+    <x-sampaui::input
+        name="email"
+        type="email"
+        label="Email"
+        icon="envelope"
+        placeholder="voce@empresa.com"
+    />
 
-<x-sampaui::input
-    name="password"
-    type="password"
-    label="Senha"
-    icon="lock"
-/>
+    <x-sampaui::input
+        name="password"
+        type="password"
+        label="Senha"
+        icon="lock"
+    />
+</div>
 BLADE,
             ],
             [
                 'title' => 'Tipos comuns',
                 'description' => 'Texto, email, telefone e busca preservam os atributos nativos.',
                 'code' => <<<'BLADE'
-<x-sampaui::input name="name" label="Nome" placeholder="Nome completo" />
-<x-sampaui::input name="email" type="email" label="Email" placeholder="voce@empresa.com" />
-<x-sampaui::input name="phone" type="tel" label="Telefone" value="(11) 99999-0000" />
-<x-sampaui::input name="search" type="search" label="Busca" placeholder="Nome, email ou telefone" />
+<div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 w-full items-start">
+    <x-sampaui::input name="name" label="Nome" placeholder="Nome completo" />
+    <x-sampaui::input name="email" type="email" label="Email" placeholder="voce@empresa.com" />
+    <x-sampaui::input name="phone" type="tel" label="Telefone" value="(11) 99999-0000" />
+    <x-sampaui::input name="search" type="search" label="Busca" placeholder="Nome, email ou telefone" />
+</div>
 BLADE,
             ],
             [
                 'title' => 'Estados',
                 'description' => 'Erro manual, desabilitado, valor inicial e binding Livewire.',
                 'code' => <<<'BLADE'
-<x-sampaui::input name="document" label="Documento" error="Documento invalido." />
-<x-sampaui::input name="company" label="Empresa" value="SampaUI" />
-<x-sampaui::input name="disabled_email" label="Email bloqueado" value="admin@sampaui.dev" disabled />
-<x-sampaui::input name="filter" label="Filtro Livewire" wire:model.live.debounce.300ms="filter" />
+<div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 w-full items-start">
+    <x-sampaui::input name="document" label="Documento" error="Documento invalido." />
+    <x-sampaui::input name="company" label="Empresa" value="SampaUI" />
+    <x-sampaui::input name="disabled_email" label="Email bloqueado" value="admin@sampaui.dev" disabled />
+    <x-sampaui::input name="filter" label="Filtro Livewire" wire:model.live.debounce.300ms="filter" />
+</div>
 BLADE,
             ],
             [
                 'title' => 'Com borda e sem borda',
                 'description' => 'Campos usam borda por padrao; remova com `class="border-0"` apenas em usos pontuais.',
                 'code' => <<<'BLADE'
-<x-sampaui::input name="company" label="Empresa" placeholder="SampaUI" />
+<div class="grid gap-5 sm:grid-cols-2 w-full items-start">
+    <x-sampaui::input name="company" label="Empresa" placeholder="SampaUI" />
 
-<x-sampaui::input
-    name="company_clean"
-    label="Empresa sem borda"
-    placeholder="SampaUI"
-    class="border-0"
-/>
+    <x-sampaui::input
+        name="company_clean"
+        label="Empresa sem borda"
+        placeholder="SampaUI"
+        class="border-0"
+    />
+</div>
 BLADE,
             ],
         ];
@@ -1853,32 +1890,34 @@ BLADE,
                 'title' => 'Estados e Livewire',
                 'description' => 'Erro, disabled, eventos Alpine e envio smart com Livewire.',
                 'code' => <<<'BLADE'
-<x-sampaui::pin
-    name="recovery"
-    label="Recuperacao"
-    length="5"
-    error="Codigo invalido."
-/>
-
-<x-sampaui::pin
-    name="blocked_code"
-    label="Codigo bloqueado"
-    length="5"
-    value="12345"
-    disabled
-/>
-
-<form wire:submit="verify">
+<div class="flex flex-wrap gap-8 items-start w-full">
     <x-sampaui::pin
-        name="pin"
-        label="Digite seu codigo"
-        length="6"
-        numbers
-        smart
-        wire:model.live="pin"
-        x-on:filled="console.log($event.detail.model)"
+        name="recovery"
+        label="Recuperacao"
+        length="5"
+        error="Codigo invalido."
     />
-</form>
+
+    <x-sampaui::pin
+        name="blocked_code"
+        label="Codigo bloqueado"
+        length="5"
+        value="12345"
+        disabled
+    />
+
+    <form wire:submit="verify">
+        <x-sampaui::pin
+            name="pin"
+            label="Digite seu codigo"
+            length="6"
+            numbers
+            smart
+            wire:model.live="pin"
+            x-on:filled="console.log($event.detail.model)"
+        />
+    </form>
+</div>
 BLADE,
             ],
         ];
@@ -1888,34 +1927,36 @@ BLADE,
                 'title' => 'Selecoes',
                 'description' => 'Placeholder, valor comum, disabled e estado de erro.',
                 'code' => <<<'BLADE'
-<x-sampaui::select name="status" label="Status" placeholder="Selecione">
-    <option value="lead">Lead</option>
-    <option value="won">Fechado</option>
-</x-sampaui::select>
+<div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 w-full items-start">
+    <x-sampaui::select name="status" label="Status" placeholder="Selecione">
+        <option value="lead">Lead</option>
+        <option value="won">Fechado</option>
+    </x-sampaui::select>
 
-<x-sampaui::select
-    name="owner"
-    label="Responsavel"
-    value="ana"
-    :options="[
-        'ana' => 'Ana',
-        'bruno' => 'Bruno',
-    ]"
-/>
+    <x-sampaui::select
+        name="owner"
+        label="Responsavel"
+        value="ana"
+        :options="[
+            'ana' => 'Ana',
+            'bruno' => 'Bruno',
+        ]"
+    />
 
-<x-sampaui::select
-    name="team"
-    label="Equipe"
-    disabled
-    :options="['commercial' => 'Comercial']"
-/>
+    <x-sampaui::select
+        name="team"
+        label="Equipe"
+        disabled
+        :options="['commercial' => 'Comercial']"
+    />
 
-<x-sampaui::select
-    name="city"
-    label="Cidade"
-    error="Escolha uma cidade."
-    :options="['sp' => 'Sao Paulo']"
-/>
+    <x-sampaui::select
+        name="city"
+        label="Cidade"
+        error="Escolha uma cidade."
+        :options="['sp' => 'Sao Paulo']"
+    />
+</div>
 BLADE,
             ],
             [
@@ -1939,20 +1980,20 @@ BLADE,
                 'title' => 'Com borda e sem borda',
                 'description' => 'O select segue o input: superficie limpa por padrao e borda sob demanda via `class`.',
                 'code' => <<<'BLADE'
-<x-sampaui::select name="status_clean" label="Status">
-    <option value="active">Ativo</option>
-    <option value="paused">Pausado</option>
-</x-sampaui::select>
+<div class="grid gap-5 sm:grid-cols-2 w-full items-start">
+    <x-sampaui::select
+        name="status_with_border"
+        label="Com borda"
+        :options="['active' => 'Ativo', 'paused' => 'Pausado']"
+    />
 
-<x-sampaui::select
-    name="status_borderless"
-    label="Status sem borda"
-    class="border-0"
-    :options="[
-        'active' => 'Ativo',
-        'paused' => 'Pausado',
-    ]"
-/>
+    <x-sampaui::select
+        name="status_no_border"
+        label="Sem borda"
+        class="border-0"
+        :options="['active' => 'Ativo', 'paused' => 'Pausado']"
+    />
+</div>
 BLADE,
             ],
         ];
@@ -1996,28 +2037,30 @@ BLADE,
                 'title' => 'Estados',
                 'description' => 'Erro, required, disabled e mensagem vazia customizada.',
                 'code' => <<<'BLADE'
-<x-sampaui::select-search
-    name="pipeline"
-    label="Pipeline"
-    error="Escolha um pipeline."
-    required
-    :options="['sales' => 'Vendas', 'support' => 'Suporte']"
-/>
+<div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 w-full items-start">
+    <x-sampaui::select-search
+        name="pipeline"
+        label="Pipeline"
+        error="Escolha um pipeline."
+        required
+        :options="['sales' => 'Vendas', 'support' => 'Suporte']"
+    />
 
-<x-sampaui::select-search
-    name="team"
-    label="Equipe bloqueada"
-    value="commercial"
-    disabled
-    :options="['commercial' => 'Comercial']"
-/>
+    <x-sampaui::select-search
+        name="team"
+        label="Equipe bloqueada"
+        value="commercial"
+        disabled
+        :options="['commercial' => 'Comercial']"
+    />
 
-<x-sampaui::select-search
-    name="segment"
-    label="Segmento"
-    empty-text="Nenhum segmento encontrado."
-    :options="[]"
-/>
+    <x-sampaui::select-search
+        name="segment"
+        label="Segmento"
+        empty-text="Nenhum segmento encontrado."
+        :options="[]"
+    />
+</div>
 BLADE,
             ],
             [
@@ -2042,18 +2085,20 @@ BLADE,
                 'title' => 'Com borda e sem borda',
                 'description' => 'O controle usa borda por padrao; remova com `class=\"border-0\"` quando o layout pedir.',
                 'code' => <<<'BLADE'
-<x-sampaui::select-search
-    name="status_with_border"
-    label="Com borda"
-    :options="['active' => 'Ativo', 'paused' => 'Pausado']"
-/>
+<div class="grid gap-5 sm:grid-cols-2 w-full items-start">
+    <x-sampaui::select-search
+        name="status_with_border"
+        label="Com borda"
+        :options="['active' => 'Ativo', 'paused' => 'Pausado']"
+    />
 
-<x-sampaui::select-search
-    name="status_no_border"
-    label="Sem borda"
-    class="border-0"
-    :options="['active' => 'Ativo', 'paused' => 'Pausado']"
-/>
+    <x-sampaui::select-search
+        name="status_no_border"
+        label="Sem borda"
+        class="border-0"
+        :options="['active' => 'Ativo', 'paused' => 'Pausado']"
+    />
+</div>
 BLADE,
             ],
         ];
@@ -2081,6 +2126,35 @@ BLADE,
             [
                 'title' => 'Estados',
                 'description' => 'Erro, disabled, loading e opcao individual desabilitada.',
+                'preview' => <<<'BLADE'
+<div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 w-full items-start">
+    <x-sampaui::select-multiple
+        name="channels"
+        label="Canais"
+        error="Selecione ao menos um canal."
+        :options="[
+            'email' => 'Email',
+            'whatsapp' => 'WhatsApp',
+            ['value' => 'sms', 'label' => 'SMS bloqueado', 'disabled' => true],
+        ]"
+    />
+
+    <x-sampaui::select-multiple
+        name="teams"
+        label="Times"
+        disabled
+        :value="['sales']"
+        :options="['sales' => 'Comercial']"
+    />
+
+    <x-sampaui::select-multiple
+        name="tags"
+        label="Tags"
+        loading
+        :options="[]"
+    />
+</div>
+BLADE,
                 'code' => <<<'BLADE'
 <x-sampaui::select-multiple
     name="channels"
@@ -2130,36 +2204,182 @@ BLADE,
 
         $components['textarea']['showcases'] = [
             [
-                'title' => 'Usos principais',
-                'description' => 'Rows, placeholder, conteudo inicial e texto longo.',
-                'code' => <<<'BLADE'
-<x-sampaui::textarea name="summary" label="Resumo" rows="3" placeholder="Registre o contexto" />
+                'title' => 'Auto-resize, Contador, Limpeza e Cópia',
+                'description' => 'Expansão dinâmica de altura com Alpine.js (com limite de max-rows), contagem com feedback de cores e botões de limpeza e cópia rápida.',
+                'preview' => <<<'BLADE'
+<div class="grid gap-5 sm:grid-cols-2 w-full items-start">
+    <x-sampaui::textarea
+        name="feedback"
+        label="Depoimento com limite e cópia"
+        placeholder="Conte como foi sua experiência..."
+        auto-resize
+        counter
+        clearable
+        copyable
+        maxlength="200"
+        max-rows="6"
+        hint="Expande até 6 linhas com feedback de caracteres e cópia rápida."
+    />
 
-<x-sampaui::textarea name="briefing" label="Briefing interno" rows="5">
-Cliente quer centralizar atendimento e comercial em um fluxo unico.
-</x-sampaui::textarea>
+    <x-sampaui::textarea
+        name="notes_counter"
+        label="Anotações com contador livre"
+        placeholder="Escreva notas sem limite rígido..."
+        auto-resize
+        counter
+        clearable
+        copyable
+        rows="3"
+    />
+</div>
 BLADE,
-            ],
-            [
-                'title' => 'Estados',
-                'description' => 'Erro, disabled e binding Livewire.',
                 'code' => <<<'BLADE'
-<x-sampaui::textarea name="notes" label="Observacoes" error="Inclua uma observacao." />
-<x-sampaui::textarea name="archived_notes" label="Historico" disabled>Conteudo bloqueado.</x-sampaui::textarea>
-<x-sampaui::textarea name="message" label="Mensagem" wire:model.live.debounce.500ms="message" />
-BLADE,
-            ],
-            [
-                'title' => 'Com borda e sem borda',
-                'description' => 'Use o textarea com borda por padrao e remova apenas quando o layout pedir uma superficie mais limpa.',
-                'code' => <<<'BLADE'
-<x-sampaui::textarea name="notes_clean" label="Observacoes" rows="3" />
+<x-sampaui::textarea
+    name="feedback"
+    label="Depoimento com limite e cópia"
+    placeholder="Conte como foi sua experiência..."
+    auto-resize
+    counter
+    clearable
+    copyable
+    maxlength="200"
+    max-rows="6"
+    hint="Expande até 6 linhas com feedback de caracteres e cópia rápida."
+/>
 
 <x-sampaui::textarea
-    name="notes_clean"
-    label="Observacoes sem borda"
+    name="notes_counter"
+    label="Anotações com contador livre"
+    placeholder="Escreva notas sem limite rígido..."
+    auto-resize
+    counter
+    clearable
+    copyable
     rows="3"
-    class="border-0"
+/>
+BLADE,
+            ],
+            [
+                'title' => 'Usos principais e Rows',
+                'description' => 'Altura inicial definida por `rows`, placeholder e preenchimento inicial via slot ou prop.',
+                'preview' => <<<'BLADE'
+<div class="grid gap-5 sm:grid-cols-2 w-full items-start">
+    <x-sampaui::textarea
+        name="summary"
+        label="Resumo operacional"
+        rows="3"
+        placeholder="Registre o contexto do chamado..."
+    />
+
+    <x-sampaui::textarea
+        name="briefing"
+        label="Briefing do cliente"
+        rows="3"
+    >Cliente solicitou integração completa com gateway de pagamento PIX e emissão de notas.</x-sampaui::textarea>
+</div>
+BLADE,
+                'code' => <<<'BLADE'
+<x-sampaui::textarea
+    name="summary"
+    label="Resumo operacional"
+    rows="3"
+    placeholder="Registre o contexto do chamado..."
+/>
+
+<x-sampaui::textarea
+    name="briefing"
+    label="Briefing do cliente"
+    rows="3"
+>Cliente solicitou integração completa com gateway de pagamento PIX e emissão de notas.</x-sampaui::textarea>
+BLADE,
+            ],
+            [
+                'title' => 'Estados de formulário',
+                'description' => 'Erro de validação, desabilitado e somente leitura com estilização nativa.',
+                'preview' => <<<'BLADE'
+<div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 w-full items-start">
+    <x-sampaui::textarea
+        name="notes_error"
+        label="Com erro"
+        error="Descreva uma justificativa obrigatória."
+        rows="3"
+    />
+
+    <x-sampaui::textarea
+        name="archived_notes"
+        label="Bloqueado"
+        disabled
+        rows="3"
+    >Histórico consolidado e protegido contra alterações.</x-sampaui::textarea>
+
+    <x-sampaui::textarea
+        name="readonly_notes"
+        label="Somente leitura"
+        readonly
+        rows="3"
+    >Texto disponível apenas para consulta e cópia.</x-sampaui::textarea>
+</div>
+BLADE,
+                'code' => <<<'BLADE'
+<x-sampaui::textarea
+    name="notes_error"
+    label="Com erro"
+    error="Descreva uma justificativa obrigatória."
+    rows="3"
+/>
+
+<x-sampaui::textarea
+    name="archived_notes"
+    label="Bloqueado"
+    disabled
+    rows="3"
+>Histórico consolidado e protegido contra alterações.</x-sampaui::textarea>
+
+<x-sampaui::textarea
+    name="readonly_notes"
+    label="Somente leitura"
+    readonly
+    rows="3"
+>Texto disponível apenas para consulta e cópia.</x-sampaui::textarea>
+BLADE,
+            ],
+            [
+                'title' => 'Livewire e Redimensionamento',
+                'description' => 'Sincronização reativa com Livewire e opções de bloqueio de redimensionamento (`resize="none"`).',
+                'preview' => <<<'BLADE'
+<div class="grid gap-5 sm:grid-cols-2 w-full items-start">
+    <x-sampaui::textarea
+        name="message_livewire"
+        label="Mensagem Livewire"
+        wire:model.live.debounce.500ms="message"
+        placeholder="Digite para sincronizar..."
+        rows="3"
+    />
+
+    <x-sampaui::textarea
+        name="fixed_height"
+        label="Sem redimensionamento manual"
+        resize="none"
+        rows="3"
+        placeholder="Altura travada sem alça de arrastar"
+    />
+</div>
+BLADE,
+                'code' => <<<'BLADE'
+<x-sampaui::textarea
+    name="message_livewire"
+    label="Mensagem Livewire"
+    wire:model.live.debounce.500ms="message"
+    placeholder="Digite para sincronizar..."
+    rows="3"
+/>
+
+<x-sampaui::textarea
+    name="fixed_height"
+    label="Sem redimensionamento manual"
+    resize="none"
+    rows="3"
+    placeholder="Altura travada sem alça de arrastar"
 />
 BLADE,
             ],
@@ -2264,43 +2484,47 @@ BLADE,
                 'title' => 'Datas',
                 'description' => 'Valor inicial, required e limites de selecao.',
                 'code' => <<<'BLADE'
-<x-sampaui::date-picker
-    name="published_at"
-    label="Data de publicacao"
-    value="2026-05-25"
-/>
+<div class="grid gap-5 sm:grid-cols-2 w-full items-start">
+    <x-sampaui::date-picker
+        name="published_at"
+        label="Data de publicacao"
+        value="2026-05-25"
+    />
 
-<x-sampaui::date-picker
-    name="due_at"
-    label="Vencimento"
-    min="2026-05-01"
-    max="2026-12-31"
-    required
-/>
+    <x-sampaui::date-picker
+        name="due_at"
+        label="Vencimento"
+        min="2026-05-01"
+        max="2026-12-31"
+        required
+    />
+</div>
 BLADE,
             ],
             [
                 'title' => 'Estados',
                 'description' => 'Erro, disabled e customizacao por class, com texto neutro slate-600 por padrao.',
                 'code' => <<<'BLADE'
-<x-sampaui::date-picker
-    name="scheduled_at"
-    label="Agendamento"
-    error="Escolha uma data valida."
-/>
+<div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 w-full items-start">
+    <x-sampaui::date-picker
+        name="scheduled_at"
+        label="Agendamento"
+        error="Escolha uma data valida."
+    />
 
-<x-sampaui::date-picker
-    name="locked_at"
-    label="Data bloqueada"
-    value="2026-05-25"
-    disabled
-/>
+    <x-sampaui::date-picker
+        name="locked_at"
+        label="Data bloqueada"
+        value="2026-05-25"
+        disabled
+    />
 
-<x-sampaui::date-picker
-    name="reviewed_at"
-    label="Data de revisao"
-    class="bg-slate-50 text-emerald-600 shadow-none"
-/>
+    <x-sampaui::date-picker
+        name="reviewed_at"
+        label="Data de revisao"
+        class="bg-slate-50 text-emerald-600 shadow-none"
+    />
+</div>
 BLADE,
             ],
             [
@@ -2355,19 +2579,11 @@ BLADE,
             [
                 'title' => 'Dropdown sem recorte',
                 'description' => 'Menus absolutos nao sao cortados pelo card, pois o overflow visivel e o padrao.',
-                'preview' => <<<'BLADE'
-<x-sampaui::card title="Filtros">
-    <x-sampaui::select
-        label="Status"
-        placeholder="Selecione"
-        :options="['active' => 'Ativo', 'inactive' => 'Inativo']"
-    />
-</x-sampaui::card>
-BLADE,
                 'code' => <<<'BLADE'
 <x-sampaui::card title="Filtros">
     <x-sampaui::select
         label="Status"
+        placeholder="Selecione"
         :options="['active' => 'Ativo', 'inactive' => 'Inativo']"
     />
 </x-sampaui::card>
@@ -2515,7 +2731,7 @@ BLADE,
         x-on:keydown.escape.window="open = false"
     >
         <div
-            class="absolute inset-0 bg-primary/40 transition-[backdrop-filter,opacity] duration-300 ease-out"
+            class="absolute inset-0 bg-secondary/25 transition-[backdrop-filter,opacity] duration-300 ease-out"
             x-bind:class="open ? 'backdrop-blur-[2px]' : 'backdrop-blur-none'"
             x-show="open"
             x-transition:enter="transition-opacity duration-300 ease-out"
@@ -2970,7 +3186,11 @@ BLADE,
             this.activeSize = size;
             this.open = true;
             this.active = false;
-            this.$nextTick(() => this.active = true);
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    if (this.open) this.active = true;
+                });
+            });
         },
         close() {
             this.active = false;
@@ -3009,14 +3229,14 @@ BLADE,
         x-on:keydown.escape.window="close()"
     >
         <div
-            class="absolute inset-0 bg-primary/40 transition-[backdrop-filter,opacity] duration-500 ease-out"
+            class="absolute inset-0 bg-secondary/25 transition-[backdrop-filter,opacity] duration-500 ease-out"
             x-bind:class="active ? 'opacity-100 backdrop-blur-[2px]' : 'opacity-0 backdrop-blur-none'"
             x-on:click="close()"
         ></div>
 
         <section
             class="relative flex flex-col overflow-hidden border border-border bg-white outline-none transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
-            style="will-change: transform, translate, opacity;"
+            style="will-change: transform, opacity;"
             x-bind:class="{
                 'h-full w-full max-w-md rounded-l-default': activePlacement === 'right',
                 'h-full w-full max-w-lg rounded-r-default': activePlacement === 'left',
@@ -3227,88 +3447,243 @@ BLADE,
 
         $components['table']['showcases'] = [
             [
-                'title' => 'Colunas e linhas',
-                'description' => 'Renderizacao automatica por arrays, com alinhamento por coluna.',
+                'title' => 'DataTable com Busca, Seleção e Ações',
+                'description' => 'Tabela completa com campo de busca integrado, seleção múltipla com barra contextual de ações em lote, contagem em tempo real, paginação numérica e botões circulares de ação por linha.',
                 'code' => <<<'BLADE'
 <x-sampaui::table
-    :columns="[
-        'name' => 'Cliente',
-        'status' => 'Status',
-        'amount' => ['label' => 'Valor', 'key' => 'amount', 'align' => 'right'],
-    ]"
-    :rows="[
-        ['name' => 'Ana Souza', 'status' => 'Ativo', 'amount' => 'R$ 1.200,00'],
-        ['name' => 'Bruno Lima', 'status' => 'Em analise', 'amount' => 'R$ 850,00'],
-    ]"
-/>
-BLADE,
-            ],
-            [
-                'title' => 'Ordenacao opt-in',
-                'description' => 'Colunas marcadas com `sortable` exibem icone e podem chamar metodo Livewire.',
-                'code' => <<<'BLADE'
-<x-sampaui::table
+    title="Clientes Corporativos"
+    description="Listagem sincronizada com pesquisa e exportação."
+    searchable
+    search-placeholder="Buscar por nome, email ou cargo..."
+    selectable
+    :selected-rows="[1]"
+    export-href="#export"
+    export-label="Exportar CSV"
+    per-page="2"
+    page="1"
+    :total="4"
+    pagination-type="numbers"
+    row-key="id"
     sort-by="name"
     sort-direction="asc"
-    sort-method="sortBy"
     :columns="[
-        'name' => ['label' => 'Cliente', 'sortable' => true],
+        'name' => ['label' => 'Nome', 'sortable' => true],
+        'email' => 'E-mail',
         'status' => 'Status',
-        'amount' => ['label' => 'Valor', 'key' => 'amount', 'align' => 'right', 'sortable' => true],
+        'amount' => ['label' => 'Total', 'key' => 'amount', 'align' => 'right', 'sortable' => true],
     ]"
     :rows="[
-        ['name' => 'Ana Souza', 'status' => 'Ativo', 'amount' => 'R$ 1.200,00'],
-        ['name' => 'Bruno Lima', 'status' => 'Em analise', 'amount' => 'R$ 850,00'],
+        ['id' => 1, 'name' => 'Ana Clara Souza', 'email' => 'ana.souza@empresa.com', 'status' => 'Ativo', 'amount' => 'R$ 4.200,00'],
+        ['id' => 2, 'name' => 'Bruno Henrique Lima', 'email' => 'bruno.lima@startup.io', 'status' => 'Pendente', 'amount' => 'R$ 1.850,00'],
+        ['id' => 3, 'name' => 'Carla Mendonça', 'email' => 'carla.m@consultoria.com', 'status' => 'Ativo', 'amount' => 'R$ 5.900,00'],
+        ['id' => 4, 'name' => 'Daniel Silveira', 'email' => 'daniel.s@techcorp.com.br', 'status' => 'Bloqueado', 'amount' => 'R$ 3.120,00'],
+    ]"
+>
+    <x-slot:selectionActions>
+        <x-sampaui::button size="sm" variant="danger" icon="trash" x-on:click="$dispatch('toast', { message: 'Excluindo ' + selectedRows.length + ' registro(s) selecionado(s)...', variant: 'danger' }); toggleAll(false)">Excluir selecionados</x-sampaui::button>
+        <x-sampaui::button size="sm" variant="outline" icon="envelope" x-on:click="$dispatch('toast', { message: 'Notificações enviadas aos clientes selecionados!', variant: 'success' })">Notificar</x-sampaui::button>
+    </x-slot:selectionActions>
+
+    <x-slot:actions>
+        <x-sampaui::button size="sm" variant="primary" icon="plus-lg" x-on:click="$dispatch('toast', { message: 'Abrindo formulário de cadastro de Novo Cliente...', variant: 'info' })">Novo Cliente</x-sampaui::button>
+    </x-slot:actions>
+</x-sampaui::table>
+BLADE,
+            ],
+            [
+                'title' => 'Filtros Customizados por Slot e Livewire',
+                'description' => 'Substitua a barra de pesquisa padrão por filtros ricos com select e busca debounce via Livewire.',
+                'code' => <<<'BLADE'
+<x-sampaui::table
+    title="Pedidos Recentes"
+    :columns="[
+        'order' => 'Pedido',
+        'customer' => 'Cliente',
+        'status' => 'Status',
+        'total' => ['label' => 'Total', 'key' => 'total', 'align' => 'right'],
+    ]"
+    :rows="[
+        ['order' => '#9840', 'customer' => 'Tech Solutions', 'status' => 'Processando', 'total' => 'R$ 8.400,00'],
+        ['order' => '#9841', 'customer' => 'Loja Brasil', 'status' => 'Entregue', 'total' => 'R$ 2.150,00'],
+    ]"
+>
+    <x-slot:filters>
+        <x-sampaui::select
+            name="status_filter"
+            value="all"
+            :options="['all' => 'Todos os status', 'pending' => 'Pendentes', 'completed' => 'Entregues']"
+        />
+        <x-sampaui::input
+            type="search"
+            name="search_query"
+            placeholder="Buscar por pedido..."
+            icon="search"
+            wire:model.live.debounce.300ms="search"
+        />
+    </x-slot:filters>
+
+    <x-slot:actions>
+        <x-sampaui::button size="sm" variant="outline" icon="funnel">Filtrar</x-sampaui::button>
+    </x-slot:actions>
+</x-sampaui::table>
+BLADE,
+            ],
+            [
+                'title' => 'Listagem com Status e Badges',
+                'description' => 'Renderização automática por array de colunas e linhas, com badges e alinhamento à direita para valores monetários.',
+                'code' => <<<'BLADE'
+<x-sampaui::table
+    :columns="[
+        'client' => 'Cliente',
+        'email' => 'E-mail',
+        'status' => 'Status',
+        'amount' => ['label' => 'Total', 'key' => 'amount', 'align' => 'right'],
+    ]"
+    :rows="[
+        ['client' => 'Ana Clara Souza', 'email' => 'ana.souza@empresa.com.br', 'status' => 'Ativo', 'amount' => 'R$ 3.450,00'],
+        ['client' => 'Bruno Henrique Lima', 'email' => 'bruno.lima@startup.io', 'status' => 'Pendente', 'amount' => 'R$ 1.820,00'],
+        ['client' => 'Carla Mendonça', 'email' => 'carla.m@consultoria.com', 'status' => 'Ativo', 'amount' => 'R$ 5.900,00'],
     ]"
 />
 BLADE,
             ],
             [
-                'title' => 'Compacta, striped e sem borda',
-                'description' => 'Controle de densidade e superficie externa.',
+                'title' => 'Ordenação, Striped e Compacta',
+                'description' => 'Colunas sortable com indicador de direção e densidade compacta para dashboards operacionais.',
                 'code' => <<<'BLADE'
 <x-sampaui::table
     compact
     striped
-    :columns="['code' => 'Codigo', 'owner' => 'Responsavel']"
-    :rows="[
-        ['code' => '#1024', 'owner' => 'Comercial'],
-        ['code' => '#1025', 'owner' => 'Suporte'],
+    sort-by="client"
+    sort-direction="asc"
+    :columns="[
+        'code' => ['label' => 'ID', 'sortable' => true],
+        'client' => ['label' => 'Cliente', 'sortable' => true],
+        'plan' => 'Plano',
+        'amount' => ['label' => 'Mensalidade', 'key' => 'amount', 'align' => 'right', 'sortable' => true],
     ]"
-/>
-
-<x-sampaui::table
-    :bordered="false"
-    :columns="['name' => 'Nome']"
-    :rows="[['name' => 'Superficie sem borda']]"
+    :rows="[
+        ['code' => '#1001', 'client' => 'Acme Corp', 'plan' => 'Enterprise', 'amount' => 'R$ 4.900,00'],
+        ['code' => '#1002', 'client' => 'Beta Solutions', 'plan' => 'Pro', 'amount' => 'R$ 1.250,00'],
+        ['code' => '#1003', 'client' => 'Cyber Tech', 'plan' => 'Growth', 'amount' => 'R$ 2.400,00'],
+    ]"
 />
 BLADE,
             ],
             [
-                'title' => 'Slots customizados',
-                'description' => 'Use `head` e `body` quando precisar de markup rico nas celulas.',
+                'title' => 'Estados de Carregamento e Vazio',
+                'description' => 'Skeleton de pulso durante requisições e mensagem amigável quando nenhum registro for retornado.',
+                'preview' => <<<'BLADE'
+<div class="space-y-6 w-full">
+    <div>
+        <p class="text-xs font-semibold uppercase tracking-wider text-secondary/60 mb-2">Estado de carregamento (loading)</p>
+        <x-sampaui::table
+            loading
+            :columns="['name' => 'Nome', 'role' => 'Cargo', 'team' => 'Equipe']"
+            :rows="[]"
+        />
+    </div>
+
+    <div>
+        <p class="text-xs font-semibold uppercase tracking-wider text-secondary/60 mb-2">Estado vazio (empty)</p>
+        <x-sampaui::table
+            empty-title="Nenhum colaborador encontrado"
+            empty-description="Tente ajustar os filtros ou adicione um novo registro."
+            empty-icon="people"
+            :columns="['name' => 'Nome', 'role' => 'Cargo']"
+            :rows="[]"
+        />
+    </div>
+</div>
+BLADE,
+                'code' => <<<'BLADE'
+{{-- Tabela em carregamento --}}
+<x-sampaui::table
+    loading
+    :columns="['name' => 'Nome', 'role' => 'Cargo', 'team' => 'Equipe']"
+    :rows="[]"
+/>
+
+{{-- Tabela vazia com título e descrição customizados --}}
+<x-sampaui::table
+    empty-title="Nenhum colaborador encontrado"
+    empty-description="Tente ajustar os filtros ou adicione um novo registro."
+    empty-icon="people"
+    :columns="['name' => 'Nome', 'role' => 'Cargo']"
+    :rows="[]"
+/>
+BLADE,
+            ],
+            [
+                'title' => 'Slots Customizados (Head e Body)',
+                'description' => 'Construção flexível com HTML personalizado nas células, botões de ação e modais.',
                 'code' => <<<'BLADE'
 <x-sampaui::table>
     <x-slot:head>
-        <thead>
+        <thead class="bg-light/60 text-xs font-semibold uppercase tracking-wider text-secondary">
             <tr>
-                <th class="px-4 py-3 text-left">Cliente</th>
-                <th class="px-4 py-3 text-right">Acao</th>
+                <th class="px-4 py-3 text-left">Projeto</th>
+                <th class="px-4 py-3 text-left">Status</th>
+                <th class="px-4 py-3 text-right">Ações</th>
             </tr>
         </thead>
     </x-slot:head>
 
     <x-slot:body>
-        <tbody>
-            <tr>
-                <td class="px-4 py-3">Ana Souza</td>
+        <tbody class="divide-y divide-border">
+            <tr class="transition hover:bg-light/40">
+                <td class="px-4 py-3">
+                    <p class="font-semibold text-secondary">Portal do Fornecedor</p>
+                    <p class="text-xs text-secondary/60">Laravel 12 + Livewire</p>
+                </td>
+                <td class="px-4 py-3">
+                    <x-sampaui::badge variant="success" size="sm">Em produção</x-sampaui::badge>
+                </td>
                 <td class="px-4 py-3 text-right">
-                    <x-sampaui::button size="sm" variant="outline">Abrir</x-sampaui::button>
+                    <div class="flex items-center justify-end gap-1.5">
+                        <x-sampaui::button size="sm" variant="outline" icon="pencil" rounded aria-label="Editar" />
+                        <x-sampaui::button size="sm" variant="outline" icon="trash" class="text-danger hover:border-danger hover:bg-danger/10" rounded aria-label="Excluir" />
+                    </div>
+                </td>
+            </tr>
+            <tr class="transition hover:bg-light/40">
+                <td class="px-4 py-3">
+                    <p class="font-semibold text-secondary">App de Vendas</p>
+                    <p class="text-xs text-secondary/60">API Gateway + Flutter</p>
+                </td>
+                <td class="px-4 py-3">
+                    <x-sampaui::badge variant="warning" size="sm">Em homologação</x-sampaui::badge>
+                </td>
+                <td class="px-4 py-3 text-right">
+                    <div class="flex items-center justify-end gap-1.5">
+                        <x-sampaui::button size="sm" variant="outline" icon="pencil" rounded aria-label="Editar" />
+                        <x-sampaui::button size="sm" variant="outline" icon="trash" class="text-danger hover:border-danger hover:bg-danger/10" rounded aria-label="Excluir" />
+                    </div>
                 </td>
             </tr>
         </tbody>
     </x-slot:body>
 </x-sampaui::table>
+BLADE,
+            ],
+            [
+                'title' => 'Mobile Cards Responsivos',
+                'description' => 'A prop `mobile-cards` transforma as linhas da tabela em cards estilizados em telas menores.',
+                'code' => <<<'BLADE'
+<x-sampaui::table
+    mobile-cards
+    compact
+    :columns="[
+        'code' => 'Código',
+        'server' => 'Servidor',
+        'uptime' => 'Disponibilidade',
+        'load' => ['label' => 'Carga CPU', 'key' => 'load', 'align' => 'right'],
+    ]"
+    :rows="[
+        ['code' => 'SRV-01', 'server' => 'API Principal (SP)', 'uptime' => '99.98%', 'load' => '32%'],
+        ['code' => 'SRV-02', 'server' => 'Database Primary (US)', 'uptime' => '100.00%', 'load' => '58%'],
+    ]"
+/>
 BLADE,
             ],
         ];
@@ -4075,43 +4450,366 @@ BLADE,
             ],
         ];
 
+        $components['chat-layout'] = [
+            'slug' => 'chat-layout',
+            'name' => 'Chat Layout',
+            'tag' => '<x-sampaui::chat-layout />',
+            'summary' => 'Container estrutural responsivo com sidebar e área de conversa ativa para atendimento e mensageria.',
+            'description' => 'Organiza o fluxo de mensagens em duas colunas no desktop (lista de conversas e conversa ativa) e alterna automaticamente para visualização em tela cheia no mobile via eventos Alpine (chat:open-conversation e chat:back). Suporta altura customizada e classes utilitárias sem quebrar o alinhamento.',
+            'preview_title' => 'Estrutura de Atendimento Completa',
+            'preview_caption' => 'Sidebar integrada com lista de contatos e janela ativa de troca de mensagens.',
+            'props' => [
+                ['name' => 'height', 'type' => 'string', 'default' => '44rem', 'notes' => 'Altura total do layout de mensagens (ex: 44rem, 600px, 100%).'],
+                ['name' => 'mobile-panel', 'type' => 'sidebar|conversation', 'default' => 'sidebar', 'notes' => 'Define qual painel fica visível inicialmente em telas mobile.'],
+            ],
+            'attributes' => ['class', 'id', 'style', 'x-data', 'x-on:*', 'data-*'],
+            'accessibility' => [
+                'Utiliza elementos semânticos <aside> para lista lateral e <section> para a conversa.',
+                'Dispara e escuta eventos CustomEvent para transição acessível entre telas em dispositivos móveis.',
+                'Garante contraste e foco navegável por teclado em ambos os painéis.',
+            ],
+            'examples' => [
+                [
+                    'title' => 'Uso com slots',
+                    'description' => 'Composição padrão do chat com sidebar à esquerda e conversa ativa à direita.',
+                    'code' => <<<'BLADE'
+<x-sampaui::chat-layout height="36rem">
+    <x-slot:sidebar>
+        <x-sampaui::chat-sidebar
+            title="Atendimentos"
+            subtitle="3 conversas ativas"
+            :conversations="[
+                ['name' => 'Mariana Silva', 'preview' => 'Poderia me enviar a proposta?', 'time' => '10:15', 'status' => 'online', 'active' => true, 'unread' => 1],
+                ['name' => 'Rodrigo Souza', 'preview' => 'Combinado para amanhã.', 'time' => '09:30', 'status' => 'offline'],
+            ]"
+        />
+    </x-slot:sidebar>
+
+    <x-sampaui::chat-conversation name="Mariana Silva" subtitle="Online agora" status="online">
+        <x-sampaui::chat-message time="10:14">Olá! Gostaria de saber mais sobre o plano Enterprise.</x-sampaui::chat-message>
+        <x-sampaui::chat-message from="me" time="10:15" status="Lida">Olá Mariana! Com certeza, temos condições especiais para seu time.</x-sampaui::chat-message>
+        <x-sampaui::chat-message time="10:15">Poderia me enviar a proposta?</x-sampaui::chat-message>
+
+        <x-slot:composer>
+            <x-sampaui::chat-composer placeholder="Escreva uma resposta..." />
+        </x-slot:composer>
+    </x-sampaui::chat-conversation>
+</x-sampaui::chat-layout>
+BLADE,
+                ],
+            ],
+            'showcases' => [
+                [
+                    'title' => 'Layout Interativo',
+                    'description' => 'Preview funcional da central de mensagens com sidebar e área de conversa sincronizadas.',
+                    'code' => <<<'BLADE'
+<x-sampaui::chat-layout height="34rem">
+    <x-slot:sidebar>
+        <x-sampaui::chat-sidebar
+            title="Conversas"
+            subtitle="2 não lidas"
+            :conversations="[
+                ['name' => 'Ana Martins', 'preview' => 'Tudo certo com o contrato.', 'time' => '11:20', 'status' => 'online', 'active' => true],
+                ['name' => 'Carlos Eduardo', 'preview' => 'Obrigado pelo suporte!', 'time' => 'Ontem', 'status' => 'away', 'unread' => 2],
+            ]"
+        />
+    </x-slot:sidebar>
+
+    <x-sampaui::chat-conversation name="Ana Martins" subtitle="Online agora" status="online">
+        <x-sampaui::chat-message time="11:18">Bom dia! Conseguiu revisar os anexos?</x-sampaui::chat-message>
+        <x-sampaui::chat-message from="me" time="11:19" status="Lida">Bom dia Ana! Revisei sim, ficou excelente.</x-sampaui::chat-message>
+        <x-sampaui::chat-message time="11:20">Tudo certo com o contrato.</x-sampaui::chat-message>
+
+        <x-slot:composer>
+            <x-sampaui::chat-composer placeholder="Digite sua mensagem..." />
+        </x-slot:composer>
+    </x-sampaui::chat-conversation>
+</x-sampaui::chat-layout>
+BLADE,
+                ],
+            ],
+        ];
+
+        $components['chat-sidebar'] = [
+            'slug' => 'chat-sidebar',
+            'name' => 'Chat Sidebar',
+            'tag' => '<x-sampaui::chat-sidebar />',
+            'summary' => 'Painel lateral com busca, contadores de mensagens não lidas, status de presença e lista de conversas.',
+            'description' => 'Permite renderizar listas ricas de contatos passando um array em :conversations ou compondo itens customizados no slot padrão. Suporta pesquisa reativa com wire:model ou x-model, badges de não lidas e indicador de digitação.',
+            'preview_title' => 'Inbox de Conversas',
+            'preview_caption' => 'Lista lateral com status de presença, indicador de digitação e contadores.',
+            'props' => [
+                ['name' => 'title', 'type' => 'string', 'default' => 'Conversas', 'notes' => 'Título principal do cabeçalho da sidebar.'],
+                ['name' => 'subtitle', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Subtítulo ou resumo de contatos ativos.'],
+                ['name' => 'conversations', 'type' => 'array', 'default' => '[]', 'notes' => 'Array de conversas com id, name, preview, time, unread, avatar, status, typing, tag e wireClick.'],
+                ['name' => 'search-placeholder', 'type' => 'string', 'default' => 'Buscar conversa', 'notes' => 'Placeholder da barra de pesquisa.'],
+                ['name' => 'search-name', 'type' => 'string', 'default' => 'chat_search', 'notes' => 'Atributo name do campo de busca.'],
+                ['name' => 'searchable', 'type' => 'bool', 'default' => 'true', 'notes' => 'Controla se a barra de pesquisa é renderizada.'],
+                ['name' => 'empty-title', 'type' => 'string', 'default' => 'Nenhuma conversa', 'notes' => 'Título exibido quando a lista está vazia.'],
+                ['name' => 'empty-description', 'type' => 'string', 'default' => 'As conversas recentes aparecerão aqui.', 'notes' => 'Mensagem explicativa do empty state.'],
+            ],
+            'attributes' => ['class', 'id', 'wire:model', 'x-model', 'wire:click', 'data-*'],
+            'accessibility' => [
+                'Adiciona aria-label com contagem exata em badges de mensagens não lidas.',
+                'Utiliza marcação semântica com tags <time> para horários de mensagens.',
+                'Suporta foco visível e navegação por teclado entre contatos.',
+            ],
+            'examples' => [
+                [
+                    'title' => 'Lista com múltiplos status',
+                    'description' => 'Conversas com badges de não lidas, status de presença e indicador de digitação.',
+                    'code' => <<<'BLADE'
+<div class="h-96 w-full max-w-sm rounded-2xl border border-border bg-surface overflow-hidden">
+    <x-sampaui::chat-sidebar
+        title="Atendimento"
+        subtitle="12 conversas hoje"
+        :conversations="[
+            ['name' => 'Beatriz Costa', 'preview' => 'Pode me ajudar?', 'time' => '14:32', 'status' => 'online', 'active' => true, 'unread' => 3, 'tag' => 'Suporte'],
+            ['name' => 'Lucas Mendes', 'typing' => true, 'time' => '14:28', 'status' => 'online', 'tag' => 'Comercial'],
+            ['name' => 'Fernanda Lima', 'preview' => 'Obrigada pelo retorno.', 'time' => '11:15', 'status' => 'away'],
+            ['name' => 'Gabriel Ramos', 'preview' => 'Proposta analisada.', 'time' => 'Ontem', 'status' => 'offline'],
+        ]"
+    >
+        <x-slot:actions>
+            <x-sampaui::button icon="plus" size="sm" rounded aria-label="Nova conversa" />
+        </x-slot:actions>
+    </x-sampaui::chat-sidebar>
+</div>
+BLADE,
+                ],
+            ],
+            'showcases' => [
+                [
+                    'title' => 'Sidebar Completa',
+                    'description' => 'Exemplo com busca integrada e contatos em diferentes estados.',
+                    'code' => <<<'BLADE'
+<div class="h-[26rem] w-full max-w-sm rounded-2xl border border-border bg-surface overflow-hidden">
+    <x-sampaui::chat-sidebar
+        title="Inbox"
+        subtitle="4 atendimentos ativos"
+        :conversations="[
+            ['name' => 'Camila Rocha', 'preview' => 'Documentos enviados em anexo.', 'time' => '10:45', 'status' => 'online', 'active' => true, 'tag' => 'Enterprise'],
+            ['name' => 'Diego Alves', 'typing' => true, 'time' => '10:40', 'status' => 'online', 'unread' => 1],
+            ['name' => 'Juliana Paes', 'preview' => 'Até breve!', 'time' => '08:12', 'status' => 'away'],
+        ]"
+    >
+        <x-slot:actions>
+            <x-sampaui::button icon="sliders" size="sm" variant="ghost" rounded aria-label="Filtros" />
+        </x-slot:actions>
+    </x-sampaui::chat-sidebar>
+</div>
+BLADE,
+                ],
+            ],
+        ];
+
+        $components['chat-conversation'] = [
+            'slug' => 'chat-conversation',
+            'name' => 'Chat Conversation',
+            'tag' => '<x-sampaui::chat-conversation />',
+            'summary' => 'Área principal da conversa com cabeçalho de contato, timeline com rolagem automática e slot de envio.',
+            'description' => 'Gerencia o cabeçalho com foto, nome e status do contato, botão de retorno responsivo para mobile, área com scroll e slot composer no rodapé.',
+            'preview_title' => 'Janela de Conversa Ativa',
+            'preview_caption' => 'Timeline com mensagens recebidas e enviadas, rolagem suave e composer integrado.',
+            'props' => [
+                ['name' => 'name', 'type' => 'string', 'default' => 'Contato', 'notes' => 'Nome do contato ou canal ativo.'],
+                ['name' => 'subtitle', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Subtítulo do cabeçalho (ex: status, cargo ou empresa).'],
+                ['name' => 'avatar', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Foto de perfil do contato.'],
+                ['name' => 'status', 'type' => 'online|away|busy|offline|null', 'default' => 'online', 'notes' => 'Indicador de presença no cabeçalho.'],
+                ['name' => 'back-button', 'type' => 'bool', 'default' => 'true', 'notes' => 'Exibe botão de voltar para lista no mobile.'],
+                ['name' => 'auto-scroll', 'type' => 'bool', 'default' => 'true', 'notes' => 'Executa scroll automático até a última mensagem.'],
+                ['name' => 'empty', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe estado vazio quando não há mensagens.'],
+                ['name' => 'empty-title', 'type' => 'string', 'default' => 'Nenhuma mensagem ainda', 'notes' => 'Título do empty state.'],
+                ['name' => 'empty-description', 'type' => 'string', 'default' => 'Envie a primeira mensagem para iniciar a conversa.', 'notes' => 'Descrição do empty state.'],
+            ],
+            'attributes' => ['class', 'id', 'data-*'],
+            'accessibility' => [
+                'Área de mensagens identificada com role="log" e aria-live="polite" para leitores de tela.',
+                'Botão de voltar no mobile inclui aria-label acessível.',
+            ],
+            'examples' => [
+                [
+                    'title' => 'Conversa com histórico e composer',
+                    'description' => 'Estrutura completa com mensagens intercaladas e formulário de resposta.',
+                    'code' => <<<'BLADE'
+<div class="h-96 w-full rounded-2xl border border-border overflow-hidden bg-surface">
+    <x-sampaui::chat-conversation name="Guilherme Santos" subtitle="Online agora" status="online">
+        <x-slot:actions>
+            <x-sampaui::button variant="ghost" size="sm" icon="telephone" rounded aria-label="Ligar" />
+            <x-sampaui::button variant="ghost" size="sm" icon="info-circle" rounded aria-label="Informações" />
+        </x-slot:actions>
+
+        <x-sampaui::chat-message from="system">Atendimento iniciado às 09:00</x-sampaui::chat-message>
+        <x-sampaui::chat-message time="09:01">Olá, preciso de auxílio com a integração da API.</x-sampaui::chat-message>
+        <x-sampaui::chat-message from="me" time="09:02" status="Lida">Olá Guilherme! Vou te enviar os endpoints de autenticação.</x-sampaui::chat-message>
+
+        <x-slot:composer>
+            <x-sampaui::chat-composer placeholder="Escreva para Guilherme..." />
+        </x-slot:composer>
+    </x-sampaui::chat-conversation>
+</div>
+BLADE,
+                ],
+            ],
+            'showcases' => [
+                [
+                    'title' => 'Janela de Conversa',
+                    'description' => 'Visualização com cabeçalho com ações, mensagens e composer.',
+                    'code' => <<<'BLADE'
+<div class="h-80 w-full rounded-2xl border border-border overflow-hidden bg-surface">
+    <x-sampaui::chat-conversation name="Renata Dias" subtitle="Atendimento #3021" status="online">
+        <x-slot:actions>
+            <x-sampaui::button variant="ghost" size="sm" icon="three-dots-vertical" rounded aria-label="Opções" />
+        </x-slot:actions>
+
+        <x-sampaui::chat-message time="15:10">Boa tarde! O relatório já foi emitido?</x-sampaui::chat-message>
+        <x-sampaui::chat-message from="me" time="15:11" status="Lida">Boa tarde! Sim, você pode baixá-lo no painel.</x-sampaui::chat-message>
+
+        <x-slot:composer>
+            <x-sampaui::chat-composer placeholder="Digite sua resposta..." />
+        </x-slot:composer>
+    </x-sampaui::chat-conversation>
+</div>
+BLADE,
+                ],
+            ],
+        ];
+
+        $components['chat-message'] = [
+            'slug' => 'chat-message',
+            'name' => 'Chat Message',
+            'tag' => '<x-sampaui::chat-message />',
+            'summary' => 'Bolha de mensagem estilizada para mensagens recebidas, enviadas ou avisos de sistema.',
+            'description' => 'Renderiza bolhas modernas com cantos arredondados assimétricos, timestamps, suporte a nome de autor, avatar e status de entrega automáticos (enviada, entregue, lida, erro).',
+            'preview_title' => 'Tipos de Mensagens e Status',
+            'preview_caption' => 'Bolhas de envio próprio, recebidas com foto e alertas do sistema.',
+            'props' => [
+                ['name' => 'from', 'type' => 'contact|me|outgoing|incoming|system', 'default' => 'contact', 'notes' => 'Origem da mensagem (contato, própria ou aviso do sistema).'],
+                ['name' => 'author', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Nome do autor exibido acima da mensagem.'],
+                ['name' => 'time', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Horário da mensagem (ex: 10:45).'],
+                ['name' => 'status', 'type' => 'sent|delivered|read|failed|enviada|entregue|lida|erro|null', 'default' => 'null', 'notes' => 'Status de entrega com ícones automatizados (checks duplos, check simples ou alerta).'],
+                ['name' => 'avatar', 'type' => 'string|null', 'default' => 'null', 'notes' => 'URL da foto do autor da mensagem.'],
+                ['name' => 'show-avatar', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe avatar circular ao lado da bolha de mensagem.'],
+            ],
+            'attributes' => ['class', 'id', 'data-*'],
+            'accessibility' => [
+                'Inclui marcações de tempo com elemento <time> e leitor de tela para status de entrega.',
+                'Avisos de sistema utilizam role="status" para anúncios acessíveis.',
+            ],
+            'examples' => [
+                [
+                    'title' => 'Fluxo de conversa com status',
+                    'description' => 'Mensagens demonstrando estados de envio (lida, entregue, enviada) e avisos.',
+                    'code' => <<<'BLADE'
+<div class="space-y-4 p-4 rounded-2xl border border-border bg-light/30 max-w-2xl">
+    <x-sampaui::chat-message from="system">Ontem às 18:30</x-sampaui::chat-message>
+
+    <x-sampaui::chat-message author="Lucas Mendes" time="18:31" show-avatar>
+        Olá equipe! Segue em anexo a minuta do contrato revisada.
+    </x-sampaui::chat-message>
+
+    <x-sampaui::chat-message from="me" time="18:32" status="Lida">
+        Recebido, Lucas! Já encaminhei para assinatura digital.
+    </x-sampaui::chat-message>
+
+    <x-sampaui::chat-message from="me" time="18:33" status="Entregue">
+        Assim que todos assinarem, você receberá a via final por e-mail.
+    </x-sampaui::chat-message>
+</div>
+BLADE,
+                ],
+            ],
+            'showcases' => [
+                [
+                    'title' => 'Bolhas Intercaladas',
+                    'description' => 'Exemplo com bolhas recebidas e enviadas com horários e ícones de confirmação.',
+                    'code' => <<<'BLADE'
+<div class="space-y-3.5 p-4 rounded-2xl border border-border bg-surface max-w-xl">
+    <x-sampaui::chat-message author="Carla" time="10:00" show-avatar>
+        Bom dia! Podemos marcar a reunião para hoje às 15h?
+    </x-sampaui::chat-message>
+
+    <x-sampaui::chat-message from="me" time="10:02" status="Lida">
+        Perfeito Carla! Já reservei na agenda e enviei o link do Meet.
+    </x-sampaui::chat-message>
+</div>
+BLADE,
+                ],
+            ],
+        ];
+
+        $components['chat-composer'] = [
+            'slug' => 'chat-composer',
+            'name' => 'Chat Composer',
+            'tag' => '<x-sampaui::chat-composer />',
+            'summary' => 'Barra de entrada de mensagens com textarea auto-ajustável, atalho de envio e suporte a anexos.',
+            'description' => 'Componente completo de envio com expansão vertical automática ao digitar, envio rápido com Enter (e nova linha com Shift+Enter), contador de caracteres, slots para botões de anexo e estado de carregamento.',
+            'preview_title' => 'Composer com Envio Rápido',
+            'preview_caption' => 'Textarea auto-expansível com botões de anexo, envio e atalho de teclado.',
+            'props' => [
+                ['name' => 'name', 'type' => 'string', 'default' => 'message', 'notes' => 'Nome do campo de texto textarea.'],
+                ['name' => 'placeholder', 'type' => 'string', 'default' => 'Digite uma mensagem...', 'notes' => 'Texto de orientação do campo.'],
+                ['name' => 'button-label', 'type' => 'string', 'default' => 'Enviar mensagem', 'notes' => 'Rótulo acessível (aria-label) do botão de envio.'],
+                ['name' => 'button-icon', 'type' => 'string', 'default' => 'send-fill', 'notes' => 'Ícone do botão de envio.'],
+                ['name' => 'rows', 'type' => 'int', 'default' => '1', 'notes' => 'Número inicial de linhas do textarea.'],
+                ['name' => 'disabled', 'type' => 'bool', 'default' => 'false', 'notes' => 'Desabilita o campo e o botão de envio.'],
+                ['name' => 'loading', 'type' => 'bool', 'default' => 'false', 'notes' => 'Ativa spinner e desabilita o envio.'],
+                ['name' => 'loading-target', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Alvo de loading do Livewire (wire:target).'],
+                ['name' => 'max-length', 'type' => 'int|null', 'default' => 'null', 'notes' => 'Quantidade máxima de caracteres permitidos.'],
+                ['name' => 'show-counter', 'type' => 'bool', 'default' => 'false', 'notes' => 'Exibe contador de caracteres digitados no rodapé.'],
+                ['name' => 'auto-resize', 'type' => 'bool', 'default' => 'true', 'notes' => 'Ajusta automaticamente a altura da textarea ao digitar.'],
+                ['name' => 'submit-on-enter', 'type' => 'bool', 'default' => 'true', 'notes' => 'Envia o formulário ao pressionar Enter (Shift+Enter insere quebra de linha).'],
+            ],
+            'attributes' => ['class', 'id', 'wire:model', 'wire:submit', 'wire:submit.prevent', 'x-model', 'data-*'],
+            'accessibility' => [
+                'Textarea possui aria-label e suporte nativo a navegação por teclado.',
+                'Atalhos acessíveis: Enter envia o formulário e Shift+Enter pula linha.',
+            ],
+            'examples' => [
+                [
+                    'title' => 'Com botões de anexo e contador',
+                    'description' => 'Composer com slot before para ações rápidas de anexo e limite de caracteres.',
+                    'code' => <<<'BLADE'
+<div class="p-4 rounded-2xl border border-border bg-surface max-w-2xl">
+    <x-sampaui::chat-composer
+        placeholder="Escreva sua mensagem aqui..."
+        max-length="500"
+        show-counter
+    >
+        <x-slot:before>
+            <x-sampaui::button type="button" variant="ghost" size="sm" icon="paperclip" rounded aria-label="Anexar arquivo" />
+            <x-sampaui::button type="button" variant="ghost" size="sm" icon="emoji-smile" rounded aria-label="Inserir emoji" />
+        </x-slot:before>
+    </x-sampaui::chat-composer>
+</div>
+BLADE,
+                ],
+            ],
+            'showcases' => [
+                [
+                    'title' => 'Composer Padrão',
+                    'description' => 'Exemplo padrão com botão de envio e auto-resize.',
+                    'code' => <<<'BLADE'
+<div class="p-4 rounded-2xl border border-border bg-surface max-w-xl">
+    <x-sampaui::chat-composer placeholder="Digite uma mensagem e pressione Enter..." />
+</div>
+BLADE,
+                ],
+            ],
+        ];
+
         $tableSearch = $components['table'];
         $tableSearch['slug'] = 'table-search';
         $tableSearch['name'] = 'Table Search';
         $tableSearch['tag'] = '<x-sampaui::table-search />';
-        $tableSearch['summary'] = 'Tabela com pesquisa, ordenacao, paginacao, selecao, exportacao, loading e empty state.';
-        $tableSearch['description'] = 'Use quando a listagem precisar de busca local ou Livewire. O componente compoe o Table oficial e ativa a pesquisa sem duplicar a estrutura.';
-        $tableSearch['preview_title'] = 'Tabela com pesquisa';
-        $tableSearch['preview_caption'] = 'Busca, selecao, paginacao, loading, empty state e exportacao por link.';
-        $tableSearch['props'] = collect($tableSearch['props'])
-            ->reject(fn (array $prop): bool => $prop['name'] === 'searchable')
-            ->values()
-            ->all();
-        $tableSearch['examples'] = collect($tableSearch['examples'])
-            ->map(fn (array $example): array => array_merge($example, [
-                'code' => str_replace(["<x-sampaui::table\n", "    searchable\n"], ["<x-sampaui::table-search\n", ''], $example['code']),
-            ]))
-            ->all();
-        $tableSearch['showcases'] = collect($components['table']['showcases'])
-            ->map(fn (array $showcase): array => array_merge($showcase, [
-                'code' => str_replace(
-                    ['<x-sampaui::table', '</x-sampaui::table>'],
-                    ['<x-sampaui::table-search', '</x-sampaui::table-search>'],
-                    $showcase['code']
-                ),
-            ]))
-            ->all();
+        $tableSearch['summary'] = 'DataTable premium unificada com busca, ordenação, paginação, seleção, exportação, loading e empty state.';
+        $tableSearch['description'] = 'Alias 100% consistente com o componente Table unificado. Compartilha exatamente as mesmas props, slots, eventos e capacidades de busca, paginação e seleção.';
+        $tableSearch['preview_title'] = 'DataTable com busca';
+        $tableSearch['preview_caption'] = 'Busca, seleção, paginação, loading, empty state e exportação por link.';
+        $tableSearch['props'] = $components['table']['props'];
+        $tableSearch['examples'] = $components['table']['examples'];
+        $tableSearch['showcases'] = $components['table']['showcases'];
         $components['table-search'] = $tableSearch;
-
-        $components['table']['summary'] = 'Tabela simples e responsiva para listagens por arrays ou slots.';
-        $components['table']['description'] = 'Use para listagens sem campo de pesquisa. A API avancada anterior continua disponivel por compatibilidade; em novas telas com busca, prefira Table Search.';
-        $components['table']['preview_title'] = 'Listagem simples';
-        $components['table']['preview_caption'] = 'Colunas, linhas, densidade, loading e empty state sem toolbar de pesquisa.';
-        $components['table']['props'] = collect($components['table']['props'])
-            ->reject(fn (array $prop): bool => in_array($prop['name'], ['searchable', 'searchModel'], true))
-            ->values()
-            ->all();
-        $components['table']['examples'] = array_slice($components['table']['examples'], 2);
 
         return $this->withPackageRegistryComponents($components);
     }
@@ -4128,6 +4826,8 @@ BLADE,
 
         foreach (ComponentRegistry::all() as $slug => $component) {
             if (isset($components[$slug])) {
+                $components[$slug] = $this->synchronizeRegistryContract($components[$slug], $component);
+
                 continue;
             }
 
@@ -4135,6 +4835,47 @@ BLADE,
         }
 
         return $components;
+    }
+
+    /**
+     * Mantém as páginas editoriais ricas, mas delega a API pública ao catálogo do pacote.
+     *
+     * @param  array<string, mixed>  $documentation
+     * @param  array<string, mixed>  $registry
+     * @return array<string, mixed>
+     */
+    private function synchronizeRegistryContract(array $documentation, array $registry): array
+    {
+        $documentedProps = collect($documentation['props'] ?? [])
+            ->keyBy(fn (array $prop): string => $this->normalizedPropName((string) $prop['name']));
+
+        $documentation['tag'] = (string) ($registry['tag'] ?? $documentation['tag']);
+        $documentation['props'] = collect($registry['props'] ?? [])
+            ->map(function (string $prop) use ($documentedProps): array {
+                $documented = $documentedProps->get($this->normalizedPropName($prop));
+
+                if ($documented) {
+                    $documented['name'] = $prop;
+
+                    return $documented;
+                }
+
+                return [
+                    'name' => $prop,
+                    'type' => $this->registryPropType($prop),
+                    'default' => '-',
+                    'notes' => 'Prop pública registrada no pacote SampaUI.',
+                ];
+            })
+            ->values()
+            ->all();
+
+        return $documentation;
+    }
+
+    private function normalizedPropName(string $prop): string
+    {
+        return str_replace('-', '', strtolower($prop));
     }
 
     /**

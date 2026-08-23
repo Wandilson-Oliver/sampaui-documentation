@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\DocumentationController;
 use App\Http\Controllers\ExampleController;
+use App\Http\Controllers\PlaygroundController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', DocumentationController::class)->name('documentation');
+Route::get('/playground', [PlaygroundController::class, 'index'])->name('playground');
+Route::post('/playground/compile', [PlaygroundController::class, 'compile'])->name('playground.compile');
 Route::get('/examples', [ExampleController::class, 'index'])->name('examples.index');
 Route::get('/examples/authentication', [ExampleController::class, 'authentication'])->name('examples.authentication');
 Route::get('/examples/dashboard', [ExampleController::class, 'dashboard'])->name('examples.dashboard');

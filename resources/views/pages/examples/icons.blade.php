@@ -1,6 +1,22 @@
 @extends('docs.layout', ['title' => $title ?? 'Bootstrap Icons · Documentação SampaUI'])
 
 @php
+    $snippet = <<<'BLADE'
+{{-- Exemplo de uso de ícones nos componentes SampaUI --}}
+<x-sampaui::button variant="primary" icon="plus-lg">
+    Novo registro
+</x-sampaui::button>
+
+<x-sampaui::input name="search" label="Busca" icon="search" placeholder="Procurar..." />
+
+<x-sampaui::badge variant="success" icon="check2-circle">
+    Confirmado
+</x-sampaui::badge>
+
+{{-- Uso direto com tag de ícone --}}
+<i class="bi bi-gear text-primary text-xl"></i>
+BLADE;
+
     $icons = [
         'plus', 'plus-lg', 'x-lg', 'check2', 'check2-circle', 'search', 'pencil', 'trash3', 'eye', 'download', 'upload',
         'arrow-left', 'arrow-right', 'arrow-down-up', 'sort-up', 'sort-down', 'chevron-down', 'chevron-right',
@@ -78,5 +94,12 @@
         <div class="doc-search-empty" x-show="results.length === 0">
             Nenhum ícone encontrado.
         </div>
+
+        @include('pages.examples.partials.code', [
+            'snippet' => $snippet,
+            'codeTitle' => 'Como utilizar Ícones',
+            'description' => 'Os ícones Bootstrap Icons são suportados nativamente através da prop icon="..." nos componentes SampaUI.',
+            'components' => ['button', 'input', 'badge', 'card'],
+        ])
     </section>
 @endsection

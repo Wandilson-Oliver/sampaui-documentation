@@ -66,6 +66,11 @@ BLADE;
             class="shadow-default"
         />
 
-        @include('pages.examples.partials.code', ['snippet' => $snippet])
+        @include('pages.examples.partials.code', [
+            'snippet' => $snippet,
+            'codeTitle' => 'Código da Command Palette',
+            'description' => 'Paleta de comandos modal com busca filtrada e acionamento por evento customizado ou atalho.',
+            'components' => ['command-palette', 'button', 'card', 'badge'],
+        ])
     </section>
 @endsection

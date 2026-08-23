@@ -3,22 +3,117 @@
 @php
     $snippet = <<<'BLADE'
 <div class="flex min-h-screen bg-light">
-    <x-sampaui::sidebar logo-src="/images/logo.svg" :items="$menu" :user="$user" />
+    {{-- Sidebar de navegação lateral fixa ou expansível --}}
+    <x-sampaui::sidebar
+        logo-src="/images/logo_sampaui.png"
+        logo-alt="SampaUI"
+        :items="[
+            ['label' => 'Dashboard', 'href' => '#', 'icon' => 'speedometer2', 'active' => true],
+            ['label' => 'Clientes', 'href' => '#', 'icon' => 'people'],
+            ['label' => 'Projetos', 'href' => '#', 'icon' => 'briefcase'],
+            ['label' => 'Relatórios', 'href' => '#', 'icon' => 'bar-chart'],
+        ]"
+        :user="['name' => 'Sampa Admin', 'email' => 'admin@sampa.dev']"
+        logout-href="#"
+    />
 
-    <main class="min-w-0 flex-1">
-        <x-sampaui::header title="Dashboard" subtitle="Resumo comercial em tempo real">
+    <main class="min-w-0 flex-1 bg-light/60">
+        {{-- Cabeçalho com busca, notificações e ações --}}
+        <x-sampaui::header
+            title="Painel comercial"
+            subtitle="Resumo operacional de hoje"
+            search
+            search-placeholder="Buscar cliente ou conta"
+            notifications
+            notification-count="3"
+        >
             <x-slot:actions>
-                <x-sampaui::input name="search" icon="search" placeholder="Buscar lead" />
-                <x-sampaui::button icon="plus">Novo lead</x-sampaui::button>
+                <x-sampaui::button icon="plus" class="whitespace-nowrap">Novo cliente</x-sampaui::button>
             </x-slot:actions>
         </x-sampaui::header>
 
-        <section class="grid gap-5 lg:grid-cols-4">
-            <x-sampaui::card title="Leads novos">...</x-sampaui::card>
-            <x-sampaui::card title="Conversao">...</x-sampaui::card>
-            <x-sampaui::card title="Receita">...</x-sampaui::card>
-            <x-sampaui::card title="Pendencias">...</x-sampaui::card>
-        </section>
+        <div class="space-y-6 p-6">
+            {{-- Cards de métricas rápidas --}}
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <x-sampaui::card title="Leads novos" padding="md">
+                    <p class="text-3xl font-semibold text-primary">128</p>
+                    <p class="mt-1 text-sm text-secondary">+18% na semana</p>
+                </x-sampaui::card>
+
+                <x-sampaui::card title="Conversão" padding="md">
+                    <p class="text-3xl font-semibold text-success">34%</p>
+                    <p class="mt-1 text-sm text-secondary">Meta mensal 40%</p>
+                </x-sampaui::card>
+
+                <x-sampaui::card title="Receita prevista" padding="md">
+                    <p class="text-3xl font-semibold text-accent">R$ 2,4 mi</p>
+                    <p class="mt-1 text-sm text-secondary">Pipeline aberto</p>
+                </x-sampaui::card>
+
+                <x-sampaui::card title="Pendências" padding="md">
+                    <p class="text-3xl font-semibold text-danger">17</p>
+                    <p class="mt-1 text-sm text-secondary">Exigem retorno</p>
+                </x-sampaui::card>
+            </div>
+
+            {{-- Grid principal com Pipeline e Metas --}}
+            <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+                <x-sampaui::card title="Pipeline" description="Oportunidades prioritárias" padding="lg">
+                    <x-sampaui::table compact>
+                        <x-slot:head>
+                            <thead class="bg-light/70 text-left text-xs font-semibold uppercase tracking-[0.18em] text-secondary">
+                                <tr>
+                                    <th class="px-6 py-3">Lead</th>
+                                    <th class="px-6 py-3">Etapa</th>
+                                    <th class="px-6 py-3">Valor</th>
+                                    <th class="px-6 py-3">Status</th>
+                                </tr>
+                            </thead>
+                        </x-slot:head>
+                        <x-slot:body>
+                            <tbody class="divide-y divide-border">
+                                <tr>
+                                    <td class="px-6 py-4 font-semibold text-primary">Ana Costa</td>
+                                    <td class="px-6 py-4 text-secondary">Demonstração marcada</td>
+                                    <td class="px-6 py-4 text-secondary">R$ 82.000</td>
+                                    <td class="px-6 py-4"><x-sampaui::badge variant="success">Quente</x-sampaui::badge></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-semibold text-primary">Bruno Lima</td>
+                                    <td class="px-6 py-4 text-secondary">Análise técnica</td>
+                                    <td class="px-6 py-4 text-secondary">R$ 54.000</td>
+                                    <td class="px-6 py-4"><x-sampaui::badge variant="accent">Morno</x-sampaui::badge></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-semibold text-primary">Carla Souza</td>
+                                    <td class="px-6 py-4 text-secondary">Proposta enviada</td>
+                                    <td class="px-6 py-4 text-secondary">R$ 112.000</td>
+                                    <td class="px-6 py-4"><x-sampaui::badge variant="success">Quente</x-sampaui::badge></td>
+                                </tr>
+                            </tbody>
+                        </x-slot:body>
+                    </x-sampaui::table>
+                </x-sampaui::card>
+
+                <x-sampaui::card title="Meta mensal" description="Fechamento projetado" padding="lg">
+                    <x-sampaui::progress label="Receita" :value="68" show-value variant="success" />
+                    <div class="mt-6 space-y-4">
+                        <div class="flex items-center gap-3 rounded-default border border-border p-3">
+                            <x-sampaui::indicator variant="accent" />
+                            <span class="text-sm text-secondary">Revisar propostas pendentes</span>
+                        </div>
+                        <div class="flex items-center gap-3 rounded-default border border-border p-3">
+                            <x-sampaui::indicator variant="accent" />
+                            <span class="text-sm text-secondary">Confirmar demonstrações de amanhã</span>
+                        </div>
+                        <div class="flex items-center gap-3 rounded-default border border-border p-3">
+                            <x-sampaui::indicator variant="accent" />
+                            <span class="text-sm text-secondary">Atualizar prioridades do funil</span>
+                        </div>
+                    </div>
+                </x-sampaui::card>
+            </div>
+        </div>
     </main>
 </div>
 BLADE;
@@ -144,6 +239,11 @@ BLADE;
             </div>
         </div>
 
-        @include('pages.examples.partials.code', ['snippet' => $snippet])
+        @include('pages.examples.partials.code', [
+            'snippet' => $snippet,
+            'codeTitle' => 'Código do Dashboard',
+            'description' => 'Layout completo composto por Sidebar, Header, Cards de Métricas, Table e Progress.',
+            'components' => ['sidebar', 'header', 'card', 'table', 'badge', 'progress', 'indicator', 'button', 'input'],
+        ])
     </section>
 @endsection

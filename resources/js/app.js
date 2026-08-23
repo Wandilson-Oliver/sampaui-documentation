@@ -1,7 +1,9 @@
 import { Livewire, Alpine } from '../../vendor/livewire/livewire/dist/livewire.esm';
 import '../../vendor/sampaui/sampaui/dist/sampaui.js';
+import { registerPlayground } from './playground.js';
 
 window.Alpine = Alpine;
+registerPlayground(Alpine);
 
 Alpine.data('copyCode', () => ({
     copied: false,

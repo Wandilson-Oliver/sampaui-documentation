@@ -2,17 +2,178 @@
 
 @php
     $snippet = <<<'BLADE'
-<form wire:submit.prevent="save" class="space-y-7">
-    <x-sampaui::input name="name" label="Nome do cliente" icon="person" wire:model.live="name" required />
-    <x-sampaui::phone name="phone" label="WhatsApp" wire:model.live="phone" />
-    <x-sampaui::currency-br name="budget" label="Orcamento" wire:model.live="budget" />
-    <x-sampaui::cep name="cep" label="CEP" wire:model.live="cep" />
-    <x-sampaui::select-search name="owner" label="Responsavel" :options="$owners" wire:model.live="owner" />
-    <x-sampaui::select-multiple name="tags" label="Interesses" :options="$tags" wire:model.live="tags" />
-    <x-sampaui::textarea name="notes" label="Observacoes" wire:model.live.debounce.500ms="notes" />
-    <x-sampaui::button type="submit" icon="check2-circle">Salvar cadastro</x-sampaui::button>
-</form>
+<x-sampaui::card title="Cadastro de cliente" description="Dados comerciais, contato, endereço e preferências" padding="lg">
+    <form wire:submit.prevent="save" class="space-y-7">
+        {{-- Dados Pessoais / Principais --}}
+        <div class="grid gap-5 lg:grid-cols-3">
+            <div class="lg:col-span-2">
+                <x-sampaui::input
+                    name="client_name"
+                    label="Nome do cliente"
+                    icon="person"
+                    placeholder="Mariana Oliveira"
+                    wire:model.live="name"
+                    required
+                />
+            </div>
+
+            <x-sampaui::select
+                name="client_status"
+                label="Status"
+                :options="[
+                    ['label' => 'Novo lead', 'value' => 'new'],
+                    ['label' => 'Em atendimento', 'value' => 'active'],
+                    ['label' => 'Contrato', 'value' => 'contract'],
+                ]"
+                wire:model.live="status"
+            />
+
+            <x-sampaui::input
+                name="client_email"
+                type="email"
+                label="Email"
+                icon="envelope"
+                placeholder="mariana@email.com"
+                wire:model.live="email"
+                required
+            />
+
+            <x-sampaui::phone
+                name="client_phone"
+                label="WhatsApp"
+                icon="whatsapp"
+                placeholder="(11) 9 9999-0000"
+                wire:model.live="phone"
+            />
+
+            <x-sampaui::currency-br
+                name="client_budget"
+                label="Orçamento previsto"
+                icon="cash-coin"
+                placeholder="R$ 850.000,00"
+                wire:model.live="budget"
+            />
+        </div>
+
+        {{-- Endereço com CEP com auto-busca --}}
+        <div class="grid gap-5 lg:grid-cols-[12rem_minmax(0,1fr)_12rem]">
+            <x-sampaui::cep
+                name="client_cep"
+                label="CEP"
+                placeholder="01001-000"
+                wire:model.live="cep"
+            />
+
+            <x-sampaui::input
+                name="client_address"
+                label="Endereço"
+                icon="geo-alt"
+                placeholder="Rua Boa Vista"
+                wire:model.live="address"
+            />
+
+            <x-sampaui::input
+                name="client_number"
+                label="Número"
+                placeholder="120"
+                wire:model.live="number"
+            />
+        </div>
+
+        {{-- Seletores Especializados --}}
+        <div class="grid gap-5 lg:grid-cols-2">
+            <x-sampaui::select-search
+                name="owner"
+                label="Responsável"
+                :options="[
+                    ['label' => 'Ana Martins', 'value' => 'ana'],
+                    ['label' => 'Bruno Lima', 'value' => 'bruno'],
+                    ['label' => 'Carla Souza', 'value' => 'carla'],
+                ]"
+                search-placeholder="Buscar consultor"
+                wire:model.live="owner"
+            />
+
+            <x-sampaui::select-multiple
+                name="interests"
+                label="Interesses / Tags"
+                :options="[
+                    ['label' => 'Implantação', 'value' => 'implementation'],
+                    ['label' => 'Integração', 'value' => 'integration'],
+                    ['label' => 'Enterprise', 'value' => 'enterprise'],
+                    ['label' => 'Treinamento', 'value' => 'training'],
+                ]"
+                wire:model.live="interests"
+            />
+        </div>
+
+        {{-- Observações --}}
+        <x-sampaui::textarea
+            name="notes"
+            label="Observações"
+            rows="5"
+            placeholder="Detalhe preferências, restrições de agenda e próximos passos."
+            wire:model.live.debounce.500ms="notes"
+        />
+
+        {{-- Ações do Formulário --}}
+        <div class="flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:justify-end">
+            <x-sampaui::button type="button" variant="outline" icon="x-lg" wire:click="cancel">Cancelar</x-sampaui::button>
+            <x-sampaui::button type="submit" icon="check2-circle">Salvar cadastro</x-sampaui::button>
+        </div>
+    </form>
+</x-sampaui::card>
 BLADE;
+
+    $livewireSnippet = <<<'PHP'
+namespace App\Livewire;
+
+use Livewire\Component;
+
+class ClientForm extends Component
+{
+    public string $name = '';
+    public string $status = 'active';
+    public string $email = '';
+    public string $phone = '';
+    public string $budget = '';
+    public string $cep = '';
+    public string $address = '';
+    public string $number = '';
+    public string $owner = 'ana';
+    public array $interests = ['implementation', 'training'];
+    public string $notes = '';
+
+    public function save(): void
+    {
+        $validated = $this->validate([
+            'name' => 'required|min:3',
+            'email' => 'required|email',
+            'status' => 'required',
+            'phone' => 'nullable',
+            'budget' => 'nullable',
+            'cep' => 'nullable|min:8',
+            'address' => 'nullable',
+            'owner' => 'required',
+            'interests' => 'array',
+            'notes' => 'nullable|max:1000',
+        ]);
+
+        // Persistir dados no banco...
+        session()->flash('success', 'Cliente cadastrado com sucesso!');
+    }
+
+    public function cancel(): void
+    {
+        $this->reset();
+    }
+
+    public function render()
+    {
+        return view('livewire.client-form');
+    }
+}
+PHP;
 
     $owners = [
         ['label' => 'Ana Martins', 'value' => 'ana'],
@@ -77,6 +238,12 @@ BLADE;
             </form>
         </x-sampaui::card>
 
-        @include('pages.examples.partials.code', ['snippet' => $snippet])
+        @include('pages.examples.partials.code', [
+            'snippet' => $snippet,
+            'livewireSnippet' => $livewireSnippet,
+            'codeTitle' => 'Código do Formulário Administrativo',
+            'description' => 'Formulário completo com auto-completar de CEP, máscara de WhatsApp, moeda brasileira, select search e multiselect.',
+            'components' => ['card', 'input', 'select', 'phone', 'currency-br', 'cep', 'select-search', 'select-multiple', 'textarea', 'button'],
+        ])
     </section>
 @endsection

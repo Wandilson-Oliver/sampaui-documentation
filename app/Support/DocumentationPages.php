@@ -15,201 +15,261 @@ class DocumentationPages
                 'name' => 'Design system',
                 'icon' => 'palette2',
                 'tag' => 'Foundations',
-                'summary' => 'Referência oficial de tokens semânticos, anatomia, dark mode e decisões visuais do SampaUI.',
-                'description' => 'Guia de Design System para manter cores, tipografia, spacing, radius, shadows, borders, motion, grid, icons, focus ring e componentes consistentes.',
+                'summary' => 'Referência oficial de tokens semânticos, paleta de cores, tipografia, anatomia de componentes e guia para customização visual do SampaUI.',
+                'description' => 'Aprenda como o ecossistema SampaUI organiza tokens de design em Laravel, Livewire e Tailwind CSS v4 para manter uma interface moderna, consistente, acessível e pronta para dark mode.',
                 'preview' => <<<'BLADE'
-<div class="space-y-6">
-    <x-sampaui::card padding="lg">
-        <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+<div class="space-y-10">
+    <!-- Intro Card -->
+    <div class="rounded-2xl border border-border bg-surface p-6 md:p-8 shadow-sm">
+        <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] items-center">
             <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Paleta de cores</p>
-                <h2 class="mt-3 text-3xl font-semibold tracking-tight text-primary">Paleta personalizada do SampaUI</h2>
-                <p class="mt-4 max-w-2xl text-sm leading-6 text-secondary">
-                    O pacote usa tokens semanticos definidos em <code>config/sampaui.php</code> e no bloco <code>@theme</code> do CSS. Para trocar a identidade visual, altere os mesmos tokens nos dois lugares, recompile o pacote e publique os assets no app consumidor.
+                <div class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary mb-3">
+                    <i class="bi bi-stars"></i> Tokens & Diretrizes Visuais
+                </div>
+                <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight text-heading">Arquitetura de Design System</h2>
+                <p class="mt-3 text-sm md:text-base leading-relaxed text-secondary/80">
+                    O SampaUI utiliza uma arquitetura baseada em <strong>tokens semânticos centralizados</strong>. As cores e propriedades visuais são declaradas no arquivo <code>config/sampaui.php</code> e mapeadas no bloco <code>@theme</code> do Tailwind CSS, garantindo total harmonia entre os componentes Blade, os scripts Alpine.js e as regras CSS.
                 </p>
             </div>
 
-            <x-sampaui::alert title="Regra do tema" variant="success">
-                Mantenha as cores centralizadas nos tokens do SampaUI para preservar consistencia entre componentes e documentacao.
+            <x-sampaui::alert title="Princípio de Ouro" variant="success">
+                Nunca utilize cores hexadecimais soltas no código. Utilize sempre as classes semânticas oficiais (<code>bg-primary</code>, <code>text-secondary</code>, <code>border-border</code>).
             </x-sampaui::alert>
         </div>
-    </x-sampaui::card>
-
-    <figure class="overflow-hidden rounded-default border border-border bg-white">
-        <img
-            src="{{ asset('images/paleta de cores novas.png') }}"
-            alt="Paleta oficial de cores do SampaUI"
-            class="block h-auto w-full"
-        >
-        <figcaption class="border-t border-border px-5 py-4 text-sm text-secondary">
-            Referência visual oficial da paleta usada pelo pacote e pela documentação.
-        </figcaption>
-    </figure>
-
-    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        @foreach ([
-            ['name' => 'Primary', 'className' => 'bg-primary', 'hex' => '#2FAFD3', 'class' => 'bg-primary'],
-            ['name' => 'Secondary', 'className' => 'bg-secondary', 'hex' => '#102A43', 'class' => 'bg-secondary'],
-            ['name' => 'Success', 'className' => 'bg-success', 'hex' => '#2CB36C', 'class' => 'bg-success'],
-            ['name' => 'Accent', 'className' => 'bg-accent', 'hex' => '#F7931E', 'class' => 'bg-accent'],
-            ['name' => 'Purple', 'className' => 'bg-purple', 'hex' => '#7C5CFC', 'class' => 'bg-purple'],
-            ['name' => 'Danger', 'className' => 'bg-danger', 'hex' => '#D93045', 'class' => 'bg-danger'],
-            ['name' => 'Warning', 'className' => 'bg-warning', 'hex' => '#FBBF24', 'class' => 'bg-warning'],
-            ['name' => 'Info', 'className' => 'bg-info', 'hex' => '#4FC3E8', 'class' => 'bg-info'],
-            ['name' => 'Light', 'className' => 'bg-light', 'hex' => '#F8FAFC', 'class' => 'bg-light'],
-            ['name' => 'Muted', 'className' => 'bg-muted', 'hex' => '#CBD5E1', 'class' => 'bg-muted'],
-            ['name' => 'Surface', 'className' => 'bg-surface', 'hex' => '#FFFFFF', 'class' => 'bg-surface'],
-            ['name' => 'Border', 'className' => 'border-border', 'hex' => '#E2E8F0', 'class' => 'bg-border'],
-            ['name' => 'Text', 'className' => 'text-text', 'hex' => '#0F172A', 'class' => 'bg-text'],
-        ] as $color)
-            <x-sampaui::card padding="lg">
-                <div class="flex items-start gap-4">
-                    <span class="h-14 w-14 shrink-0 rounded-[1.1rem] border border-border {{ $color['class'] }}"></span>
-                    <div class="min-w-0">
-                        <p class="font-semibold text-primary">{{ $color['name'] }}</p>
-                        <p class="mt-1 text-sm text-secondary">{{ $color['className'] }}</p>
-                        <p class="mt-1 font-mono text-xs font-semibold text-secondary">{{ $color['hex'] }}</p>
-                        <p class="mt-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">Token SampaUI</p>
-                    </div>
-                </div>
-            </x-sampaui::card>
-        @endforeach
     </div>
 
-    <x-sampaui::card title="Fundamentos do framework" description="Referência rápida para revisar antes de criar ou ajustar componentes" padding="lg">
-        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <!-- 1. Paleta de Cores Semânticas -->
+    <div class="space-y-4">
+        <div>
+            <h3 class="text-xl font-bold tracking-tight text-heading flex items-center gap-2">
+                <i class="bi bi-palette text-primary"></i> 1. Paleta de Cores & Tokens Semânticos
+            </h3>
+            <p class="mt-1 text-sm text-secondary/70">Clique nas classes para entender o propósito de cada token no ecossistema.</p>
+        </div>
+
+        <!-- Grupo: Marca e Ações -->
+        <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-secondary/60 mb-3">Cores de Identidade & Ação</p>
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                @foreach ([
+                    ['name' => 'Primary (Teal)', 'bg' => 'bg-primary', 'hex' => '#2FAFD3', 'usage' => 'Botões de ação principal, links ativos, foco e destaques.'],
+                    ['name' => 'Secondary (Navy)', 'bg' => 'bg-secondary', 'hex' => '#102A43', 'usage' => 'Títulos fortes, ícones de cabeçalho e superfícies escuras.'],
+                    ['name' => 'Accent (Amber)', 'bg' => 'bg-accent', 'hex' => '#F7931E', 'usage' => 'Badges populares, notificações e detalhes de destaque.'],
+                    ['name' => 'Purple (Royal)', 'bg' => 'bg-purple', 'hex' => '#7C5CFC', 'usage' => 'Tags especiais, métricas analíticas e recursos pro.'],
+                ] as $color)
+                    <div class="rounded-xl border border-border bg-surface p-4 shadow-sm transition hover:border-primary/40">
+                        <div class="flex items-center gap-3">
+                            <span class="h-12 w-12 shrink-0 rounded-xl shadow-inner {{ $color['bg'] }}"></span>
+                            <div class="min-w-0 flex-1">
+                                <p class="font-bold text-heading text-sm">{{ $color['name'] }}</p>
+                                <p class="font-mono text-xs text-secondary/60 font-semibold">{{ $color['hex'] }}</p>
+                            </div>
+                        </div>
+                        <p class="mt-3 text-xs leading-5 text-secondary/80 border-t border-border/60 pt-2.5">{{ $color['usage'] }}</p>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <!-- Grupo: Feedback e Status -->
+        <div class="pt-2">
+            <p class="text-xs font-bold uppercase tracking-wider text-secondary/60 mb-3">Feedback, Alertas & Validação</p>
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                @foreach ([
+                    ['name' => 'Success', 'bg' => 'bg-success', 'hex' => '#2CB36C', 'usage' => 'Sucesso, conclusões, badges positivos e confirmações.'],
+                    ['name' => 'Danger', 'bg' => 'bg-danger', 'hex' => '#D93045', 'usage' => 'Erros de validação, alertas críticos e ações de exclusão.'],
+                    ['name' => 'Warning', 'bg' => 'bg-warning', 'hex' => '#FBBF24', 'usage' => 'Avisos preventivos, pendências e atenção.'],
+                    ['name' => 'Info', 'bg' => 'bg-info', 'hex' => '#4FC3E8', 'usage' => 'Dicas contextuais, guias e informações operacionais.'],
+                ] as $color)
+                    <div class="rounded-xl border border-border bg-surface p-4 shadow-sm transition hover:border-primary/40">
+                        <div class="flex items-center gap-3">
+                            <span class="h-12 w-12 shrink-0 rounded-xl shadow-inner {{ $color['bg'] }}"></span>
+                            <div class="min-w-0 flex-1">
+                                <p class="font-bold text-heading text-sm">{{ $color['name'] }}</p>
+                                <p class="font-mono text-xs text-secondary/60 font-semibold">{{ $color['hex'] }}</p>
+                            </div>
+                        </div>
+                        <p class="mt-3 text-xs leading-5 text-secondary/80 border-t border-border/60 pt-2.5">{{ $color['usage'] }}</p>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <!-- Grupo: Superfícies e Estrutura -->
+        <div class="pt-2">
+            <p class="text-xs font-bold uppercase tracking-wider text-secondary/60 mb-3">Superfícies, Bordas & Contraste</p>
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                @foreach ([
+                    ['name' => 'Surface', 'bg' => 'bg-surface border border-border', 'hex' => '#FFFFFF', 'usage' => 'Fundo de cards, painéis modais, menus e dropdowns.'],
+                    ['name' => 'Light', 'bg' => 'bg-light border border-border', 'hex' => '#F8FAFC', 'usage' => 'Fundo de páginas, áreas sutis e estados desabilitados.'],
+                    ['name' => 'Border', 'bg' => 'bg-border', 'hex' => '#E2E8F0', 'usage' => 'Linhas divisórias, contorno de cards e separadores.'],
+                    ['name' => 'Muted', 'bg' => 'bg-muted', 'hex' => '#CBD5E1', 'usage' => 'Textos secundários, placeholders e bordas suaves.'],
+                ] as $color)
+                    <div class="rounded-xl border border-border bg-surface p-4 shadow-sm transition hover:border-primary/40">
+                        <div class="flex items-center gap-3">
+                            <span class="h-12 w-12 shrink-0 rounded-xl shadow-inner {{ $color['bg'] }}"></span>
+                            <div class="min-w-0 flex-1">
+                                <p class="font-bold text-heading text-sm">{{ $color['name'] }}</p>
+                                <p class="font-mono text-xs text-secondary/60 font-semibold">{{ $color['hex'] }}</p>
+                            </div>
+                        </div>
+                        <p class="mt-3 text-xs leading-5 text-secondary/80 border-t border-border/60 pt-2.5">{{ $color['usage'] }}</p>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Fundamentos Visuais (Tipografia, Radius, Sombras, Foco) -->
+    <div class="space-y-4 pt-4">
+        <div>
+            <h3 class="text-xl font-bold tracking-tight text-heading flex items-center gap-2">
+                <i class="bi bi-grid-1x2 text-primary"></i> 2. Fundamentos Visuais
+            </h3>
+            <p class="mt-1 text-sm text-secondary/70">Padrões estruturais aplicados rigorosamente em todos os componentes do pacote.</p>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ([
-                ['title' => 'Colors', 'copy' => 'Tokens semânticos: primary, secondary, accent, danger, light, surface, success, warning, info, purple, muted, border e text.'],
-                ['title' => 'Typography', 'copy' => 'Hierarquia objetiva, pesos fortes em títulos, texto operacional legível e labels compactos.'],
-                ['title' => 'Spacing', 'copy' => 'Espaçamento generoso, mas funcional: grids densos em dashboards e respiro em páginas institucionais.'],
-                ['title' => 'Radius', 'copy' => 'Use rounded-default como base e aumente raio apenas em superfícies editoriais ou hero cards.'],
-                ['title' => 'Shadows', 'copy' => 'Sombras discretas para elevação; nunca usar sombra pesada como substituta de hierarquia.'],
-                ['title' => 'Borders', 'copy' => 'Campos e triggers usam border-secondary/20; divisores e cards usam border-border.'],
-                ['title' => 'Elevation', 'copy' => 'Elevação deve indicar sobreposição, foco ou agrupamento de tarefas.'],
-                ['title' => 'Motion', 'copy' => 'Transições curtas, úteis e previsíveis. Evite animações decorativas em fluxos operacionais.'],
-                ['title' => 'Grid', 'copy' => 'Priorize layouts responsivos com colunas claras e fallback mobile em uma coluna.'],
-                ['title' => 'Icons', 'copy' => 'Bootstrap Icons é a biblioteca oficial. Use sempre classes bi bi-*.'],
-                ['title' => 'Focus Ring', 'copy' => 'Foco visível com focus:ring-primary/20 e contraste suficiente em light/dark.'],
-                ['title' => 'Dark Mode', 'copy' => 'Superfícies, bordas, textos e estados precisam manter contraste sem criar tema paralelo.'],
+                ['title' => 'Tipografia', 'icon' => 'fonts', 'copy' => 'Utiliza a fonte Instrument Sans com forte contraste hierárquico: títulos em semibold/bold e corpo legível e fluido.'],
+                ['title' => 'Raios de Borda (Radius)', 'icon' => 'square', 'copy' => 'rounded-default (12px) para inputs, cards e botões. rounded-full para badges e avatares circulares.'],
+                ['title' => 'Sombras & Elevação', 'icon' => 'shadows', 'copy' => 'Sombras suaves (shadow-sm, shadow-xl) reservadas para dropdowns e modais flutuantes.'],
+                ['title' => 'Anéis de Foco (A11y)', 'icon' => 'bullseye', 'copy' => 'Foco acessível em todos os controles navegáveis por teclado via focus:ring-2 focus:ring-primary/20.'],
+                ['title' => 'Ícones Padronizados', 'icon' => 'bootstrap', 'copy' => 'Bootstrap Icons (bi bi-*) integrado nativamente como biblioteca oficial com suporte a props dedicadas.'],
+                ['title' => 'Dark Mode Nativo', 'icon' => 'moon-stars', 'copy' => 'Transições suaves para modo escuro via variáveis CSS e classes utilitárias dark: sem quebrar contrastes.'],
             ] as $foundation)
-                <div class="rounded-[1rem] border border-border bg-white p-4">
-                    <p class="font-semibold text-primary">{{ $foundation['title'] }}</p>
-                    <p class="mt-2 text-sm leading-6 text-secondary">{{ $foundation['copy'] }}</p>
+                <div class="rounded-xl border border-border bg-surface p-5 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-surface-subtle text-primary border border-border">
+                            <i class="bi bi-{{ $foundation['icon'] }} text-lg"></i>
+                        </span>
+                        <h4 class="font-bold text-heading text-base">{{ $foundation['title'] }}</h4>
+                    </div>
+                    <p class="mt-3 text-sm leading-relaxed text-secondary/80">{{ $foundation['copy'] }}</p>
                 </div>
             @endforeach
         </div>
-    </x-sampaui::card>
-
-    <div class="grid gap-5 lg:grid-cols-2">
-        <x-sampaui::card title="Component Anatomy" description="Estrutura recomendada para novos componentes" padding="lg">
-            <div class="space-y-3 text-sm leading-6 text-secondary">
-                <p><strong class="text-primary">Wrapper:</strong> controla layout, surface, radius, border e slots.</p>
-                <p><strong class="text-primary">Control real:</strong> recebe name, id, wire:*, x-*, disabled, readonly, required e aria-*.</p>
-                <p><strong class="text-primary">Feedback:</strong> hint, error, loading, success e empty state devem ser explícitos.</p>
-                <p><strong class="text-primary">Slots:</strong> prefix, suffix, actions, footer e body devem evitar HTML duplicado no consumo.</p>
-            </div>
-        </x-sampaui::card>
-
-        <x-sampaui::card title="Tokens semânticos" description="Não crie paleta paralela dentro de componentes" padding="lg">
-            <div class="flex flex-wrap gap-2">
-                @foreach (['primary', 'secondary', 'accent', 'danger', 'light', 'surface', 'success', 'warning', 'info', 'purple', 'muted', 'border', 'text'] as $token)
-                    <x-sampaui::badge variant="light">{{ $token }}</x-sampaui::badge>
-                @endforeach
-            </div>
-            <x-sampaui::alert class="mt-5" title="Regra" variant="warning">
-                Se um ajuste visual precisa de cor, primeiro verifique se já existe token semântico SampaUI.
-            </x-sampaui::alert>
-        </x-sampaui::card>
     </div>
 
-    <div class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_24rem]">
-        <x-sampaui::card title="Como alterar a paleta" description="Altere config e CSS juntos para manter pacote, docs e app consumidor sincronizados" padding="lg">
-            <div class="space-y-4">
-                @foreach ([
-                    ['title' => '1. Edite sampaui/config/sampaui.php', 'copy' => 'Atualize o array theme com os hexadecimais oficiais da marca. Esses valores documentam a paleta que o pacote expõe.'],
-                    ['title' => '2. Edite sampaui/resources/css/sampaui.css', 'copy' => 'Repita os mesmos valores no bloco @theme para o Tailwind gerar bg-primary, text-secondary, border-border e demais utilitarias.'],
-                    ['title' => '3. Recompile o pacote', 'copy' => 'Rode npm run build dentro de sampaui para atualizar dist/sampaui.css.'],
-                    ['title' => '4. Publique no app consumidor', 'copy' => 'Rode php artisan vendor:publish --tag=sampaui-assets --force e php artisan view:clear no projeto Laravel que usa o pacote.'],
-                ] as $step)
-                    <div class="rounded-[1.1rem] border border-border bg-white p-4">
-                        <p class="font-semibold text-primary">{{ $step['title'] }}</p>
-                        <p class="mt-1 text-sm leading-6 text-secondary">{{ $step['copy'] }}</p>
-                    </div>
-                @endforeach
+    <!-- 3. Anatomia de Componentes -->
+    <div class="space-y-4 pt-4">
+        <div>
+            <h3 class="text-xl font-bold tracking-tight text-heading flex items-center gap-2">
+                <i class="bi bi-layers text-primary"></i> 3. Anatomia de um Componente SampaUI
+            </h3>
+            <p class="mt-1 text-sm text-secondary/70">Todo componente segue uma estrutura consistente de 4 camadas para máxima previsibilidade:</p>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="rounded-xl border border-border bg-surface p-5">
+                <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-xs mb-3">1</span>
+                <h4 class="font-bold text-heading text-sm">Wrapper / Field</h4>
+                <p class="mt-2 text-xs leading-relaxed text-secondary/80">Controla labels acessíveis, asterisco de obrigatório, layout e espaçamento vertical.</p>
             </div>
-        </x-sampaui::card>
 
-        <x-sampaui::card title="Arquivos que controlam as cores" description="Use os mesmos hexadecimais nos dois arquivos" padding="lg">
-            <div class="space-y-4">
-                <div>
-                    <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">config/sampaui.php</p>
-                    <pre class="overflow-x-auto rounded-[1rem] bg-primary p-4 text-xs leading-6 text-white"><code>'theme' => [
-    'primary' => '#2FAFD3',
-    'secondary' => '#102A43',
-    'accent' => '#F7931E',
-    'danger' => '#D93045',
-    'light' => '#F8FAFC',
-    'success' => '#2CB36C',
-    'warning' => '#FBBF24',
-    'info' => '#4FC3E8',
-    'purple' => '#7C5CFC',
-    'muted' => '#CBD5E1',
-    'surface' => '#FFFFFF',
-    'border' => '#E2E8F0',
-    'text' => '#0F172A',
-],</code></pre>
+            <div class="rounded-xl border border-border bg-surface p-5">
+                <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-xs mb-3">2</span>
+                <h4 class="font-bold text-heading text-sm">Controle Nativo</h4>
+                <p class="mt-2 text-xs leading-relaxed text-secondary/80">Preserva atributos HTML (name, id, required, disabled) e bindings reativos Livewire/Alpine.</p>
+            </div>
+
+            <div class="rounded-xl border border-border bg-surface p-5">
+                <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-xs mb-3">3</span>
+                <h4 class="font-bold text-heading text-sm">Feedback Visual</h4>
+                <p class="mt-2 text-xs leading-relaxed text-secondary/80">Mensagens de erro de validação (ErrorBag), hint de apoio e estados de carregamento (loading).</p>
+            </div>
+
+            <div class="rounded-xl border border-border bg-surface p-5">
+                <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-xs mb-3">4</span>
+                <h4 class="font-bold text-heading text-sm">Slots Flexíveis</h4>
+                <p class="mt-2 text-xs leading-relaxed text-secondary/80">Prefixos, sufixos, botões de ação e rodapés customizáveis sem duplicação de marcação.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Guia Passo a Passo de Customização -->
+    <div class="space-y-4 pt-4">
+        <div>
+            <h3 class="text-xl font-bold tracking-tight text-heading flex items-center gap-2">
+                <i class="bi bi-sliders text-primary"></i> 4. Como Customizar a Paleta de Cores
+            </h3>
+            <p class="mt-1 text-sm text-secondary/70">Passo a passo definitivo para alterar os tokens e publicar em sua aplicação:</p>
+        </div>
+
+        <div class="grid gap-5 lg:grid-cols-2">
+            <!-- Passo 1 e 2 -->
+            <div class="rounded-xl border border-border bg-surface p-6 space-y-4">
+                <div class="flex items-start gap-3">
+                    <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-white font-bold text-xs">1</span>
+                    <div>
+                        <h4 class="font-bold text-heading text-sm">Atualize config/sampaui.php</h4>
+                        <p class="mt-1 text-xs text-secondary/70">Defina os valores hexadecimais da sua marca no array de tema.</p>
+                    </div>
                 </div>
+                <pre class="overflow-x-auto rounded-lg bg-secondary p-3.5 text-xs text-white"><code>'theme' => [
+    'primary'   => '#2FAFD3',
+    'secondary' => '#102A43',
+    'accent'    => '#F7931E',
+    'success'   => '#2CB36C',
+    'danger'    => '#D93045',
+],</code></pre>
 
-                <div>
-                    <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">resources/css/sampaui.css</p>
-                    <pre class="overflow-x-auto rounded-[1rem] bg-secondary p-4 text-xs leading-6 text-white"><code>@theme {
+                <div class="flex items-start gap-3 pt-2 border-t border-border/60">
+                    <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-white font-bold text-xs">2</span>
+                    <div>
+                        <h4 class="font-bold text-heading text-sm">Atualize resources/css/sampaui.css</h4>
+                        <p class="mt-1 text-xs text-secondary/70">Mapeie as mesmas variáveis no bloco @theme do Tailwind v4.</p>
+                    </div>
+                </div>
+                <pre class="overflow-x-auto rounded-lg bg-secondary p-3.5 text-xs text-white"><code>@theme {
   --color-primary: #2FAFD3;
   --color-secondary: #102A43;
   --color-accent: #F7931E;
-  --color-danger: #D93045;
-  --color-light: #F8FAFC;
-  --color-success: #2CB36C;
-  --color-warning: #FBBF24;
-  --color-info: #4FC3E8;
-  --color-purple: #7C5CFC;
-  --color-muted: #CBD5E1;
-  --color-surface: #FFFFFF;
-  --color-border: #E2E8F0;
-  --color-text: #0F172A;
 }</code></pre>
-                </div>
             </div>
-        </x-sampaui::card>
-    </div>
 
-    <x-sampaui::card title="Comandos depois da alteracao" description="Fluxo minimo para validar e publicar a nova paleta" padding="lg">
-        <pre class="overflow-x-auto rounded-[1rem] bg-primary p-4 text-xs leading-6 text-white"><code>cd sampaui
-npm run build
-composer test
+            <!-- Passo 3 e 4 -->
+            <div class="rounded-xl border border-border bg-surface p-6 space-y-4">
+                <div class="flex items-start gap-3">
+                    <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-white font-bold text-xs">3</span>
+                    <div>
+                        <h4 class="font-bold text-heading text-sm">Recompile o pacote SampaUI</h4>
+                        <p class="mt-1 text-xs text-secondary/70">Gere a distribuição compilada do Tailwind CSS no pacote.</p>
+                    </div>
+                </div>
+                <pre class="overflow-x-auto rounded-lg bg-secondary p-3.5 text-xs text-white"><code>cd sampaui
+npm run build</code></pre>
 
-cd ../sampaui-documentation
-npm run build
-php artisan test
-php artisan view:clear
-
-# no app consumidor
-php artisan vendor:publish --tag=sampaui-assets --force
+                <div class="flex items-start gap-3 pt-2 border-t border-border/60">
+                    <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-white font-bold text-xs">4</span>
+                    <div>
+                        <h4 class="font-bold text-heading text-sm">Publique e limpe o cache na aplicação</h4>
+                        <p class="mt-1 text-xs text-secondary/70">Atualize os arquivos publicados no seu projeto Laravel.</p>
+                    </div>
+                </div>
+                <pre class="overflow-x-auto rounded-lg bg-secondary p-3.5 text-xs text-white"><code>php artisan vendor:publish --tag=sampaui-assets --force
 php artisan view:clear</code></pre>
-    </x-sampaui::card>
+            </div>
+        </div>
+    </div>
 </div>
 BLADE,
                 'code' => <<<'BLADE'
-{{-- Use tokens customizados do SampaUI --}}
-<x-sampaui::button class="bg-primary text-white hover:bg-primary/90">
-    Salvar
+{{-- 1. Exemplo de botão usando token oficial Primary --}}
+<x-sampaui::button variant="primary">
+    Salvar alterações
 </x-sampaui::button>
 
-{{-- Depois de alterar classes no pacote --}}
-{{-- cd sampaui && npm run build --}}
+{{-- 2. Exemplo de Card estruturado com Surface e Border --}}
+<x-sampaui::card padding="md">
+    <h3 class="text-lg font-bold text-heading">Card Semântico</h3>
+    <p class="text-sm text-secondary/80 mt-1">Utiliza superfícies e bordas oficiais.</p>
+</x-sampaui::card>
 
-{{-- Depois, no app consumidor --}}
-{{-- php artisan vendor:publish --tag=sampaui-assets --force --}}
-{{-- php artisan view:clear --}}
+{{-- 3. Exemplo de Badge de Status com token Success --}}
+<x-sampaui::badge variant="success">
+    Aprovado
+</x-sampaui::badge>
 BLADE,
             ],
         ];

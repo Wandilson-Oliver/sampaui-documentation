@@ -18,8 +18,19 @@
         <div class="doc-page-hero-copy">
             <span class="doc-component-tag">{{ $page['tag'] }}</span>
             <h1>{{ $page['name'] }}</h1>
-            <p>{{ $page['summary'] }}</p>
-            <p>{{ $page['description'] }}</p>
+            @php
+                $summary = trim($page['summary'] ?? '');
+                $description = trim($page['description'] ?? '');
+                $hasDifferentDescription = $description && strtolower($summary) !== strtolower($description) && ! str_starts_with(strtolower($description), strtolower($summary));
+            @endphp
+            <p class="doc-hero-summary">{{ $summary }}</p>
+            @if ($hasDifferentDescription)
+                <p class="doc-hero-description">{{ $description }}</p>
+            @endif
+            <div class="doc-component-badges" aria-label="Metadados da página">
+                <span class="doc-badge-pill"><i class="bi bi-palette2" aria-hidden="true"></i>Tokens & Diretrizes</span>
+                <span class="doc-badge-pill"><i class="bi bi-check2-circle" aria-hidden="true"></i>Oficial SampaUI</span>
+            </div>
         </div>
     </section>
 
