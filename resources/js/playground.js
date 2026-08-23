@@ -122,7 +122,7 @@ export function registerPlayground(Alpine) {
         ],
 
         init() {
-            const saved = localStorage.getItem('sampaui_playground_state_v9');
+            const saved = localStorage.getItem('sampaui_playground_state_v10');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -658,7 +658,7 @@ export function registerPlayground(Alpine) {
                 currentDevice: this.currentDevice,
                 splitPercent: this.splitPercent,
             };
-            localStorage.setItem('sampaui_playground_state_v9', JSON.stringify(state));
+            localStorage.setItem('sampaui_playground_state_v10', JSON.stringify(state));
         },
 
         async compileBladeCode(code) {
@@ -921,6 +921,50 @@ export function registerPlayground(Alpine) {
         return true;
       }
     });
+
+    // Interceptar submit de formulários no preview simulando loading dinâmico durante a ação
+    document.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const submitBtn = form.querySelector('button[type="submit"]');
+
+      if (submitBtn) {
+        const originalHtml = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-75', 'cursor-wait');
+        submitBtn.innerHTML = '<i class="bi bi-arrow-repeat animate-spin" aria-hidden="true"></i> <span>Salvando...</span>';
+
+        setTimeout(() => {
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('opacity-75', 'cursor-wait');
+          submitBtn.innerHTML = originalHtml;
+
+          window.dispatchEvent(new CustomEvent('toast', {
+            detail: {
+              type: 'success',
+              title: 'Configurações salvas!',
+              message: 'As preferências foram atualizadas com sucesso.'
+            }
+          }));
+
+          // Fechar modal após salvar com sucesso
+          document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
+            if (el._x_dataStack) {
+              el._x_dataStack.forEach((scope) => {
+                if (scope && typeof scope.close === 'function') {
+                  scope.close();
+                }
+              });
+            }
+          });
+          dispatchOverlayClose('edit-profile');
+          dispatchOverlayClose();
+        }, 500);
+      } else {
+        dispatchOverlayClose('edit-profile');
+        dispatchOverlayClose();
+      }
+    }, true);
 
     // Interceptar cliques em botões de fechar, cancelar ou com x-on:click="close()" no preview
     document.addEventListener('click', (e) => {

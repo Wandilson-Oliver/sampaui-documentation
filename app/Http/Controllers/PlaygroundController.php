@@ -717,7 +717,7 @@ PHP,
                         type="submit"
                         variant="primary"
                         icon="check2"
-                        loading
+                        loading-target="saveSettings"
                     >
                         Salvar Alterações
                     </x-sampaui::button>
