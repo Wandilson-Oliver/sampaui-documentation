@@ -125,7 +125,7 @@ export function registerPlayground(Alpine) {
         compileAbortController: null,
 
         init() {
-            const saved = localStorage.getItem('sampaui_playground_state_v16');
+            const saved = localStorage.getItem('sampaui_playground_state_v17');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -666,7 +666,7 @@ export function registerPlayground(Alpine) {
                 currentDevice: this.currentDevice,
                 splitPercent: this.splitPercent,
             };
-            localStorage.setItem('sampaui_playground_state_v16', JSON.stringify(state));
+            localStorage.setItem('sampaui_playground_state_v17', JSON.stringify(state));
         },
 
         async compileBladeCode(code) {
@@ -751,8 +751,46 @@ export function registerPlayground(Alpine) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <!-- SampaUI CSS Pré-compilado & Bootstrap Icons -->
+  <!-- Bootstrap Icons CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- SampaUI CSS Pré-compilado -->
   <link rel="stylesheet" href="${sampauiCssUrl}">
+
+  <!-- Tailwind CSS CDN para utilitários dinâmicos -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+          },
+          colors: {
+            primary: '#2FAFD3',
+            secondary: '#102A43',
+            accent: '#F7931E',
+            danger: '#D93045',
+            success: '#2CB36C',
+            warning: '#FBBF24',
+            info: '#4FC3E8',
+            purple: '#7C5CFC',
+            surface: '#FFFFFF',
+            border: '#E2E8F0',
+            light: '#F8FAFC',
+            muted: '#CBD5E1',
+            text: '#0F172A',
+          },
+          borderRadius: {
+            'default': '0.75rem',
+            'lg': '1rem',
+          }
+        }
+      }
+    }
+  </script>
 
   <style>
     [x-cloak] {
