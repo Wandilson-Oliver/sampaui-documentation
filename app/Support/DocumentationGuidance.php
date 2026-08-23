@@ -18,10 +18,10 @@ final class DocumentationGuidance
             'use' => [
                 $summary.'.',
                 match ($category) {
-                    'Formulários' => 'Use em formulários Blade ou Livewire que precisam de label, estado e validação consistentes.',
-                    'Data' => 'Use para leitura, comparação, seleção e operação sobre dados de negócio.',
-                    'Overlay' => 'Use para fluxos temporários que precisam de foco, contexto e retorno claro.',
-                    'Comunicação' => 'Use para conversas, inbox, atendimento e composição de mensagens com consistência visual.',
+                    'Formulários' => 'Use em formulários Blade ou Livewire aproveitando a herança nativa de atributos HTML e vínculo de erro.',
+                    'Data' => 'Use para leitura, comparação, seleção e operação sobre dados de negócio, preferindo slots para barras de ação e cabeçalhos customizados.',
+                    'Overlay' => 'Use para fluxos temporários que precisam de foco, contexto e retorno claro com controle declarativo via Livewire.',
+                    'Comunicação' => 'Use para conversas, inbox, atendimento e composição de mensagens com consistência visual e reatividade em tempo real.',
                     default => 'Use quando a interface precisar manter o mesmo padrão visual e comportamental do SampaUI.',
                 },
             ],
@@ -31,7 +31,7 @@ final class DocumentationGuidance
                     : 'Evite quando um elemento semântico nativo mais simples resolver a tarefa sem perder consistência.',
                 in_array($category, ['Feedback'], true)
                     ? 'Não use como única forma de comunicar uma informação crítica ou persistente.'
-                    : 'Não duplique o componente com HTML solto apenas para pequenas diferenças de espaçamento.',
+                    : 'Não passe configurações excessivas por props quando um slot semântico (<x-slot:...>) fornecer maior controle visual.',
             ],
             'errors' => [
                 $category === 'Formulários'
