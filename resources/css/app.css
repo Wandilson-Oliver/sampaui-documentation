@@ -1309,22 +1309,24 @@ details[open] .doc-menu-chevron {
 }
 
 /* Home Page Specifics */
+/* Home Page Specifics */
 .doc-home-hero {
+    position: relative;
     display: grid;
-    gap: 2rem;
-    padding: 2rem 0 3rem;
+    gap: 2.5rem;
+    padding: 2.5rem 0 3.5rem;
     border-bottom: 1px solid var(--doc-border);
 }
 
 @media (min-width: 64rem) {
     .doc-home-hero {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1.1fr 0.9fr;
         align-items: center;
     }
 }
 
 .doc-home-logo-frame img {
-    height: 3rem;
+    height: 2.75rem;
     width: auto;
 }
 
@@ -1356,6 +1358,12 @@ details[open] .doc-menu-chevron {
     line-height: 1.2;
 }
 
+@media (min-width: 48rem) {
+    .doc-home-hero-copy h1 {
+        font-size: 2.75rem;
+    }
+}
+
 .doc-home-hero-copy h1 span {
     color: var(--doc-primary);
 }
@@ -1370,15 +1378,63 @@ details[open] .doc-menu-chevron {
 .doc-home-actions {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 0.75rem;
     margin-top: 1.5rem;
+}
+
+/* Quick Install Box */
+.doc-quick-install {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-top: 1.25rem;
+    padding: 0.375rem 0.5rem 0.375rem 0.875rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--doc-border);
+    background-color: var(--doc-surface-subtle);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.doc-quick-install-prompt {
+    color: var(--doc-primary);
+    font-weight: 700;
+    user-select: none;
+}
+
+.doc-quick-install code {
+    color: var(--doc-heading);
+    font-weight: 600;
+}
+
+.doc-quick-install-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--doc-border);
+    background-color: var(--doc-surface);
+    color: var(--doc-muted);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--doc-duration) var(--doc-ease);
+}
+
+.doc-quick-install-btn:hover {
+    color: var(--doc-primary);
+    border-color: var(--doc-primary);
 }
 
 .doc-stack-badges {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 1.75rem;
+    gap: 0.625rem;
+    margin-top: 1.5rem;
 }
 
 .doc-stack-badges span {
@@ -1388,21 +1444,55 @@ details[open] .doc-menu-chevron {
     border: 1px solid var(--doc-border);
     border-radius: 0.5rem;
     background-color: var(--doc-surface);
-    padding: 0.375rem 0.75rem;
+    padding: 0.3125rem 0.6875rem;
     color: var(--doc-text);
-    font-size: 0.8125rem;
-    font-weight: 500;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+/* Browser Frame & Product Preview */
+.doc-browser-window {
+    border: 1px solid var(--doc-border);
+    border-radius: 1rem;
+    background-color: var(--doc-surface);
+    box-shadow: 0 16px 40px -8px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(15, 23, 42, 0.02);
+    overflow: hidden;
+}
+
+.doc-browser-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.625rem 1rem;
+    border-bottom: 1px solid var(--doc-border);
+    background-color: var(--doc-surface-subtle);
+}
+
+.doc-browser-dots {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.doc-browser-dot {
+    height: 0.625rem;
+    width: 0.625rem;
+    border-radius: 9999px;
+}
+
+.doc-browser-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--doc-muted);
 }
 
 .doc-home-product-preview {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    border: 1px solid var(--doc-border);
-    border-radius: 1rem;
+    padding: 1.25rem;
     background-color: var(--doc-surface);
-    padding: 1rem;
-    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
 }
 
 .doc-home-metric-grid {
@@ -1417,30 +1507,55 @@ details[open] .doc-menu-chevron {
     color: var(--doc-heading);
 }
 
+/* Overview Stat Cards */
 .doc-home-overview {
     display: grid;
     gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-    padding: 1.5rem 0;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    padding: 2rem 0;
     border-bottom: 1px solid var(--doc-border);
 }
 
-.doc-home-overview div {
+.doc-home-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     border: 1px solid var(--doc-border);
-    border-radius: 0.75rem;
+    border-radius: 0.875rem;
     background-color: var(--doc-surface);
-    padding: 1.25rem;
-    text-align: center;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    transition: all var(--doc-duration) var(--doc-ease);
 }
 
-.doc-home-overview strong {
-    display: block;
+.doc-home-stat-card:hover {
+    border-color: color-mix(in srgb, var(--doc-primary) 50%, var(--doc-border));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(47, 175, 211, 0.08);
+}
+
+.doc-home-stat-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.75rem;
+    width: 2.75rem;
+    border-radius: 0.75rem;
+    background-color: color-mix(in srgb, var(--doc-primary) 10%, var(--doc-surface));
     color: var(--doc-primary);
-    font-size: 1.75rem;
-    font-weight: 800;
+    font-size: 1.25rem;
+    flex-shrink: 0;
 }
 
-.doc-home-overview span {
+.doc-home-stat-info strong {
+    display: block;
+    color: var(--doc-heading);
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.doc-home-stat-info span {
     display: block;
     margin-top: 0.25rem;
     color: var(--doc-muted);
@@ -1448,10 +1563,11 @@ details[open] .doc-menu-chevron {
     font-weight: 500;
 }
 
+/* Installation Section */
 .doc-install-section {
     display: grid;
-    gap: 1.5rem;
-    padding: 2rem 0;
+    gap: 2rem;
+    padding: 2.5rem 0;
     border-bottom: 1px solid var(--doc-border);
 }
 
@@ -1466,15 +1582,44 @@ details[open] .doc-menu-chevron {
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
-    margin-top: 1rem;
+    margin-top: 1.25rem;
     color: var(--doc-primary);
     font-size: 0.875rem;
     font-weight: 600;
     text-decoration: none;
+    transition: gap var(--doc-duration) var(--doc-ease);
 }
 
+.doc-install-section a:hover {
+    gap: 0.625rem;
+}
+
+.doc-install-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.doc-install-feature-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 0.375rem;
+    background-color: color-mix(in srgb, var(--doc-primary) 8%, var(--doc-surface));
+    color: var(--doc-heading);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.doc-install-feature-pill i {
+    color: var(--doc-primary);
+}
+
+/* Home Section Generic */
 .doc-home-section {
-    padding: 2rem 0;
+    padding: 2.5rem 0;
 }
 
 .doc-home-section-heading-row {
@@ -1497,6 +1642,58 @@ details[open] .doc-menu-chevron {
     font-weight: 600;
 }
 
+/* Catalog Search Bar */
+.doc-catalog-search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1.25rem;
+}
+
+.doc-catalog-search-wrap i.bi-search {
+    position: absolute;
+    left: 1rem;
+    color: var(--doc-muted);
+    font-size: 0.9375rem;
+    pointer-events: none;
+}
+
+.doc-catalog-search-input {
+    width: 100%;
+    border: 1px solid var(--doc-border);
+    border-radius: 0.875rem;
+    background-color: var(--doc-surface);
+    padding: 0.75rem 2.75rem 0.75rem 2.625rem;
+    color: var(--doc-heading);
+    font-size: 0.875rem;
+    outline: none;
+    transition: all var(--doc-duration) var(--doc-ease);
+}
+
+.doc-catalog-search-input:focus {
+    border-color: var(--doc-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--doc-primary) 15%, transparent);
+}
+
+.doc-catalog-search-clear {
+    position: absolute;
+    right: 0.875rem;
+    background: transparent;
+    border: none;
+    color: var(--doc-muted);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+.doc-catalog-search-clear:hover {
+    color: var(--doc-heading);
+}
+
+/* Catalog Filters */
 .doc-catalog-filters {
     display: flex;
     flex-wrap: wrap;
@@ -1511,18 +1708,23 @@ details[open] .doc-menu-chevron {
     padding: 0.375rem 0.875rem;
     color: var(--doc-text);
     font-size: 0.8125rem;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     transition: all var(--doc-duration) var(--doc-ease);
 }
 
-.doc-catalog-filters button:hover,
+.doc-catalog-filters button:hover {
+    border-color: var(--doc-primary);
+    color: var(--doc-primary);
+}
+
 .doc-catalog-filters button.doc-catalog-filter-active {
     border-color: var(--doc-primary);
     background-color: var(--doc-primary);
     color: #ffffff;
 }
 
+/* Catalog Cards */
 .doc-catalog-grid {
     display: grid;
     gap: 1.25rem;
@@ -1621,6 +1823,11 @@ details[open] .doc-menu-chevron {
     color: var(--doc-primary);
     font-size: 0.8125rem;
     font-weight: 600;
+    transition: gap var(--doc-duration) var(--doc-ease);
+}
+
+.doc-card-link:hover {
+    gap: 0.5625rem;
 }
 
 .doc-roadmap-grid {

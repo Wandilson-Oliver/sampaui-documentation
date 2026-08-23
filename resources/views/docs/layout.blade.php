@@ -77,6 +77,13 @@
                 ->values();
 
             $tableOfContents = $tableOfContents ?? match (true) {
+                request()->routeIs('documentation') => [
+                    ['id' => 'home-title', 'label' => 'Visão geral'],
+                    ['id' => 'instalacao', 'label' => 'Instalação'],
+                    ['id' => 'templates-title', 'label' => 'Templates'],
+                    ['id' => 'componentes', 'label' => 'Componentes'],
+                    ['id' => 'roadmap', 'label' => 'Roadmap'],
+                ],
                 request()->routeIs('documentation.components.show') => [
                     ['id' => 'visao-geral', 'label' => 'Visão geral'],
                     ['id' => 'exemplos', 'label' => 'Exemplos'],
