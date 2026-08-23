@@ -7,10 +7,12 @@
         $guidance = \App\Support\DocumentationGuidance::for($componentDoc);
         $status = \App\Support\DocumentationGuidance::status($componentDoc);
         $isPlanned = $status === 'Planejado';
-        $showcaseCodes = collect($showcases)->pluck('code')->filter();
+        $showcaseCodes = collect($showcases)->map(function (array $s): ?string {
+            return $s['code'] ?? ($s['code_examples']['Blade'] ?? ($s['code_examples']['Livewire'] ?? null));
+        })->filter();
         $recipes = collect($componentDoc['examples'] ?? [])
-            ->reject(fn (array $example): bool => $showcaseCodes->contains($example['code'] ?? null))
-            ->unique('code');
+            ->reject(fn (array $example): bool => $showcaseCodes->contains($example['code'] ?? ($example['code_examples']['Blade'] ?? null)))
+            ->unique(fn (array $example): string => $example['code'] ?? ($example['code_examples']['Blade'] ?? ($example['code_examples']['Livewire'] ?? $example['title'])));
         $componentNavigation = collect($components)->values();
         $currentComponentIndex = $componentNavigation->search(fn (array $component): bool => $component['slug'] === $componentDoc['slug']);
         $previousComponent = $currentComponentIndex !== false && $currentComponentIndex > 0 ? $componentNavigation->get($currentComponentIndex - 1) : null;
@@ -73,7 +75,7 @@
         <div class="doc-example-list">
             @foreach ($showcases as $showcase)
                 @php
-                    $previewCode = $showcase['preview'] ?? $showcase['code'];
+                    $previewCode = $showcase['preview'] ?? ($showcase['code'] ?? ($showcase['code_examples']['Blade'] ?? ($showcase['code_examples']['Livewire'] ?? '')));
                     $previewHtml = match (true) {
                         $isPlanned => '<div class="doc-planned-preview-large">'.view('docs.partials.component-preview', ['slug' => $componentDoc['slug']])->render().'</div>',
                         $componentDoc['slug'] === 'modal' => view('docs.partials.modal-livewire-preview', [
@@ -82,10 +84,29 @@
                         ])->render(),
                         default => \Illuminate\Support\Facades\Blade::render($previewCode),
                     };
-                    $codeExamples = ['Blade' => trim($showcase['code'])];
+                    if (isset($showcase['code_examples']) && is_array($showcase['code_examples'])) {
+                        $codeExamples = $showcase['code_examples'];
+                    } else {
+                        $codeExamples = [];
+                        if (isset($showcase['blade'])) {
+                            $codeExamples['Blade'] = trim($showcase['blade']);
+                        } elseif (isset($showcase['code']) && ! str_contains($showcase['code'], 'wire:')) {
+                            $codeExamples['Blade'] = trim($showcase['code']);
+                        }
 
-                    if (! $isPlanned && str_contains($showcase['code'], 'wire:')) {
-                        $codeExamples = ['Livewire' => trim($showcase['code'])];
+                        if (isset($showcase['livewire'])) {
+                            $codeExamples['Livewire'] = trim($showcase['livewire']);
+                        } elseif (isset($showcase['code']) && str_contains($showcase['code'], 'wire:')) {
+                            $codeExamples['Livewire'] = trim($showcase['code']);
+                        }
+
+                        if (isset($showcase['livewire_php'])) {
+                            $codeExamples['PHP (Componente)'] = trim($showcase['livewire_php']);
+                        }
+
+                        if (empty($codeExamples)) {
+                            $codeExamples['Blade'] = trim($showcase['code'] ?? '');
+                        }
                     }
                 @endphp
 
@@ -107,14 +128,15 @@
 
                 @foreach ($recipes as $example)
                     @php
-                        $language = str_contains($example['code'], 'public function') || str_contains($example['title'], 'Classe Livewire') ? 'PHP' : (str_contains($example['code'], 'wire:') ? 'Livewire' : 'Blade');
+                        $exampleCode = $example['code'] ?? ($example['code_examples']['Blade'] ?? ($example['code_examples']['Livewire'] ?? ''));
+                        $language = str_contains($exampleCode, 'public function') || str_contains($example['title'], 'Classe Livewire') ? 'PHP' : (str_contains($exampleCode, 'wire:') ? 'Livewire' : 'Blade');
                     @endphp
                     <article class="doc-recipe">
                         <div>
                             <h3>{{ $example['title'] }}</h3>
                             <p>{{ $example['description'] }}</p>
                         </div>
-                        <x-docs.code-block :code="$example['code']" :label="$language" />
+                        <x-docs.code-block :code="$exampleCode" :label="$language" />
                     </article>
                 @endforeach
             </div>

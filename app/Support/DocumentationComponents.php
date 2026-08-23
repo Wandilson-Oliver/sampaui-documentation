@@ -135,9 +135,15 @@ BLADE,
 BLADE,
                     ],
                     [
-                        'title' => 'Livewire',
-                        'description' => 'Padrao para submit de formulario com estado de envio.',
-                        'code' => <<<'BLADE'
+                        'title' => 'Uso em Formulários & Ações',
+                        'description' => 'Disparo de eventos, submissão de formulários e estados de loading sincronizados com o backend.',
+                        'code_examples' => [
+                            'Blade' => <<<'BLADE'
+<x-sampaui::button type="submit" icon="check2-circle">
+    Salvar alterações
+</x-sampaui::button>
+BLADE,
+                            'Livewire' => <<<'BLADE'
 <x-sampaui::button
     type="submit"
     icon="check2-circle"
@@ -147,6 +153,27 @@ BLADE,
     Salvar cliente
 </x-sampaui::button>
 BLADE,
+                            'PHP (Componente)' => <<<'PHP'
+namespace App\Livewire;
+
+use Livewire\Component;
+
+class EditCustomer extends Component
+{
+    public function save(): void
+    {
+        // Executa validações e salva
+        sleep(1); // Simula processamento
+        $this->dispatch('toast', variant: 'success', title: 'Salvo com sucesso!');
+    }
+
+    public function render()
+    {
+        return view('livewire.edit-customer');
+    }
+}
+PHP,
+                        ],
                     ],
                 ],
             ],
@@ -155,45 +182,77 @@ BLADE,
                 'name' => 'Input',
                 'tag' => '<x-sampaui::input />',
                 'summary' => 'Campo textual com label opcional, mensagem de erro, estados desabilitados e passthrough total de atributos HTML/Livewire.',
-                'description' => 'Indicado para formularios operacionais, autenticacao e filtros. A borda padrao usa `border-secondary/20`; `wire:model` inicializa o campo e identifica automaticamente a chave do ErrorBag sem exigir `name`.',
-                'preview_title' => 'Formulario de contato',
+                'description' => 'Indicado para formulários operacionais, autenticação e filtros. A borda padrão usa `border-secondary/20`; `wire:model` inicializa o campo e identifica automaticamente a chave do ErrorBag sem exigir `name`.',
+                'preview_title' => 'Formulário de contato',
                 'preview_caption' => 'Exemplos de input simples, erro validado e binding Livewire.',
                 'props' => [
                     ['name' => 'type', 'type' => 'string', 'default' => 'text', 'notes' => 'Aceita qualquer tipo suportado por `<input>`.'],
                     ['name' => 'label', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Renderiza `<label>` associado ao campo.'],
-                    ['name' => 'name', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Usado para o atributo `name`; id e ErrorBag tambem podem ser derivados de `wire:model`.'],
+                    ['name' => 'name', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Usado para o atributo `name`; id e ErrorBag também podem ser derivados de `wire:model`.'],
                     ['name' => 'value', 'type' => 'mixed', 'default' => 'null', 'notes' => 'Valor inicial opcional para uso sem Livewire.'],
                     ['name' => 'placeholder', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Texto auxiliar dentro do campo.'],
-                    ['name' => 'error', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Sobrescreve a mensagem automatica do ErrorBag.'],
+                    ['name' => 'error', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Sobrescreve a mensagem automática do ErrorBag.'],
                     ['name' => 'disabled', 'type' => 'bool', 'default' => 'false', 'notes' => 'Aplica estilo inativo e atributo `disabled`.'],
                     ['name' => 'icon', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Nome Bootstrap Icons sem o prefixo `bi-`, renderizado dentro do campo à esquerda.'],
-                    ['name' => 'revealable', 'type' => 'bool', 'default' => 'true', 'notes' => 'Em campos `type="password"`, renderiza o botao de mostrar/ocultar senha quando nao ha slot `suffix`.'],
-                    ['name' => '$prefix', 'type' => 'Named slot', 'default' => '-', 'notes' => 'Conteudo customizado dentro do campo, à esquerda.'],
-                    ['name' => '$suffix', 'type' => 'Named slot', 'default' => '-', 'notes' => 'Conteudo customizado dentro do campo, à direita.'],
+                    ['name' => 'revealable', 'type' => 'bool', 'default' => 'true', 'notes' => 'Em campos `type="password"`, renderiza o botão de mostrar/ocultar senha quando não há slot `suffix`.'],
+                    ['name' => '$prefix', 'type' => 'Named slot', 'default' => '-', 'notes' => 'Conteúdo customizado dentro do campo, à esquerda.'],
+                    ['name' => '$suffix', 'type' => 'Named slot', 'default' => '-', 'notes' => 'Conteúdo customizado dentro do campo, à direita.'],
                 ],
                 'attributes' => ['class', 'id', 'autocomplete', 'required', 'wire:model.live', 'x-model', 'aria-*'],
                 'accessibility' => [
-                    'Sempre informe `label` ou um `aria-label` quando o campo nao tiver texto visivel.',
+                    'Sempre informe `label` ou um `aria-label` quando o campo não tiver texto visível.',
                     'Mensagens de erro recebem `aria-describedby` automaticamente quando o erro existe.',
-                    'Use `autocomplete` adequado para email, telefone e endereco em fluxos reais.',
+                    'Use `autocomplete` adequado para email, telefone e endereço em fluxos reais.',
                 ],
                 'examples' => [
                     [
-                        'title' => 'Basico',
-                        'description' => 'Input textual com placeholder e label.',
-                        'code' => <<<'BLADE'
+                        'title' => 'Básico com Label e Ícone',
+                        'description' => 'Input textual com validação automática e sincronização reativa com Livewire.',
+                        'code_examples' => [
+                            'Blade' => <<<'BLADE'
 <x-sampaui::input
     name="email"
     type="email"
     label="Email corporativo"
+    icon="envelope"
     placeholder="voce@empresa.com"
+    required
 />
 BLADE,
+                            'Livewire' => <<<'BLADE'
+<x-sampaui::input
+    label="Email corporativo"
+    type="email"
+    icon="envelope"
+    placeholder="voce@empresa.com"
+    wire:model.blur="email"
+    required
+/>
+BLADE,
+                            'PHP (Componente)' => <<<'PHP'
+namespace App\Livewire;
+
+use Livewire\Component;
+use Livewire\Attributes\Validate;
+
+class ContactForm extends Component
+{
+    #[Validate('required|email')]
+    public string $email = '';
+
+    public function render()
+    {
+        return view('livewire.contact-form');
+    }
+}
+PHP,
+                        ],
                     ],
                     [
-                        'title' => 'Com icone',
+                        'title' => 'Com icones',
                         'description' => 'Use `icon` para Bootstrap Icons simples dentro do campo.',
-                        'code' => <<<'BLADE'
+                        'code_examples' => [
+                            'Blade' => <<<'BLADE'
 <x-sampaui::input
     name="email"
     type="email"
@@ -202,18 +261,86 @@ BLADE,
     placeholder="voce@empresa.com"
 />
 BLADE,
+                            'Livewire' => <<<'BLADE'
+<x-sampaui::input
+    type="email"
+    label="Email corporativo"
+    icon="envelope"
+    placeholder="voce@empresa.com"
+    wire:model.live="email"
+/>
+BLADE,
+                        ],
                     ],
                     [
-                        'title' => 'Slots internos',
-                        'description' => 'Use `prefix` e `suffix` para icones ou acoes customizadas.',
-                        'code' => <<<'BLADE'
+                        'title' => 'Busca Incremental com Debounce',
+                        'description' => 'Campo de busca em tempo real com `wire:model.live.debounce` para filtrar dados dinamicamente.',
+                        'code_examples' => [
+                            'Blade' => <<<'BLADE'
+<x-sampaui::input
+    name="search"
+    label="Buscar registros"
+    icon="search"
+    placeholder="Digite para pesquisar..."
+/>
+BLADE,
+                            'Livewire' => <<<'BLADE'
+<x-sampaui::input
+    label="Buscar registros"
+    icon="search"
+    placeholder="Nome, email ou documento..."
+    wire:model.live.debounce.300ms="search"
+/>
+BLADE,
+                            'PHP (Componente)' => <<<'PHP'
+namespace App\Livewire;
+
+use Livewire\Component;
+
+class SearchUsers extends Component
+{
+    public string $search = '';
+
+    public function updatedSearch(): void
+    {
+        // Executado a cada 300ms de pausa na digitação
+    }
+
+    public function render()
+    {
+        return view('livewire.search-users', [
+            'users' => User::where('name', 'like', "%{$this->search}%")->get(),
+        ]);
+    }
+}
+PHP,
+                        ],
+                    ],
+                    [
+                        'title' => 'Senha com Alternador de Visibilidade',
+                        'description' => 'Em campos do tipo password, use `revealable` para alternar visibilidade com Alpine.',
+                        'code_examples' => [
+                            'Blade' => <<<'BLADE'
 <x-sampaui::input
     name="password"
     type="password"
-    label="Senha"
+    label="Senha de acesso"
     icon="lock"
+    revealable
+    required
 />
 BLADE,
+                            'Livewire' => <<<'BLADE'
+<x-sampaui::input
+    type="password"
+    label="Senha de acesso"
+    icon="lock"
+    revealable
+    wire:model.blur="password"
+    required
+/>
+BLADE,
+                        ],
                     ],
                     [
                         'title' => 'Senha customizada',
@@ -230,30 +357,6 @@ BLADE,
         </button>
     </x-slot:suffix>
 </x-sampaui::input>
-BLADE,
-                    ],
-                    [
-                        'title' => 'Validacao Livewire',
-                        'description' => 'Depois de `$this->validate()`, a mensagem do ErrorBag aparece sem prop `error` manual.',
-                        'code' => <<<'BLADE'
-<x-sampaui::input
-    type="email"
-    label="Email"
-    wire:model.blur="email"
-    required
-/>
-BLADE,
-                    ],
-                    [
-                        'title' => 'Livewire',
-                        'description' => 'Binding direto em busca incremental.',
-                        'code' => <<<'BLADE'
-<x-sampaui::input
-    name="search"
-    label="Buscar cliente"
-    placeholder="Nome, email ou telefone"
-    wire:model.live.debounce.300ms="search"
-/>
 BLADE,
                     ],
                 ],
@@ -390,19 +493,55 @@ BLADE,
 BLADE,
                     ],
                     [
-                        'title' => 'Livewire',
-                        'description' => 'Binding bidirecional; mudancas feitas pelo servidor atualizam valor e label.',
-                        'code' => <<<'BLADE'
+                        'title' => 'Uso Reativo com Livewire',
+                        'description' => 'Binding bidirecional; mudanças feitas pelo servidor ou pelo usuário atualizam o valor reativamente.',
+                        'code_examples' => [
+                            'Blade' => <<<'BLADE'
 <x-sampaui::select
+    name="city"
     label="Cidade"
-    wire:model.live="city"
+    placeholder="Selecione a cidade"
     required
     :options="[
-        'sp' => 'Sao Paulo',
+        'sp' => 'São Paulo',
         'campinas' => 'Campinas',
+        'rio' => 'Rio de Janeiro',
     ]"
 />
 BLADE,
+                            'Livewire' => <<<'BLADE'
+<x-sampaui::select
+    label="Cidade de atuação"
+    wire:model.live="selectedCity"
+    required
+    :options="[
+        'sp' => 'São Paulo',
+        'campinas' => 'Campinas',
+        'rio' => 'Rio de Janeiro',
+    ]"
+/>
+BLADE,
+                            'PHP (Componente)' => <<<'PHP'
+namespace App\Livewire;
+
+use Livewire\Component;
+
+class CitySelector extends Component
+{
+    public ?string $selectedCity = 'sp';
+
+    public function updatedSelectedCity(string $value): void
+    {
+        // Reage à mudança de cidade
+    }
+
+    public function render()
+    {
+        return view('livewire.city-selector');
+    }
+}
+PHP,
+                        ],
                     ],
                 ],
             ],
@@ -466,17 +605,48 @@ BLADE,
 BLADE,
                     ],
                     [
-                        'title' => 'Livewire',
-                        'description' => '`wire:model` se conecta ao estado Alpine por `x-modelable`; nao informe `value` neste uso.',
-                        'code' => <<<'BLADE'
+                        'title' => 'Pesquisa Dinâmica com Livewire',
+                        'description' => '`wire:model` sincronizado com componente Livewire.',
+                        'code_examples' => [
+                            'Blade' => <<<'BLADE'
 <x-sampaui::select-search
     name="customer_id"
     label="Cliente"
-    placeholder="Buscar cliente"
+    placeholder="Buscar cliente..."
+    :options="[
+        1 => 'Ana Souza - ana@empresa.com',
+        2 => 'Bruno Lima - bruno@empresa.com',
+        3 => 'Carla Martins - carla@empresa.com',
+    ]"
+/>
+BLADE,
+                            'Livewire' => <<<'BLADE'
+<x-sampaui::select-search
+    label="Cliente responsável"
+    placeholder="Buscar cliente..."
     wire:model.live="customerId"
     :options="$customers"
 />
 BLADE,
+                            'PHP (Componente)' => <<<'PHP'
+namespace App\Livewire;
+
+use App\Models\Customer;
+use Livewire\Component;
+
+class SelectCustomer extends Component
+{
+    public ?int $customerId = null;
+
+    public function render()
+    {
+        return view('livewire.select-customer', [
+            'customers' => Customer::pluck('name', 'id')->toArray(),
+        ]);
+    }
+}
+PHP,
+                        ],
                     ],
                 ],
             ],
@@ -1027,7 +1197,6 @@ BLADE,
                 'accessibility' => [
                     'O componente renderiza `role="dialog"` e `aria-modal="true"` automaticamente.',
                     'Informe `title` ou um slot `header` com heading claro para dar contexto ao dialog.',
-                    'Use `persistent` somente em fluxos em que fechar sem acao causaria perda de dados.',
                 ],
                 'examples' => [
                     [
@@ -1053,18 +1222,91 @@ BLADE,
 BLADE,
                     ],
                     [
-                        'title' => 'Evento Livewire',
-                        'description' => 'Fechamento por evento e callback depois da animacao.',
-                        'code' => <<<'BLADE'
+                        'title' => 'Modal com Livewire & Validação',
+                        'description' => 'Abertura reativa, submissão com indicador de loading, validações de erro e fechamento programático.',
+                        'code_examples' => [
+                            'Blade' => <<<'BLADE'
+<div x-data="{ open: false }">
+    <x-sampaui::button x-on:click="open = true" icon="person-plus">
+        Novo cliente
+    </x-sampaui::button>
+
+    <x-sampaui::modal x-show="open" title="Novo cliente" subtitle="Preencha os dados de contato.">
+        <div class="space-y-4">
+            <x-sampaui::input label="Nome completo" placeholder="Ex: Ana Souza" required />
+            <x-sampaui::input label="Email corporativo" type="email" placeholder="ana@empresa.com" required />
+        </div>
+
+        <x-slot:actions>
+            <x-sampaui::button variant="outline" x-on:click="open = false">
+                Cancelar
+            </x-sampaui::button>
+            <x-sampaui::button x-on:click="open = false">
+                Salvar cliente
+            </x-sampaui::button>
+        </x-slot:actions>
+    </x-sampaui::modal>
+</div>
+BLADE,
+                            'Livewire' => <<<'BLADE'
+<x-sampaui::button wire:click="$set('showCustomerModal', true)" icon="person-plus">
+    Novo cliente
+</x-sampaui::button>
+
 <x-sampaui::modal
     model="showCustomerModal"
-    title="Editar cliente"
-    close-event="customer-saved"
-    after-close="afterModalClose"
+    title="Novo cliente"
+    subtitle="Preencha os dados para iniciar o atendimento."
+    size="lg"
 >
-    Dados atualizados no Livewire.
+    <div class="space-y-4">
+        <x-sampaui::input label="Nome completo" icon="person" wire:model.blur="name" required />
+        <x-sampaui::input label="Email corporativo" type="email" icon="envelope" wire:model.blur="email" required />
+    </div>
+
+    <x-slot:actions>
+        <x-sampaui::button variant="outline" wire:click="$set('showCustomerModal', false)">
+            Cancelar
+        </x-sampaui::button>
+        <x-sampaui::button wire:click="saveCustomer" wire:loading.attr="disabled" wire:target="saveCustomer">
+            Salvar cliente
+        </x-sampaui::button>
+    </x-slot:actions>
 </x-sampaui::modal>
 BLADE,
+                            'PHP (Componente)' => <<<'PHP'
+namespace App\Livewire;
+
+use Livewire\Component;
+use Livewire\Attributes\Validate;
+
+class CustomerManager extends Component
+{
+    public bool $showCustomerModal = false;
+
+    #[Validate('required|min:3')]
+    public string $name = '';
+
+    #[Validate('required|email')]
+    public string $email = '';
+
+    public function saveCustomer(): void
+    {
+        $this->validate();
+
+        // Customer::create(['name' => $this->name, 'email' => $this->email]);
+
+        $this->showCustomerModal = false;
+        $this->dispatch('toast', variant: 'success', title: 'Cliente cadastrado com sucesso!');
+    }
+
+    public function render()
+    {
+        return view('livewire.customer-manager');
+    }
+}
+PHP,
+                        ],
                     ],
                     [
                         'title' => 'Formulario completo',
@@ -1074,17 +1316,10 @@ BLADE,
     Novo lead
 </x-sampaui::button>
 
-<x-sampaui::modal model="showLeadModal" title="Novo lead" subtitle="Preencha os dados para iniciar o atendimento." size="xl">
+<x-sampaui::modal model="showLeadModal" title="Novo lead" subtitle="Preencha os dados para iniciar o atendimento." size="xl" close-event="lead-saved">
     <div class="grid gap-4 sm:grid-cols-2">
         <x-sampaui::input name="name" label="Nome" icon="person" wire:model.live="lead.name" required />
         <x-sampaui::input name="email" type="email" label="Email" icon="envelope" wire:model.live="lead.email" required />
-        <x-sampaui::select
-            name="stage"
-            label="Etapa"
-            placeholder="Selecione uma etapa"
-            wire:model.live="lead.stage"
-            :options="['new' => 'Novo', 'qualified' => 'Qualificado', 'proposal' => 'Proposta']"
-        />
         <x-sampaui::select-search
             name="owner"
             label="Responsavel"
@@ -1315,50 +1550,82 @@ BLADE,
                 ],
                 'examples' => [
                     [
-                        'title' => 'Basico',
-                        'description' => 'Drawer lateral controlado por propriedade booleana Livewire.',
-                        'code' => <<<'BLADE'
-<x-sampaui::button wire:click="$set('filtersOpen', true)">
-    Abrir filtros
+                        'title' => 'Drawer Lateral com Livewire',
+                        'description' => 'Filtros avançados com Livewire, atualização reativa da listagem e botões de ação.',
+                        'code_examples' => [
+                            'Blade' => <<<'BLADE'
+<div x-data="{ filtersOpen: false }">
+    <x-sampaui::button x-on:click="filtersOpen = true" icon="funnel" variant="outline">
+        Filtrar resultados
+    </x-sampaui::button>
+
+    <x-sampaui::drawer x-show="filtersOpen" title="Filtros avançados" subtitle="Refine a visualização dos dados">
+        <div class="space-y-4">
+            <x-sampaui::input label="Nome do cliente" placeholder="Filtrar por nome" />
+            <x-sampaui::select label="Status" :options="['all' => 'Todos', 'active' => 'Ativo', 'pending' => 'Pendente']" />
+        </div>
+
+        <x-slot:actions>
+            <x-sampaui::button variant="outline" x-on:click="filtersOpen = false">Cancelar</x-sampaui::button>
+            <x-sampaui::button x-on:click="filtersOpen = false">Aplicar filtros</x-sampaui::button>
+        </x-slot:actions>
+    </x-sampaui::drawer>
+</div>
+BLADE,
+                            'Livewire' => <<<'BLADE'
+<x-sampaui::button wire:click="$set('filtersOpen', true)" icon="funnel" variant="outline">
+    Filtrar resultados
 </x-sampaui::button>
 
-<x-sampaui::drawer model="filtersOpen" title="Filtros" subtitle="Refine a listagem">
-    Conteudo dos filtros.
+<x-sampaui::drawer
+    model="filtersOpen"
+    title="Filtros avançados"
+    subtitle="Refine os registros da listagem."
+    size="md"
+>
+    <div class="space-y-4">
+        <x-sampaui::input label="Buscar termo" icon="search" wire:model.live.debounce.300ms="search" />
+        <x-sampaui::select label="Status do cliente" wire:model.live="status" :options="['all' => 'Todos', 'active' => 'Ativo', 'pending' => 'Pendente']" />
+    </div>
 
     <x-slot:actions>
-        <x-sampaui::button variant="outline" wire:click="$set('filtersOpen', false)">
-            Cancelar
+        <x-sampaui::button variant="outline" wire:click="resetFilters">
+            Limpar
         </x-sampaui::button>
-        <x-sampaui::button wire:click="applyFilters">
-            Aplicar
+        <x-sampaui::button wire:click="$set('filtersOpen', false)">
+            Ver resultados
         </x-sampaui::button>
     </x-slot:actions>
 </x-sampaui::drawer>
 BLADE,
-                    ],
-                    [
-                        'title' => 'Posicao',
-                        'description' => 'Use `placement` para escolher a borda de entrada.',
-                        'code' => <<<'BLADE'
-<x-sampaui::drawer model="rightDrawer" title="Direita" placement="right" />
-<x-sampaui::drawer model="leftDrawer" title="Esquerda" placement="left" />
-<x-sampaui::drawer model="topDrawer" title="Topo" placement="top" />
-<x-sampaui::drawer model="bottomDrawer" title="Rodape" placement="bottom" />
-BLADE,
-                    ],
-                    [
-                        'title' => 'Evento Livewire',
-                        'description' => 'Fechamento por evento e callback depois da animacao.',
-                        'code' => <<<'BLADE'
-<x-sampaui::drawer
-    model="filtersOpen"
-    title="Filtros avancados"
-    close-event="filters-applied"
-    after-close="afterDrawerClose"
->
-    Filtros atualizados no Livewire.
-</x-sampaui::drawer>
-BLADE,
+                            'PHP (Componente)' => <<<'PHP'
+namespace App\Livewire;
+
+use Livewire\Component;
+
+class UserListWithFilters extends Component
+{
+    public bool $filtersOpen = false;
+    public string $search = '';
+    public string $status = 'all';
+
+    public function resetFilters(): void
+    {
+        $this->reset(['search', 'status']);
+    }
+
+    public function render()
+    {
+        return view('livewire.user-list-with-filters', [
+            'users' => User::query()
+                ->when($this->search, fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
+                ->when($this->status !== 'all', fn ($q) => $q->where('status', $this->status))
+                ->paginate(15),
+        ]);
+    }
+}
+PHP,
+                        ],
                     ],
                 ],
             ],
@@ -1383,39 +1650,53 @@ BLADE,
                 ],
                 'examples' => [
                     [
-                        'title' => 'Instalacao no layout',
-                        'description' => 'Inclua uma vez perto do final do body.',
-                        'code' => <<<'BLADE'
-<x-sampaui::toast />
+                        'title' => 'Instalação no Layout & Disparo Livewire',
+                        'description' => 'Inclua a tag `<x-sampaui::toast />` uma única vez no layout base (ex: `app.blade.php`) e dispare notificações do backend em qualquer componente Livewire.',
+                        'code_examples' => [
+                            'Layout Blade' => <<<'BLADE'
+<!-- resources/views/layouts/app.blade.php -->
+<body>
+    {{ $slot }}
+
+    <!-- Container Global de Toasts -->
+    <x-sampaui::toast position="top-right" :max="5" />
+</body>
 BLADE,
-                    ],
-                    [
-                        'title' => 'Disparo basico',
-                        'description' => 'Evento browser com titulo e mensagem.',
-                        'code' => <<<'BLADE'
-<button
-    type="button"
-    onclick="window.dispatchEvent(new CustomEvent('toast', {
-        detail: { type: 'success', title: 'Salvo', message: 'Alteracoes publicadas.' }
-    }))"
->
-    Mostrar toast
-</button>
-BLADE,
-                    ],
-                    [
-                        'title' => 'Persistente',
-                        'description' => 'Use `duration: 0` para manter ate fechamento manual.',
-                        'code' => <<<'BLADE'
-window.dispatchEvent(new CustomEvent('toast', {
-    detail: {
-        type: 'warning',
-        title: 'Revisao pendente',
-        message: 'Confira os dados antes de aprovar.',
-        duration: 0
+                            'Livewire (PHP)' => <<<'PHP'
+namespace App\Livewire;
+
+use Livewire\Component;
+
+class LeadAction extends Component
+{
+    public function approve(): void
+    {
+        // Regra de aprovação
+        $this->dispatch('toast', [
+            'type' => 'success',
+            'title' => 'Proposta aprovada!',
+            'message' => 'O contrato foi enviado para assinatura digital.',
+        ]);
     }
-}))
+
+    public function reject(): void
+    {
+        $this->dispatch('toast', [
+            'type' => 'danger',
+            'title' => 'Proposta rejeitada',
+            'message' => 'O lead foi movido para o arquivo.',
+        ]);
+    }
+}
+PHP,
+                            'Disparo JS / Alpine' => <<<'BLADE'
+<x-sampaui::button
+    x-on:click="$dispatch('toast', { type: 'info', title: 'Aviso', message: 'Sincronização em segundo plano.' })"
+>
+    Disparar Toast JS
+</x-sampaui::button>
 BLADE,
+                        ],
                     ],
                 ],
             ],
@@ -1460,27 +1741,82 @@ BLADE,
                 ],
                 'examples' => [
                     [
-                        'title' => 'DataTable premium',
-                        'description' => 'Tabela com toolbar, busca, seleção e exportação CSV por link.',
-                        'code' => <<<'BLADE'
+                        'title' => 'DataTable Completa com Livewire & Paginação',
+                        'description' => 'Tabela com busca em tempo real com debounce, ordenação de colunas e paginação nativa integrada.',
+                        'code_examples' => [
+                            'Blade' => <<<'BLADE'
 <x-sampaui::table
-    title="Clientes"
-    description="Base comercial"
+    title="Clientes cadastrados"
+    description="Base comercial ativa"
     searchable
     selectable
     export-href="/exports/clientes.csv"
-    per-page="10"
     :columns="[
         'name' => 'Cliente',
         'status' => 'Status',
-        'amount' => ['label' => 'Valor', 'key' => 'amount', 'align' => 'right'],
+        'amount' => ['label' => 'Faturamento', 'key' => 'amount', 'align' => 'right'],
     ]"
     :rows="[
         ['id' => 1, 'name' => 'Ana Souza', 'status' => 'Ativo', 'amount' => 'R$ 1.200,00'],
-        ['id' => 2, 'name' => 'Bruno Lima', 'status' => 'Em analise', 'amount' => 'R$ 850,00'],
+        ['id' => 2, 'name' => 'Bruno Lima', 'status' => 'Em análise', 'amount' => 'R$ 850,00'],
     ]"
 />
 BLADE,
+                            'Livewire' => <<<'BLADE'
+<x-sampaui::table
+    title="Gestão de Usuários"
+    description="Listagem sincronizada com backend Livewire"
+    searchable
+    search-model="search"
+    sort-by="{{ $sortBy }}"
+    sort-direction="{{ $sortDirection }}"
+    sort-method="sortBy"
+    :columns="[
+        'name' => ['label' => 'Nome do Usuário', 'sortable' => true],
+        'email' => 'Email',
+        'status' => 'Status',
+        'created_at' => ['label' => 'Data de Cadastro', 'sortable' => true, 'align' => 'right'],
+    ]"
+    :rows="$users"
+/>
+BLADE,
+                            'PHP (Componente)' => <<<'PHP'
+namespace App\Livewire;
+
+use App\Models\User;
+use Livewire\Component;
+use Livewire\WithPagination;
+
+class UsersTable extends Component
+{
+    use WithPagination;
+
+    public string $search = '';
+    public string $sortBy = 'name';
+    public string $sortDirection = 'asc';
+
+    public function sortBy(string $column): void
+    {
+        if ($this->sortBy === $column) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortBy = $column;
+            $this->sortDirection = 'asc';
+        }
+    }
+
+    public function render()
+    {
+        return view('livewire.users-table', [
+            'users' => User::query()
+                ->when($this->search, fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
+                ->orderBy($this->sortBy, $this->sortDirection)
+                ->paginate(10),
+        ]);
+    }
+}
+PHP,
+                        ],
                     ],
                     [
                         'title' => 'Ordenacao',
