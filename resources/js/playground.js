@@ -122,7 +122,7 @@ export function registerPlayground(Alpine) {
         ],
 
         init() {
-            const saved = localStorage.getItem('sampaui_playground_state_v12');
+            const saved = localStorage.getItem('sampaui_playground_state_v13');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -658,7 +658,7 @@ export function registerPlayground(Alpine) {
                 currentDevice: this.currentDevice,
                 splitPercent: this.splitPercent,
             };
-            localStorage.setItem('sampaui_playground_state_v12', JSON.stringify(state));
+            localStorage.setItem('sampaui_playground_state_v13', JSON.stringify(state));
         },
 
         async compileBladeCode(code) {
@@ -922,6 +922,34 @@ export function registerPlayground(Alpine) {
       }
     });
 
+    // Ouvintes globais de eventos open-modal e close-modal no iframe
+    window.addEventListener('open-modal', (e) => {
+      const modalId = typeof e.detail === 'string' ? e.detail : (e.detail?.id || e.detail?.name || 'edit-profile');
+      document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
+        if (el._x_dataStack) {
+          el._x_dataStack.forEach((scope) => {
+            if (scope && typeof scope.openOverlay === 'function') {
+              scope.openOverlay();
+            }
+          });
+        }
+      });
+      dispatchOverlayOpen(modalId);
+    });
+
+    window.addEventListener('close-modal', () => {
+      document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
+        if (el._x_dataStack) {
+          el._x_dataStack.forEach((scope) => {
+            if (scope && typeof scope.close === 'function') {
+              scope.close();
+            }
+          });
+        }
+      });
+      dispatchOverlayClose();
+    });
+
     // Interceptar submit de formulários no preview simulando loading dinâmico durante a ação
     document.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -976,33 +1004,32 @@ export function registerPlayground(Alpine) {
       }
     }, true);
 
-    // Interceptar cliques em botões de fechar, cancelar ou com x-on:click="close()" no preview
+    // Interceptar cliques em botões específicos de fechar/cancelar dentro do preview
     document.addEventListener('click', (e) => {
-      let target = e.target;
-      let closeTrigger = null;
-      while (target && target !== document && target.nodeType === 1) {
-        const text = (target.textContent || '').trim().toLowerCase();
-        const onclick = (target.getAttribute('x-on:click') || target.getAttribute('@click') || target.getAttribute('onclick') || '').toLowerCase();
-        const ariaLabel = (target.getAttribute('aria-label') || '').toLowerCase();
+      const btn = e.target.closest('button, [role="button"], a');
+      if (!btn) return;
 
-        if (
-          text === 'cancelar' ||
-          text === 'fechar' ||
-          ariaLabel.includes('fechar') ||
-          ariaLabel.includes('close') ||
-          onclick.includes('close(') ||
-          onclick.includes('open = false') ||
-          onclick.includes('open=false') ||
-          onclick.includes('close-modal') ||
-          onclick.includes('close-drawer')
-        ) {
-          closeTrigger = target;
-          break;
-        }
-        target = target.parentElement;
-      }
+      const text = (btn.textContent || '').trim().toLowerCase();
+      const onclick = (btn.getAttribute('x-on:click') || btn.getAttribute('@click') || btn.getAttribute('onclick') || '').toLowerCase();
+      const ariaLabel = (btn.getAttribute('aria-label') || '').toLowerCase();
 
-      if (closeTrigger) {
+      const isClose = (
+        text === 'cancelar' ||
+        text === 'fechar' ||
+        text === 'cancel' ||
+        text === 'close' ||
+        ariaLabel === 'fechar' ||
+        ariaLabel === 'fechar modal' ||
+        ariaLabel === 'fechar gaveta' ||
+        ariaLabel === 'close' ||
+        ariaLabel === 'close modal' ||
+        onclick.includes('close()') ||
+        onclick.includes('close(') ||
+        onclick.includes('open = false') ||
+        onclick.includes('open=false')
+      );
+
+      if (isClose) {
         document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
           if (el._x_dataStack) {
             el._x_dataStack.forEach((scope) => {
