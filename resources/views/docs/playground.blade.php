@@ -203,9 +203,7 @@
                     class="select-none border-r border-slate-800 bg-[#090d13] px-3 py-4 text-right font-mono text-xs text-slate-600 overflow-hidden"
                     x-ref="lineNumbers"
                 >
-                    <template x-for="line in getLineNumbersArray(currentCode())" :key="line">
-                        <div x-text="line"></div>
-                    </template>
+                    <pre class="font-mono text-xs leading-6 select-none" x-text="getLineNumbersString(currentCode())"></pre>
                 </div>
 
                 <!-- Camada de Cores de Sintaxe e Textareas Transparentes -->

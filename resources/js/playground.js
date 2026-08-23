@@ -121,8 +121,11 @@ export function registerPlayground(Alpine) {
             { label: 'public function save()', type: 'livewire', desc: 'Método de ação reativa Livewire', icon: 'bi-play-circle', snippet: "public function save()\n{\n    $this->showModal = false;\n}" }
         ],
 
+        compileCache: new Map(),
+        compileAbortController: null,
+
         init() {
-            const saved = localStorage.getItem('sampaui_playground_state_v14');
+            const saved = localStorage.getItem('sampaui_playground_state_v15');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -250,6 +253,11 @@ export function registerPlayground(Alpine) {
 
         getLineCount(text) {
             return (text || '').split('\n').length;
+        },
+
+        getLineNumbersString(text) {
+            const count = Math.max(1, (text || '').split('\n').length);
+            return Array.from({ length: count }, (_, i) => i + 1).join('\n');
         },
 
         getLineNumbersArray(text) {
@@ -658,13 +666,23 @@ export function registerPlayground(Alpine) {
                 currentDevice: this.currentDevice,
                 splitPercent: this.splitPercent,
             };
-            localStorage.setItem('sampaui_playground_state_v14', JSON.stringify(state));
+            localStorage.setItem('sampaui_playground_state_v15', JSON.stringify(state));
         },
 
         async compileBladeCode(code) {
-            if (!code || (!code.includes('<x-') && !code.includes('@'))) {
+            if (!code || (!code.includes('<x-') && !code.includes('@') && !code.includes('$'))) {
                 return code;
             }
+
+            const cacheKey = code + ':::' + (this.livewire || '');
+            if (this.compileCache.has(cacheKey)) {
+                return this.compileCache.get(cacheKey);
+            }
+
+            if (this.compileAbortController) {
+                this.compileAbortController.abort();
+            }
+            this.compileAbortController = new AbortController();
 
             const compileUrl = this.config?.compileUrl || '/playground/compile';
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
@@ -673,6 +691,7 @@ export function registerPlayground(Alpine) {
                 this.isCompiling = true;
                 const response = await fetch(compileUrl, {
                     method: 'POST',
+                    signal: this.compileAbortController.signal,
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
@@ -689,15 +708,14 @@ export function registerPlayground(Alpine) {
                 this.isCompiling = false;
                 if (result.success) {
                     this.compileError = null;
+                    this.compileCache.set(cacheKey, result.html);
                     return result.html;
                 } else {
                     this.compileError = result.error || 'Erro na compilação do Blade';
-                    return `<div class="p-6 text-danger bg-danger/10 rounded-xl border border-danger/30 m-4">
-                        <h4 class="font-bold flex items-center gap-2 mb-2"><i class="bi bi-exclamation-triangle-fill"></i> Erro de Sintaxe Blade</h4>
-                        <pre class="text-xs overflow-auto font-mono whitespace-pre-wrap">${result.error}</pre>
-                    </div>` + result.html;
+                    return result.html || code;
                 }
             } catch (err) {
+                if (err.name === 'AbortError') return '';
                 this.isCompiling = false;
                 console.warn('[Playground] Erro ao compilar Blade:', err);
                 return code;
@@ -711,6 +729,7 @@ export function registerPlayground(Alpine) {
             const jsContent = this.js || '';
             const livewireStateJson = JSON.stringify(this.parseLivewireState(this.livewire || ''));
             const sampauiJsUrl = (this.config?.assetsUrl ? this.config.assetsUrl + '/sampaui.js' : '/vendor/sampaui/sampaui.js');
+            const sampauiCssUrl = (this.config?.assetsUrl ? this.config.assetsUrl + '/sampaui.css' : '/vendor/sampaui/sampaui.css');
 
             const isDark = this.canvasBg === 'dark';
             const isLight = this.canvasBg === 'light';
@@ -732,128 +751,43 @@ export function registerPlayground(Alpine) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <!-- Bootstrap Icons CDN -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- SampaUI CSS Pré-compilado & Bootstrap Icons -->
+  <link rel="stylesheet" href="${sampauiCssUrl}">
 
-  <!-- Silenciar aviso informativo de desenvolvimento do Tailwind CDN no preview -->
-  <script>
-    (function() {
-      const _origWarn = console.warn;
-      console.warn = function(...args) {
-        if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com')) {
-          return;
-        }
-        _origWarn.apply(console, args);
-      };
-    })();
-  </script>
-
-  <!-- Tailwind CSS CDN com tokens, paleta e suporte dark oficial SampaUI -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-            mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
-          },
-          colors: {
-            primary: '#2FAFD3',
-            secondary: '#102A43',
-            accent: '#F7931E',
-            danger: '#D93045',
-            success: '#2CB36C',
-            warning: '#FBBF24',
-            info: '#4FC3E8',
-            purple: '#7C5CFC',
-            surface: '#FFFFFF',
-            border: '#E2E8F0',
-            light: '#F8FAFC',
-            muted: '#CBD5E1',
-            text: '#0F172A',
-          },
-          borderRadius: {
-            'default': '0.75rem',
-            'lg': '1rem',
-          }
-        }
-      }
+  <style>
+    [x-cloak] {
+      display: none !important;
     }
-  </script>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      -webkit-font-smoothing: antialiased;
+    }
+    ${cssContent}
+  </style>
+</head>
+<body class="h-full ${bodyBg} antialiased selection:bg-primary/30">
+  ${compiledHtml}
 
-  <!-- Livewire / Alpine $wire Emulator para o Playground -->
+  <!-- Estado Livewire para o Preview -->
   <script>
     window.rawWireState = Object.assign(${livewireStateJson}, window.rawWireState || {});
     window.wireState = window.rawWireState;
+  </script>
 
-    document.addEventListener('alpine:init', () => {
-      window.wireState = Alpine.reactive(window.rawWireState);
-    });
+  <!-- SampaUI Runtime & Alpine.js -->
+  <script src="${sampauiJsUrl}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 
-    function dispatchOverlayOpen(key) {
-      const candidates = [key, 'sampaui-modal-standalone-' + key, 'sampaui-drawer-standalone-' + key].filter(Boolean);
-      candidates.forEach((name) => {
-        window.dispatchEvent(new CustomEvent('open-modal', { detail: name }));
-        document.dispatchEvent(new CustomEvent('open-modal', { detail: name }));
-        window.dispatchEvent(new CustomEvent('open-modal-' + name));
-        document.dispatchEvent(new CustomEvent('open-modal-' + name));
-        window.dispatchEvent(new CustomEvent('open-drawer', { detail: name }));
-        document.dispatchEvent(new CustomEvent('open-drawer', { detail: name }));
-        window.dispatchEvent(new CustomEvent('open-drawer-' + name));
-        document.dispatchEvent(new CustomEvent('open-drawer-' + name));
-      });
-
-      // Acionamento direto de componentes Alpine na árvore DOM (com validação de escopo)
-      try {
-        document.querySelectorAll('[x-data]').forEach((el) => {
-          if (el._x_dataStack) {
-            el._x_dataStack.forEach((scope) => {
-              if (scope && typeof scope.openOverlay === 'function' && !scope.visible) {
-                const elId = el.getAttribute('id') || el.querySelector('[id]')?.getAttribute('id') || '';
-                const elModel = el.getAttribute('model') || '';
-                if (!key || candidates.includes(elId) || candidates.includes(elModel) || elId.includes(key) || elModel === key) {
-                  scope.openOverlay();
-                }
-              }
-            });
-          }
-        });
-      } catch (_) {}
+  <script>
+    if (window.Alpine && typeof window.Alpine.start === 'function' && !window.Alpine.initialized) {
+      window.Alpine.initialized = true;
+      window.Alpine.start();
     }
 
-    function dispatchOverlayClose(key) {
-      const candidates = [key, 'sampaui-modal-standalone-' + key, 'sampaui-drawer-standalone-' + key].filter(Boolean);
-      candidates.forEach((name) => {
-        window.dispatchEvent(new CustomEvent('close-modal', { detail: name }));
-        document.dispatchEvent(new CustomEvent('close-modal', { detail: name }));
-        window.dispatchEvent(new CustomEvent('close-modal-' + name));
-        document.dispatchEvent(new CustomEvent('close-modal-' + name));
-        window.dispatchEvent(new CustomEvent('close-drawer', { detail: name }));
-        document.dispatchEvent(new CustomEvent('close-drawer', { detail: name }));
-        window.dispatchEvent(new CustomEvent('close-drawer-' + name));
-        document.dispatchEvent(new CustomEvent('close-drawer-' + name));
-      });
-
-      // Fechamento direto de componentes Alpine na árvore DOM (com validação de escopo)
-      try {
-        document.querySelectorAll('[x-data]').forEach((el) => {
-          if (el._x_dataStack) {
-            el._x_dataStack.forEach((scope) => {
-              if (scope && typeof scope.close === 'function' && scope.visible) {
-                const elId = el.getAttribute('id') || el.querySelector('[id]')?.getAttribute('id') || '';
-                const elModel = el.getAttribute('model') || '';
-                if (!key || candidates.includes(elId) || candidates.includes(elModel) || elId.includes(key) || elModel === key) {
-                  scope.close();
-                }
-              }
-            });
-          }
-        });
-      } catch (_) {}
-    }
-
+    // Livewire / Alpine $wire Emulator
     window.$wire = new Proxy({}, {
       get(target, prop) {
         if (prop === 'entangle') {
@@ -861,96 +795,37 @@ export function registerPlayground(Alpine) {
             get live() { return window.wireState[name]; },
             set live(val) {
               window.wireState[name] = val;
-              if (val) dispatchOverlayOpen(name);
-              else dispatchOverlayClose(name);
+              window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: name }));
             }
           });
         }
         if (prop === '$set') {
           return (key, val) => {
             window.wireState[key] = val;
-            const isOpening = (val === true || val === 1 || val === '1' || val === 'true');
-            if (isOpening) {
-              dispatchOverlayOpen(key);
-            } else {
-              dispatchOverlayClose(key);
-            }
+            window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: key }));
           };
         }
         if (prop === '$toggle') {
           return (key) => {
             window.wireState[key] = !window.wireState[key];
-            if (window.wireState[key]) {
-              dispatchOverlayOpen(key);
-            } else {
-              dispatchOverlayClose(key);
-            }
+            window.dispatchEvent(new CustomEvent(window.wireState[key] ? 'open-modal' : 'close-modal', { detail: key }));
           };
         }
         if (prop === 'dispatch' || prop === '$dispatch') {
           return (eventName, payload) => {
             window.dispatchEvent(new CustomEvent(eventName, { detail: payload }));
-            document.dispatchEvent(new CustomEvent(eventName, { detail: payload }));
-            if (eventName === 'open-modal' || eventName === 'open-drawer') {
-              dispatchOverlayOpen(typeof payload === 'string' ? payload : (payload?.id || payload?.model || ''));
-            } else if (eventName === 'close-modal' || eventName === 'close-drawer') {
-              dispatchOverlayClose(typeof payload === 'string' ? payload : (payload?.id || payload?.model || ''));
-            }
           };
         }
-        if (prop === '$get' || prop === 'get') {
-          return (key) => window.wireState[key];
-        }
-        if (prop === '$refresh' || prop === 'refresh') {
-          return () => {};
-        }
-        if (prop in window.wireState) {
-          return window.wireState[prop];
-        }
-        return (...args) => {
-          if (prop === 'save' || prop === 'submit' || prop === 'authenticate') {
-            dispatchOverlayClose('showCustomerModal');
-            dispatchOverlayClose('showFilterDrawer');
-          }
-        };
+        if (prop in window.wireState) return window.wireState[prop];
+        return (...args) => {};
       },
       set(target, prop, val) {
         window.wireState[prop] = val;
-        if (val) dispatchOverlayOpen(prop);
-        else dispatchOverlayClose(prop);
         return true;
       }
     });
 
-    // Ouvintes globais de eventos open-modal e close-modal no iframe
-    window.addEventListener('open-modal', (e) => {
-      const modalId = typeof e.detail === 'string' ? e.detail : (e.detail?.id || e.detail?.name || 'edit-profile');
-      document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
-        if (el._x_dataStack) {
-          el._x_dataStack.forEach((scope) => {
-            if (scope && typeof scope.openOverlay === 'function') {
-              scope.openOverlay();
-            }
-          });
-        }
-      });
-      dispatchOverlayOpen(modalId);
-    });
-
-    window.addEventListener('close-modal', () => {
-      document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
-        if (el._x_dataStack) {
-          el._x_dataStack.forEach((scope) => {
-            if (scope && typeof scope.close === 'function') {
-              scope.close();
-            }
-          });
-        }
-      });
-      dispatchOverlayClose();
-    });
-
-    // Interceptar submit de formulários no preview simulando loading dinâmico durante a ação
+    // Interceptar formulários submit simulando ciclo de loading e fechamento automático com Toast
     document.addEventListener('submit', (e) => {
       e.preventDefault();
       const form = e.target;
@@ -980,218 +855,11 @@ export function registerPlayground(Alpine) {
           };
 
           window.dispatchEvent(new CustomEvent('toast', { detail: toastData }));
-          document.dispatchEvent(new CustomEvent('toast', { detail: toastData }));
-          if (window.parent && window.parent !== window) {
-            window.parent.dispatchEvent(new CustomEvent('toast', { detail: toastData }));
-          }
-
-          // Fechar modal após salvar com sucesso
-          document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
-            if (el._x_dataStack) {
-              el._x_dataStack.forEach((scope) => {
-                if (scope && typeof scope.close === 'function') {
-                  scope.close();
-                }
-              });
-            }
-          });
-          dispatchOverlayClose('edit-profile');
-          dispatchOverlayClose();
-        }, 600);
-      } else {
-        dispatchOverlayClose('edit-profile');
-        dispatchOverlayClose();
+          window.dispatchEvent(new CustomEvent('close-modal', { detail: 'edit-profile' }));
+        }, 500);
       }
     }, true);
 
-    // Interceptar cliques em botões específicos de fechar/cancelar dentro do preview
-    document.addEventListener('click', (e) => {
-      const btn = e.target.closest('button, [role="button"], a');
-      if (!btn) return;
-
-      const text = (btn.textContent || '').trim().toLowerCase();
-      const onclick = (btn.getAttribute('x-on:click') || btn.getAttribute('@click') || btn.getAttribute('onclick') || '').toLowerCase();
-      const ariaLabel = (btn.getAttribute('aria-label') || '').toLowerCase();
-
-      const isClose = (
-        text === 'cancelar' ||
-        text === 'fechar' ||
-        text === 'cancel' ||
-        text === 'close' ||
-        ariaLabel === 'fechar' ||
-        ariaLabel === 'fechar modal' ||
-        ariaLabel === 'fechar gaveta' ||
-        ariaLabel === 'close' ||
-        ariaLabel === 'close modal' ||
-        onclick.includes('close()') ||
-        onclick.includes('close(') ||
-        onclick.includes('open = false') ||
-        onclick.includes('open=false')
-      );
-
-      if (isClose) {
-        document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
-          if (el._x_dataStack) {
-            el._x_dataStack.forEach((scope) => {
-              if (scope && typeof scope.close === 'function') {
-                scope.close();
-              }
-            });
-          }
-        });
-        dispatchOverlayClose();
-      }
-    }, true);
-
-    // Interceptar cliques em wire:click no preview interativo (fase de captura)
-    document.addEventListener('click', (e) => {
-      let target = e.target;
-      let btn = null;
-      while (target && target !== document && target.nodeType === 1) {
-        if (target.hasAttribute && target.hasAttribute('wire:click')) {
-          btn = target;
-          break;
-        }
-        target = target.parentElement;
-      }
-      if (!btn) return;
-      const rawAction = btn.getAttribute('wire:click') || '';
-      const action = rawAction.trim();
-
-      if (action.startsWith('$set(')) {
-        e.preventDefault();
-        const inside = action.slice(5, action.endsWith(')') ? -1 : undefined);
-        const commaIdx = inside.indexOf(',');
-        if (commaIdx !== -1) {
-          const key = inside.slice(0, commaIdx).trim().replace(/^['"]|['"]$/g, '');
-          const rawVal = inside.slice(commaIdx + 1).trim().replace(/^['"]|['"]$/g, '');
-          const val = (rawVal === 'true') ? true : ((rawVal === 'false') ? false : (isNaN(Number(rawVal)) ? rawVal : Number(rawVal)));
-          window.$wire.$set(key, val);
-          return;
-        }
-      }
-
-      if (action.startsWith('$toggle(')) {
-        e.preventDefault();
-        const key = action.slice(8, action.endsWith(')') ? -1 : undefined).trim().replace(/^['"]|['"]$/g, '');
-        window.$wire.$toggle(key);
-        return;
-      }
-
-      if (action.startsWith('$dispatch(') || action.startsWith('dispatch(')) {
-        e.preventDefault();
-        const start = action.indexOf('(');
-        const inside = action.slice(start + 1, action.endsWith(')') ? -1 : undefined);
-        const commaIdx = inside.indexOf(',');
-        if (commaIdx !== -1) {
-          const evName = inside.slice(0, commaIdx).trim().replace(/^['"]|['"]$/g, '');
-          const rawParam = inside.slice(commaIdx + 1).trim();
-          let param = rawParam.replace(/^['"]|['"]$/g, '');
-          if (rawParam.startsWith('{')) {
-            try { param = JSON.parse(rawParam.replace(/'/g, '"')); } catch (_) {}
-          }
-          window.$wire.dispatch(evName, param);
-        } else {
-          window.$wire.dispatch(inside.trim().replace(/^['"]|['"]$/g, ''));
-        }
-        return;
-      }
-
-      if (action.startsWith('openModal(') || action.startsWith('openDrawer(')) {
-        e.preventDefault();
-        const key = action.slice(action.indexOf('(') + 1, action.endsWith(')') ? -1 : undefined).trim().replace(/^['"]|['"]$/g, '') || 'modal';
-        dispatchOverlayOpen(key);
-        return;
-      }
-
-      // Propriedade booleana direta (ex: wire:click="showCustomerModal" ou wire:click="showFilterDrawer")
-      if (action in window.wireState || action === 'showCustomerModal' || action === 'showFilterDrawer') {
-        e.preventDefault();
-        window.$wire.$set(action, !window.wireState[action]);
-        return;
-      }
-
-      // Método genérico Livewire: save, submit, toggleConnect, etc.
-      e.preventDefault();
-      const methodName = action.replace(/\(.*?\)$/, '').trim();
-      if (typeof window.$wire[methodName] === 'function') {
-        window.$wire[methodName]();
-      } else {
-        if (methodName === 'save' || methodName === 'submit' || methodName === 'authenticate') {
-          dispatchOverlayClose('showCustomerModal');
-          dispatchOverlayClose('showFilterDrawer');
-        }
-      }
-    }, true);
-  </script>
-
-  <style>
-    [x-cloak] {
-      display: none !important;
-    }
-    [wire\:loading],
-    [wire\:loading\.delay],
-    [wire\:loading\.inline-block],
-    [wire\:loading\.inline],
-    [wire\:loading\.block],
-    [wire\:loading\.flex],
-    [wire\:loading\.table],
-    [wire\:loading\.grid] {
-      display: none !important;
-    }
-    [wire\:loading\.remove] {
-      display: inline-flex !important;
-    }
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      margin: 0;
-      padding: 0;
-      min-height: 100%;
-      -webkit-font-smoothing: antialiased;
-    }
-    html.dark, html.dark body {
-      background-color: #0b0f17 !important;
-      color: #f0f6fc !important;
-    }
-    html.dark .bg-slate-50, html.dark .bg-slate-100, html.dark .bg-white {
-      background-color: #161b22 !important;
-      border-color: #30363d !important;
-      color: #f0f6fc !important;
-    }
-    html.dark .text-slate-800, html.dark .text-slate-900, html.dark .text-secondary {
-      color: #f0f6fc !important;
-    }
-    html.dark .text-slate-500, html.dark .text-slate-600 {
-      color: #8b949e !important;
-    }
-    html.dark .border-slate-200, html.dark .border-slate-100 {
-      border-color: #30363d !important;
-    }
-    html.light, html.light body {
-      background-color: #ffffff !important;
-      color: #0f172a !important;
-    }
-    html.neutral, html.neutral body {
-      background-color: #f1f5f9 !important;
-      color: #1e293b !important;
-    }
-    ${cssContent}
-  </style>
-</head>
-<body class="h-full ${bodyBg} antialiased selection:bg-primary/30">
-  ${compiledHtml}
-
-  <!-- SampaUI Runtime & Alpine.js -->
-  <script src="${sampauiJsUrl}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
-  <script>
-    if (window.Alpine && typeof window.Alpine.start === 'function' && !window.Alpine.initialized) {
-      window.Alpine.initialized = true;
-      window.Alpine.start();
-    }
-  </script>
-
-  <script>
     try {
       ${jsContent}
     } catch (err) {
