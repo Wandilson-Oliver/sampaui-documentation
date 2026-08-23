@@ -492,7 +492,7 @@ it('renders the interactive playground with split view tabs and live preview', f
         ->assertDontSee('doc-sidebar-nav', false)
         ->assertSee('Playground')
         ->assertSee('Componentes SampaUI')
-        ->assertSee('Card de Perfil')
+        ->assertSee('Card Profile')
         ->assertSee('HTML')
         ->assertSee('CSS')
         ->assertSee('JavaScript')
