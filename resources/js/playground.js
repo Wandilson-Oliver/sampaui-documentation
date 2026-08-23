@@ -125,7 +125,7 @@ export function registerPlayground(Alpine) {
         compileAbortController: null,
 
         init() {
-            const saved = localStorage.getItem('sampaui_playground_state_v17');
+            const saved = localStorage.getItem('sampaui_playground_state_v18');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -666,7 +666,7 @@ export function registerPlayground(Alpine) {
                 currentDevice: this.currentDevice,
                 splitPercent: this.splitPercent,
             };
-            localStorage.setItem('sampaui_playground_state_v17', JSON.stringify(state));
+            localStorage.setItem('sampaui_playground_state_v18', JSON.stringify(state));
         },
 
         async compileBladeCode(code) {
@@ -813,6 +813,102 @@ export function registerPlayground(Alpine) {
   <script>
     window.rawWireState = Object.assign(${livewireStateJson}, window.rawWireState || {});
     window.wireState = window.rawWireState;
+
+    function dispatchOverlayOpen(key) {
+      const candidates = [key, 'sampaui-modal-standalone-' + key, 'sampaui-drawer-standalone-' + key].filter(Boolean);
+      candidates.forEach((name) => {
+        window.dispatchEvent(new CustomEvent('open-modal', { detail: name }));
+        document.dispatchEvent(new CustomEvent('open-modal', { detail: name }));
+        window.dispatchEvent(new CustomEvent('open-modal-' + name));
+        window.dispatchEvent(new CustomEvent('open-drawer', { detail: name }));
+        document.dispatchEvent(new CustomEvent('open-drawer', { detail: name }));
+        window.dispatchEvent(new CustomEvent('open-drawer-' + name));
+      });
+
+      try {
+        document.querySelectorAll('[data-sampaui-overlay], [x-data]').forEach((el) => {
+          if (el._x_dataStack) {
+            el._x_dataStack.forEach((scope) => {
+              if (scope && typeof scope.openOverlay === 'function') {
+                const elId = el.getAttribute('id') || el.querySelector('[id]')?.getAttribute('id') || '';
+                const elModel = el.getAttribute('model') || '';
+                if (!key || candidates.includes(elId) || candidates.includes(elModel) || elId.includes(key) || elModel === key) {
+                  scope.openOverlay();
+                }
+              }
+            });
+          }
+        });
+      } catch (_) {}
+    }
+
+    function dispatchOverlayClose(key) {
+      const candidates = [key, 'sampaui-modal-standalone-' + key, 'sampaui-drawer-standalone-' + key].filter(Boolean);
+      candidates.forEach((name) => {
+        window.dispatchEvent(new CustomEvent('close-modal', { detail: name }));
+        document.dispatchEvent(new CustomEvent('close-modal', { detail: name }));
+        window.dispatchEvent(new CustomEvent('close-modal-' + name));
+        window.dispatchEvent(new CustomEvent('close-drawer', { detail: name }));
+        document.dispatchEvent(new CustomEvent('close-drawer', { detail: name }));
+        window.dispatchEvent(new CustomEvent('close-drawer-' + name));
+      });
+
+      try {
+        document.querySelectorAll('[data-sampaui-overlay], [x-data]').forEach((el) => {
+          if (el._x_dataStack) {
+            el._x_dataStack.forEach((scope) => {
+              if (scope && typeof scope.close === 'function') {
+                const elId = el.getAttribute('id') || el.querySelector('[id]')?.getAttribute('id') || '';
+                const elModel = el.getAttribute('model') || '';
+                if (!key || candidates.includes(elId) || candidates.includes(elModel) || elId.includes(key) || elModel === key) {
+                  scope.close();
+                }
+              }
+            });
+          }
+        });
+      } catch (_) {}
+    }
+
+    // Ouvintes explícitos para window open-modal e close-modal
+    window.addEventListener('open-modal', (e) => {
+      const modalId = typeof e.detail === 'string' ? e.detail : (e.detail?.id || e.detail?.name || 'edit-profile');
+      dispatchOverlayOpen(modalId);
+    });
+
+    window.addEventListener('close-modal', (e) => {
+      const modalId = typeof e.detail === 'string' ? e.detail : (e.detail?.id || e.detail?.name);
+      dispatchOverlayClose(modalId);
+    });
+
+    // Interceptar cliques em botões de abertura, cancelamento e fechamento
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('button, [role="button"], a');
+      if (!btn) return;
+
+      const onclick = (btn.getAttribute('x-on:click') || btn.getAttribute('@click') || btn.getAttribute('onclick') || '').trim();
+      const text = (btn.textContent || '').trim().toLowerCase();
+
+      if (onclick.includes('open-modal') || onclick.includes('openOverlay') || onclick.includes('openModal')) {
+        const match = onclick.match(/open-modal['"]?\s*,\s*['"]([^'"]+)['"]/);
+        const modalId = match ? match[1] : 'edit-profile';
+        dispatchOverlayOpen(modalId);
+        return;
+      }
+
+      const isClose = (
+        text === 'cancelar' ||
+        text === 'fechar' ||
+        text === 'cancel' ||
+        text === 'close' ||
+        onclick.includes('close()') ||
+        onclick.includes('close(')
+      );
+
+      if (isClose) {
+        dispatchOverlayClose();
+      }
+    }, true);
   </script>
 
   <!-- SampaUI Runtime & Alpine.js -->
@@ -825,33 +921,6 @@ export function registerPlayground(Alpine) {
       try { window.Alpine.start(); } catch (_) {}
     }
 
-    // Ouvintes explícitos para window open-modal e close-modal
-    window.addEventListener('open-modal', (e) => {
-      const modalId = typeof e.detail === 'string' ? e.detail : (e.detail?.id || e.detail?.name || 'edit-profile');
-      document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
-        if (el._x_dataStack) {
-          el._x_dataStack.forEach((scope) => {
-            if (scope && typeof scope.openOverlay === 'function' && (el.id === modalId || !modalId)) {
-              scope.openOverlay();
-            }
-          });
-        }
-      });
-    });
-
-    window.addEventListener('close-modal', (e) => {
-      const modalId = typeof e.detail === 'string' ? e.detail : (e.detail?.id || e.detail?.name);
-      document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
-        if (el._x_dataStack) {
-          el._x_dataStack.forEach((scope) => {
-            if (scope && typeof scope.close === 'function' && (el.id === modalId || !modalId)) {
-              scope.close();
-            }
-          });
-        }
-      });
-    });
-
     // Livewire / Alpine $wire Emulator
     window.$wire = new Proxy({}, {
       get(target, prop) {
@@ -860,25 +929,33 @@ export function registerPlayground(Alpine) {
             get live() { return window.wireState[name]; },
             set live(val) {
               window.wireState[name] = val;
-              window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: name }));
+              if (val) dispatchOverlayOpen(name);
+              else dispatchOverlayClose(name);
             }
           });
         }
         if (prop === '$set') {
           return (key, val) => {
             window.wireState[key] = val;
-            window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: key }));
+            if (val) dispatchOverlayOpen(key);
+            else dispatchOverlayClose(key);
           };
         }
         if (prop === '$toggle') {
           return (key) => {
             window.wireState[key] = !window.wireState[key];
-            window.dispatchEvent(new CustomEvent(window.wireState[key] ? 'open-modal' : 'close-modal', { detail: key }));
+            if (window.wireState[key]) dispatchOverlayOpen(key);
+            else dispatchOverlayClose(key);
           };
         }
         if (prop === 'dispatch' || prop === '$dispatch') {
           return (eventName, payload) => {
             window.dispatchEvent(new CustomEvent(eventName, { detail: payload }));
+            if (eventName === 'open-modal' || eventName === 'open-drawer') {
+              dispatchOverlayOpen(typeof payload === 'string' ? payload : (payload?.id || payload?.model || ''));
+            } else if (eventName === 'close-modal' || eventName === 'close-drawer') {
+              dispatchOverlayClose(typeof payload === 'string' ? payload : (payload?.id || payload?.model || ''));
+            }
           };
         }
         if (prop in window.wireState) return window.wireState[prop];
@@ -920,7 +997,7 @@ export function registerPlayground(Alpine) {
           };
 
           window.dispatchEvent(new CustomEvent('toast', { detail: toastData }));
-          window.dispatchEvent(new CustomEvent('close-modal', { detail: 'edit-profile' }));
+          dispatchOverlayClose('edit-profile');
         }, 500);
       }
     }, true);
