@@ -20,22 +20,22 @@ class PlaygroundController extends Controller
         $templates = [
             'components' => [
                 'name' => 'Componentes SampaUI',
-                'description' => 'Formulário moderno com inputs, selects com busca, toggle, checkbox, pin e feedback.',
+                'description' => 'Formulário moderno com inputs, selects com busca, toggle, checkbox, textarea e botões de ação.',
                 'html' => <<<'BLADE'
-<div class="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+<div class="flex min-h-screen items-center justify-center bg-slate-50/80 p-4 sm:p-8 font-sans">
     <x-sampaui::card
-        title="Cadastro de Oportunidade"
-        description="Utilize todos os componentes oficiais do SampaUI no Playground."
+        title="Cadastro de Oportunidade Comercial"
+        description="Preencha os dados do cliente e configure as preferências de atendimento."
         padding="lg"
-        class="w-full max-w-2xl shadow-xl"
+        class="w-full max-w-2xl shadow-xl border-slate-200/80 bg-white"
     >
         <x-slot:actions>
             <x-sampaui::badge variant="primary" icon="stars">SampaUI v0.1</x-sampaui::badge>
         </x-slot:actions>
 
-        <div class="space-y-4">
-            <x-sampaui::alert variant="info" icon="info-circle" title="Dica de Desenvolvimento">
-                Você pode usar tags como <code>&lt;x-sampaui::input&gt;</code>, <code>&lt;x-sampaui::select-search&gt;</code> e slots Blade em tempo real!
+        <form wire:submit.prevent="save" class="space-y-5">
+            <x-sampaui::alert variant="info" icon="info-circle" title="Integração em Tempo Real">
+                Edite os campos abaixo. O estado Livewire e os componentes Blade são sincronizados instantaneamente no preview.
             </x-sampaui::alert>
 
             <div class="grid gap-4 sm:grid-cols-2">
@@ -44,6 +44,7 @@ class PlaygroundController extends Controller
                     label="Nome do Cliente"
                     placeholder="Ex: Ana Clara Souza"
                     icon="person"
+                    wire:model.live="client_name"
                     required
                 />
 
@@ -53,6 +54,7 @@ class PlaygroundController extends Controller
                     label="Email Corporativo"
                     placeholder="ana.souza@empresa.com"
                     icon="envelope"
+                    wire:model.live="client_email"
                     required
                 />
             </div>
@@ -63,10 +65,11 @@ class PlaygroundController extends Controller
                     label="Segmento de Atuação"
                     placeholder="Selecione um segmento"
                     :options="[
-                        'tech' => 'Tecnologia & Software',
+                        'tech' => 'Tecnologia & SaaS',
                         'health' => 'Saúde & Farmacêutica',
                         'finance' => 'Financeiro & Fintech',
                         'retail' => 'Varejo & E-commerce',
+                        'agro' => 'Agronegócio',
                     ]"
                 />
 
@@ -74,44 +77,50 @@ class PlaygroundController extends Controller
                     name="priority"
                     label="Prioridade do Atendimento"
                     :options="[
-                        'low' => 'Baixa',
-                        'medium' => 'Média',
-                        'high' => 'Alta Prioridade',
+                        'low' => 'Baixa Prioridade',
+                        'medium' => 'Média Prioridade',
+                        'high' => 'Alta Prioridade (Urgente)',
                     ]"
                 />
             </div>
 
             <x-sampaui::textarea
                 name="notes"
-                label="Observações do Atendimento"
-                placeholder="Detalhes adicionais sobre a oportunidade..."
+                label="Observações & Escopo do Projeto"
+                placeholder="Detalhes adicionais sobre a oportunidade comercial..."
                 rows="3"
                 auto-resize
                 counter
-                maxlength="200"
+                maxlength="250"
             />
 
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
-                <x-sampaui::toggle
-                    name="notify_email"
-                    label="Enviar resumo por email"
-                    checked
-                />
+            <div class="rounded-xl border border-slate-100 bg-slate-50/60 p-4 space-y-3">
+                <span class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Notificações & Alertas</span>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <x-sampaui::toggle
+                        name="notify_email"
+                        label="Enviar resumo detalhado por e-mail"
+                        checked
+                    />
 
-                <x-sampaui::checkbox
-                    name="notify_whatsapp"
-                    label="Notificar via WhatsApp"
-                    checked
-                />
+                    <x-sampaui::checkbox
+                        name="notify_whatsapp"
+                        label="Notificar equipe via WhatsApp"
+                        color="primary"
+                        checked
+                    />
+                </div>
             </div>
-        </div>
 
-        <x-slot:footer>
-            <div class="flex items-center justify-between w-full">
-                <x-sampaui::button variant="outline" icon="x-lg">Cancelar</x-sampaui::button>
-                <x-sampaui::button variant="primary" icon="check2-circle" wire:click="save">Salvar Registro</x-sampaui::button>
+            <div class="flex items-center justify-between gap-3 pt-4 border-t border-slate-100">
+                <x-sampaui::button type="button" variant="outline" icon="arrow-counterclockwise">
+                    Limpar
+                </x-sampaui::button>
+                <x-sampaui::button type="submit" variant="primary" icon="check2-circle" wire:click="save">
+                    Salvar Oportunidade
+                </x-sampaui::button>
             </div>
-        </x-slot:footer>
+        </form>
     </x-sampaui::card>
 </div>
 BLADE,
@@ -150,70 +159,102 @@ PHP,
             ],
             'modal_drawer' => [
                 'name' => 'Modal & Drawer Interativo',
-                'description' => 'Controle de estado Livewire para abertura e fechamento de modais e painéis laterais.',
+                'description' => 'Controle de estado Livewire para abertura, foco acessível e painéis laterais.',
                 'html' => <<<'BLADE'
-<div class="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-100 p-6 font-sans">
-  <div class="flex flex-wrap items-center justify-center gap-3">
-    <x-sampaui::button variant="primary" icon="window-stack" wire:click="$set('showCustomerModal', true)">
-      Abrir Modal de Cadastro
-    </x-sampaui::button>
+<div class="flex min-h-screen flex-col items-center justify-center bg-slate-50/80 p-6 font-sans">
+    <div class="w-full max-w-xl space-y-6 text-center">
+        <div>
+            <x-sampaui::badge variant="primary" icon="layers" class="mb-2">Overlays Acessíveis</x-sampaui::badge>
+            <h2 class="text-2xl font-bold tracking-tight text-slate-800">Modais e Drawers Integrados</h2>
+            <p class="mt-1 text-sm text-slate-500">Clique nos gatilhos abaixo para interagir com o ciclo completo de abertura, foco e fechamento.</p>
+        </div>
 
-    <x-sampaui::button variant="secondary" icon="layout-sidebar-inset-reverse" wire:click="$set('showFilterDrawer', true)">
-      Abrir Gaveta Lateral de Filtros
-    </x-sampaui::button>
-  </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+            <!-- Gatilho do Modal -->
+            <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm text-left flex flex-col justify-between hover:shadow-md transition">
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                            <i class="bi bi-window-stack"></i>
+                        </span>
+                        <strong class="text-sm font-semibold text-slate-800">Modal de Cadastro</strong>
+                    </div>
+                    <p class="text-xs text-slate-500 leading-relaxed">Janela modal acessível com focus trap, transições suaves e submissão de formulário.</p>
+                </div>
+                <x-sampaui::button variant="primary" icon="person-plus" wire:click="$set('showCustomerModal', true)" full>
+                    Abrir Modal
+                </x-sampaui::button>
+            </div>
 
-  <!-- Modal Interativo -->
-  <x-sampaui::modal
-    model="showCustomerModal"
-    title="Novo Cliente"
-    subtitle="Cadastre as informações principais para iniciar o atendimento."
-    size="lg"
-  >
-    <div class="space-y-4">
-      <x-sampaui::input name="nome" label="Nome Completo" placeholder="Digite o nome..." icon="person" required />
-      <x-sampaui::input name="email" type="email" label="Email Corporativo" placeholder="cliente@empresa.com" icon="envelope" required />
-      <x-sampaui::select-search
-        name="segmento"
-        label="Segmento"
-        placeholder="Escolha um segmento"
-        :options="['tech' => 'Tecnologia', 'retail' => 'Varejo', 'service' => 'Serviços']"
-      />
+            <!-- Gatilho do Drawer -->
+            <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm text-left flex flex-col justify-between hover:shadow-md transition">
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary/10 text-secondary">
+                            <i class="bi bi-layout-sidebar-inset-reverse"></i>
+                        </span>
+                        <strong class="text-sm font-semibold text-slate-800">Painel Lateral</strong>
+                    </div>
+                    <p class="text-xs text-slate-500 leading-relaxed">Gaveta lateral expansível ideal para filtros avançados, configurações ou detalhes rápidos.</p>
+                </div>
+                <x-sampaui::button variant="secondary" icon="funnel" wire:click="$set('showFilterDrawer', true)" full>
+                    Abrir Gaveta
+                </x-sampaui::button>
+            </div>
+        </div>
     </div>
 
-    <x-slot:actions>
-      <x-sampaui::button variant="outline" wire:click="$set('showCustomerModal', false)">
-        Cancelar
-      </x-sampaui::button>
-      <x-sampaui::button variant="primary" icon="check2" wire:click="save">
-        Salvar Cliente
-      </x-sampaui::button>
-    </x-slot:actions>
-  </x-sampaui::modal>
+    <!-- Modal Interativo -->
+    <x-sampaui::modal
+        model="showCustomerModal"
+        title="Novo Cliente"
+        subtitle="Preencha as informações principais para iniciar o atendimento."
+        size="lg"
+    >
+        <div class="space-y-4">
+            <x-sampaui::input name="nome" label="Nome Completo" placeholder="Digite o nome..." icon="person" required />
+            <x-sampaui::input name="email" type="email" label="Email Corporativo" placeholder="cliente@empresa.com" icon="envelope" required />
+            <x-sampaui::select-search
+                name="segmento"
+                label="Segmento"
+                placeholder="Escolha um segmento"
+                :options="['tech' => 'Tecnologia & SaaS', 'retail' => 'Varejo & E-commerce', 'service' => 'Prestação de Serviços']"
+            />
+        </div>
 
-  <!-- Drawer Lateral -->
-  <x-sampaui::drawer
-    model="showFilterDrawer"
-    placement="right"
-    title="Filtros Avançados"
-    subtitle="Refine os resultados da listagem"
-    size="md"
-  >
-    <div class="space-y-4">
-      <x-sampaui::input name="busca" label="Termo de Busca" icon="search" placeholder="Nome, email ou documento..." />
-      <x-sampaui::select name="status" label="Status" :options="['all' => 'Todos', 'active' => 'Ativos', 'pending' => 'Pendentes']" />
-      <x-sampaui::toggle name="urgent" label="Apenas urgentes" checked />
-    </div>
+        <x-slot:actions>
+            <x-sampaui::button variant="outline" wire:click="$set('showCustomerModal', false)">
+                Cancelar
+            </x-sampaui::button>
+            <x-sampaui::button variant="primary" icon="check2" wire:click="save">
+                Salvar Cliente
+            </x-sampaui::button>
+        </x-slot:actions>
+    </x-sampaui::modal>
 
-    <x-slot:actions>
-      <x-sampaui::button variant="outline" wire:click="$set('showFilterDrawer', false)">
-        Fechar
-      </x-sampaui::button>
-      <x-sampaui::button variant="primary" wire:click="$set('showFilterDrawer', false)">
-        Aplicar Filtros
-      </x-sampaui::button>
-    </x-slot:actions>
-  </x-sampaui::drawer>
+    <!-- Drawer Lateral -->
+    <x-sampaui::drawer
+        model="showFilterDrawer"
+        placement="right"
+        title="Filtros Avançados"
+        subtitle="Refine os resultados da listagem operacional."
+        size="md"
+    >
+        <div class="space-y-4">
+            <x-sampaui::input name="busca" label="Termo de Busca" icon="search" placeholder="Nome, email ou documento..." />
+            <x-sampaui::select name="status" label="Status" :options="['all' => 'Todos os Registros', 'active' => 'Ativos', 'pending' => 'Pendentes', 'archived' => 'Arquivados']" />
+            <x-sampaui::toggle name="urgent" label="Exibir apenas urgentes" checked />
+        </div>
+
+        <x-slot:actions>
+            <x-sampaui::button variant="outline" wire:click="$set('showFilterDrawer', false)">
+                Fechar
+            </x-sampaui::button>
+            <x-sampaui::button variant="primary" icon="check2" wire:click="$set('showFilterDrawer', false)">
+                Aplicar Filtros
+            </x-sampaui::button>
+        </x-slot:actions>
+    </x-sampaui::drawer>
 </div>
 BLADE,
                 'css' => '',
@@ -248,14 +289,57 @@ class Playground extends Component
 PHP,
             ],
             'datatable' => [
-                'name' => 'DataTable Profissional',
-                'description' => 'Tabela rica com busca, ordenação de colunas, paginação e ações.',
+                'name' => 'DataTable com Métricas',
+                'description' => 'Tabela rica com cards de indicadores, busca, ordenação de colunas e paginação.',
                 'html' => <<<'BLADE'
-<div class="min-h-screen bg-slate-50 p-6 font-sans">
+<div class="min-h-screen bg-slate-50/80 p-4 sm:p-8 font-sans">
     <div class="mx-auto max-w-5xl space-y-6">
+        <!-- Indicadores Rápidos (Cards de Métricas) -->
+        <div class="grid gap-4 sm:grid-cols-3">
+            <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total de Clientes</span>
+                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                        <i class="bi bi-people"></i>
+                    </span>
+                </div>
+                <div class="mt-3 flex items-baseline gap-2">
+                    <strong class="text-2xl font-bold text-slate-800">1.428</strong>
+                    <span class="text-xs font-semibold text-emerald-600">+12% este mês</span>
+                </div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Faturamento Ativo</span>
+                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600">
+                        <i class="bi bi-currency-dollar"></i>
+                    </span>
+                </div>
+                <div class="mt-3 flex items-baseline gap-2">
+                    <strong class="text-2xl font-bold text-slate-800">R$ 84.920</strong>
+                    <span class="text-xs font-semibold text-emerald-600">+8.4%</span>
+                </div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Taxa de Conversão</span>
+                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-purple/10 text-purple">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </span>
+                </div>
+                <div class="mt-3 flex items-baseline gap-2">
+                    <strong class="text-2xl font-bold text-slate-800">24.6%</strong>
+                    <span class="text-xs font-semibold text-slate-500">Meta: 20%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela Rica SampaUI -->
         <x-sampaui::table
-            title="Gestão de Clientes"
-            description="Listagem completa com busca e ordenação sincronizadas via Livewire."
+            title="Gestão de Carteira de Clientes"
+            description="Listagem completa com busca e ordenação sincronizadas em tempo real."
             searchable
             search-model="search"
             selectable
@@ -311,127 +395,22 @@ class CustomerTable extends Component
 }
 PHP,
             ],
-            'chat' => [
-                'name' => 'Central de Atendimento (Chat)',
-                'description' => 'Interface moderna de atendimento com lista de conversas, mensagens e compositor.',
-                'html' => <<<'BLADE'
-<div class="h-screen bg-slate-100 p-4 font-sans">
-    <div class="h-full rounded-2xl border border-slate-200 bg-white shadow-xl overflow-hidden flex flex-col md:flex-row">
-        <!-- Sidebar de Conversas -->
-        <div class="w-full md:w-80 border-r border-slate-200 bg-slate-50/50 flex flex-col">
-            <div class="p-4 border-b border-slate-200">
-                <x-sampaui::input name="chat_search" placeholder="Buscar conversas..." icon="search" />
-            </div>
-            <div class="flex-1 overflow-y-auto divide-y divide-slate-100 p-2 space-y-1">
-                <div class="flex items-center gap-3 p-3 rounded-xl bg-primary/10 border border-primary/20 cursor-pointer">
-                    <x-sampaui::avatar name="Ana Souza" size="md" status="online" />
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between">
-                            <strong class="text-sm font-semibold text-secondary truncate">Ana Souza</strong>
-                            <span class="text-[10px] text-slate-400">10:42</span>
-                        </div>
-                        <p class="text-xs text-slate-500 truncate">Olá! Preciso tirar uma dúvida sobre a proposta.</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 transition cursor-pointer">
-                    <x-sampaui::avatar name="Bruno Lima" size="md" status="away" />
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between">
-                            <strong class="text-sm font-semibold text-secondary truncate">Bruno Lima</strong>
-                            <span class="text-[10px] text-slate-400">09:15</span>
-                        </div>
-                        <p class="text-xs text-slate-500 truncate">Perfeito, contrato assinado!</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Área Principal de Mensagens -->
-        <div class="flex-1 flex flex-col min-w-0 bg-white">
-            <!-- Header do Chat -->
-            <div class="h-16 px-6 border-b border-slate-200 flex items-center justify-between bg-white">
-                <div class="flex items-center gap-3">
-                    <x-sampaui::avatar name="Ana Souza" size="sm" status="online" />
-                    <div>
-                        <strong class="block text-sm font-semibold text-secondary">Ana Souza</strong>
-                        <span class="text-xs text-emerald-600 font-medium">Online agora</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2">
-                    <x-sampaui::button size="sm" variant="outline" icon="telephone" />
-                    <x-sampaui::button size="sm" variant="outline" icon="three-dots-vertical" />
-                </div>
-            </div>
-
-            <!-- Corpo de Mensagens -->
-            <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/30">
-                <x-sampaui::chat-message
-                    sender="Ana Souza"
-                    time="10:40"
-                    message="Bom dia! Tudo bem? Gostaria de saber se o desconto promocional ainda está ativo."
-                />
-                <x-sampaui::chat-message
-                    sender="Você"
-                    time="10:42"
-                    message="Olá Ana! Sim, conseguimos manter as condições especiais para fechamento hoje."
-                    outgoing
-                />
-            </div>
-
-            <!-- Compositor de Mensagem -->
-            <div class="p-4 border-t border-slate-200 bg-white">
-                <x-sampaui::chat-composer
-                    placeholder="Digite sua resposta..."
-                    wire-model="message"
-                    send-action="sendMessage"
-                />
-            </div>
-        </div>
-    </div>
-</div>
-BLADE,
-                'css' => '',
-                'js' => '',
-                'livewire' => <<<'PHP'
-namespace App\Livewire;
-
-use Livewire\Component;
-
-class ChatCenter extends Component
-{
-    public string $message = '';
-
-    public function sendMessage(): void
-    {
-        if (trim($this->message) === '') return;
-
-        $this->message = '';
-    }
-
-    public function render()
-    {
-        return view('livewire.chat-center');
-    }
-}
-PHP,
-            ],
             'login' => [
                 'name' => 'Formulário de Autenticação',
                 'description' => 'Card de login elegante com validações, revealable password e botão de submissão.',
                 'html' => <<<'BLADE'
-<div class="mx-auto flex min-h-screen max-w-lg items-center justify-center p-4">
-    <x-sampaui::card padding="lg" class="w-full shadow-default">
-        <div class="mb-8 text-center">
-            <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-default bg-light">
+<div class="mx-auto flex min-h-screen max-w-md items-center justify-center p-4 font-sans">
+    <x-sampaui::card padding="lg" class="w-full shadow-2xl border-slate-200/80 bg-white">
+        <div class="mb-6 text-center">
+            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-3">
                 <x-sampaui::brand-mark />
             </div>
-            <p class="mt-5 text-sm font-semibold uppercase tracking-[0.24em] text-primary">SampaUI</p>
-            <h2 class="mt-3 text-3xl font-semibold tracking-tight text-primary">Acesse sua conta</h2>
-            <p class="mt-2 text-sm text-secondary">Entre no painel operacional.</p>
+            <p class="text-xs font-bold uppercase tracking-[0.24em] text-primary">SampaUI Design</p>
+            <h2 class="mt-2 text-2xl font-bold tracking-tight text-slate-800">Acesse sua Conta</h2>
+            <p class="mt-1 text-xs text-slate-500">Entre com suas credenciais corporativas.</p>
         </div>
 
-        <form class="space-y-5" wire:submit.prevent="authenticate">
+        <form class="space-y-4" wire:submit.prevent="authenticate">
             @if ($hasError)
                 <x-sampaui::alert variant="danger" title="Credenciais inválidas" wire:dirty.remove>
                     Confira seu e-mail e senha antes de tentar novamente.
@@ -451,27 +430,27 @@ PHP,
             <x-sampaui::input
                 name="password"
                 type="password"
-                label="Senha"
+                label="Senha de Acesso"
                 icon="lock"
                 revealable
-                placeholder="Digite sua senha"
+                placeholder="••••••••"
                 wire:model="password"
                 required
             />
 
-            <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
                 <x-sampaui::checkbox name="remember" label="Lembrar de mim" color="primary" wire:model="remember" />
-                <a href="#" class="text-sm font-semibold text-primary transition hover:text-primary/80">Esqueceu a senha?</a>
+                <a href="#" class="text-xs font-semibold text-primary transition hover:underline">Esqueceu a senha?</a>
             </div>
 
-            <x-sampaui::button type="submit" icon="box-arrow-in-right" :loading="$isAuthenticating" full>
-                Entrar
+            <x-sampaui::button type="submit" variant="primary" icon="box-arrow-in-right" :loading="$isAuthenticating" full>
+                Entrar na Plataforma
             </x-sampaui::button>
         </form>
 
-        <p class="mt-7 text-center text-sm text-secondary">
-            Novo por aqui?
-            <a href="#" class="font-semibold text-primary">Criar conta</a>
+        <p class="mt-6 text-center text-xs text-slate-500">
+            Ainda não possui acesso?
+            <a href="#" class="font-semibold text-primary hover:underline">Solicitar convite</a>
         </p>
     </x-sampaui::card>
 </div>
@@ -518,51 +497,67 @@ class Login extends Component
 PHP,
             ],
             'card' => [
-                'name' => 'Card de Perfil',
-                'description' => 'Card moderno com avatar, badges de status, métricas e botões de ação.',
+                'name' => 'Card de Perfil & Portfólio',
+                'description' => 'Card moderno com avatar, banner gradiente, métricas e tags de especialidades.',
                 'html' => <<<'BLADE'
-<div class="flex min-h-screen items-center justify-center bg-slate-50 p-6 font-sans">
-  <div class="w-full max-w-sm overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl transition-all duration-300 hover:shadow-2xl">
-    <div class="h-28 bg-gradient-to-r from-primary to-purple p-4 relative">
-      <span class="absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-full bg-white/20 backdrop-blur-md px-3 py-1 text-xs font-semibold text-white">
-        <i class="bi bi-stars"></i> Pro
-      </span>
+<div class="flex min-h-screen items-center justify-center bg-slate-50/80 p-6 font-sans">
+    <div class="w-full max-w-sm overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xl transition-all duration-300 hover:shadow-2xl">
+        <!-- Banner Gradiente com Badge -->
+        <div class="h-28 bg-gradient-to-r from-primary via-info to-purple p-4 relative">
+            <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-white/20 backdrop-blur-md px-3 py-1 text-xs font-semibold text-white">
+                <i class="bi bi-stars"></i> Pro Member
+            </span>
+        </div>
+
+        <div class="relative px-6 pb-6 pt-0">
+            <!-- Avatar e Ações Rápidas -->
+            <div class="-mt-12 mb-4 flex items-end justify-between">
+                <div class="relative rounded-full ring-4 ring-white bg-white">
+                    <x-sampaui::avatar name="Mariana Albuquerque" size="lg" status="online" />
+                </div>
+                <div class="flex gap-2">
+                    <x-sampaui::button size="sm" variant="outline" icon="chat-dots" wire:click="toggleConnect">
+                        Mensagem
+                    </x-sampaui::button>
+                    <x-sampaui::button size="sm" variant="primary" icon="person-plus" wire:click="toggleConnect">
+                        Conectar
+                    </x-sampaui::button>
+                </div>
+            </div>
+
+            <!-- Informações Principais -->
+            <div>
+                <h3 class="text-lg font-bold text-slate-800">Mariana Albuquerque</h3>
+                <p class="text-xs font-semibold text-primary">Lead UI/UX Designer & Frontend Dev</p>
+                <p class="mt-2 text-xs leading-relaxed text-slate-500">
+                    Especialista em design systems modernos, acessibilidade WAI-ARIA e arquiteturas reativas com Laravel & Livewire.
+                </p>
+            </div>
+
+            <!-- Tags de Especialidades -->
+            <div class="mt-4 flex flex-wrap gap-1.5">
+                <x-sampaui::badge variant="light" size="sm">Design System</x-sampaui::badge>
+                <x-sampaui::badge variant="light" size="sm">Tailwind CSS</x-sampaui::badge>
+                <x-sampaui::badge variant="light" size="sm">Livewire 3</x-sampaui::badge>
+            </div>
+
+            <!-- Métricas em Colunas -->
+            <div class="mt-5 grid grid-cols-3 divide-x divide-slate-100 rounded-xl border border-slate-100 bg-slate-50/60 p-3 text-center">
+                <div>
+                    <strong class="block text-base font-bold text-slate-800">1.2k</strong>
+                    <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Seguidores</span>
+                </div>
+                <div>
+                    <strong class="block text-base font-bold text-slate-800">84</strong>
+                    <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Projetos</span>
+                </div>
+                <div>
+                    <strong class="block text-base font-bold text-slate-800">4.9 ★</strong>
+                    <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Avaliação</span>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="relative px-6 pb-6 pt-0">
-      <div class="-mt-12 mb-4 flex items-end justify-between">
-        <div class="relative">
-          <x-sampaui::avatar name="Mariana Albuquerque" size="lg" status="online" />
-        </div>
-        <x-sampaui::button size="sm" icon="person-plus" wire:click="toggleConnect">
-          Conectar
-        </x-sampaui::button>
-      </div>
-
-      <div>
-        <h3 class="text-xl font-bold text-secondary">Mariana Albuquerque</h3>
-        <p class="text-sm font-medium text-slate-500">Lead UI/UX Designer @ SampaUI</p>
-        <p class="mt-2 text-xs leading-relaxed text-slate-600">
-          Especialista em design systems, prototipação ágil e interfaces web focadas em experiência do usuário.
-        </p>
-      </div>
-
-      <div class="mt-5 grid grid-cols-3 divide-x divide-slate-100 rounded-xl border border-slate-100 bg-slate-50/50 p-3 text-center">
-        <div>
-          <strong class="block text-lg font-bold text-secondary">1.2k</strong>
-          <span class="text-[11px] font-medium text-slate-500">Seguidores</span>
-        </div>
-        <div>
-          <strong class="block text-lg font-bold text-secondary">84</strong>
-          <span class="text-[11px] font-medium text-slate-500">Projetos</span>
-        </div>
-        <div>
-          <strong class="block text-lg font-bold text-secondary">4.9</strong>
-          <span class="text-[11px] font-medium text-slate-500">Avaliação</span>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 BLADE,
                 'css' => '',
@@ -581,6 +576,11 @@ class Playground extends Component
     public function toggleConnect(): void
     {
         $this->connected = ! $this->connected;
+        $this->dispatch('toast', [
+            'type' => 'info',
+            'title' => $this->connected ? 'Conexão enviada!' : 'Conexão desfeita.',
+            'message' => 'Status de relacionamento atualizado.',
+        ]);
     }
 
     public function render()
@@ -592,30 +592,26 @@ PHP,
             ],
             'architecture' => [
                 'name' => 'Composabilidade & A11y',
-                'description' => 'Arquitetura composável estilo Radix/shadcn com modal acessível, abas, badge e utilitário de classes.',
+                'description' => 'Arquitetura composável com abas, foco acessível, focus trap e modal de configurações.',
                 'html' => <<<'BLADE'
-<div class="flex min-h-screen items-center justify-center bg-slate-50 p-6 font-sans">
-    <!-- Componente Global de Notificações Toast -->
-    <x-sampaui::toast position="top-right" />
-
+<div class="flex min-h-screen items-center justify-center bg-slate-50/80 p-4 sm:p-8 font-sans">
     <div class="w-full max-w-xl space-y-6">
-        <!-- Card de Apresentação da Arquitetura -->
         <x-sampaui::card
             title="Arquitetura Composável & Acessível"
-            description="Exemplo de composabilidade, foco acessível e performance client-first."
+            description="Exemplo de composabilidade, foco acessível WAI-ARIA e performance client-first."
             padding="lg"
-            class="shadow-xl"
+            class="shadow-xl border-slate-200/80 bg-white"
         >
             <x-slot:actions>
                 <x-sampaui::badge variant="primary" icon="universal-access">WAI-ARIA 1.2</x-sampaui::badge>
             </x-slot:actions>
 
             <div class="space-y-4">
-                <x-sampaui::alert variant="info" title="Padrão Radix / shadcn">
-                    Subcomponentes atômicos com gerenciamento de estado local via Alpine.js e sincronização Livewire sob demanda.
+                <x-sampaui::alert variant="info" icon="stars" title="Padrão Radix / shadcn">
+                    Componentes desacoplados com estado local reativo via Alpine.js e sincronização Livewire transparente.
                 </x-sampaui::alert>
 
-                <!-- Abas com navegação nativa e painéis reativos -->
+                <!-- Abas com Navegação Suave -->
                 <x-sampaui::tabs
                     :tabs="[
                         'overview' => 'Visão Geral',
@@ -626,12 +622,12 @@ PHP,
                 >
                     <!-- Aba 1: Visão Geral -->
                     <x-sampaui::tab-panel name="overview">
-                        <div class="rounded-xl border border-border/80 bg-surface-subtle p-4 space-y-3">
+                        <div class="rounded-xl border border-slate-200/80 bg-slate-50/60 p-4 space-y-3">
                             <div class="flex items-center justify-between">
-                                <h4 class="font-bold text-heading text-sm">Controle de Sessão Rápida</h4>
+                                <h4 class="font-bold text-slate-800 text-sm">Controle de Sessão Rápida</h4>
                                 <x-sampaui::badge variant="success" icon="check-circle">Pronto para Produção</x-sampaui::badge>
                             </div>
-                            <p class="text-xs text-secondary/80 leading-relaxed">
+                            <p class="text-xs text-slate-500 leading-relaxed">
                                 Abra o modal abaixo para testar o foco cíclico (focus trap), tecla Escape e teleport sem acionar requisições backend.
                             </p>
 
@@ -649,9 +645,9 @@ PHP,
 
                     <!-- Aba 2: Segurança & A11y -->
                     <x-sampaui::tab-panel name="security">
-                        <div class="rounded-xl border border-border/80 bg-surface-subtle p-4 space-y-3">
-                            <h4 class="font-bold text-heading text-sm">Acessibilidade WAI-ARIA 1.2</h4>
-                            <p class="text-xs text-secondary/80 leading-relaxed">
+                        <div class="rounded-xl border border-slate-200/80 bg-slate-50/60 p-4 space-y-3">
+                            <h4 class="font-bold text-slate-800 text-sm">Acessibilidade WAI-ARIA 1.2</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">
                                 Modais e Drawers capturam o foco do teclado (Tab / Shift+Tab) e restauram para o botão de origem ao fechar.
                             </p>
                             <div class="flex items-center gap-2 pt-1">
@@ -663,11 +659,11 @@ PHP,
 
                     <!-- Aba 3: CLI & DX -->
                     <x-sampaui::tab-panel name="cli">
-                        <div class="rounded-xl border border-border/80 bg-surface-subtle p-4 space-y-3">
-                            <h4 class="font-bold text-heading text-sm">Comandos de Ejeção (shadcn style)</h4>
+                        <div class="rounded-xl border border-slate-200/80 bg-slate-50/60 p-4 space-y-3">
+                            <h4 class="font-bold text-slate-800 text-sm">Comandos de Ejeção (shadcn style)</h4>
                             <pre class="overflow-x-auto rounded-lg bg-secondary p-2.5 text-[11px] font-mono text-white"><code>php artisan sampaui:add button modal tabs</code></pre>
-                            <p class="text-xs text-secondary/80 leading-relaxed">
-                                Copie o código-fonte Blade diretamente para <code>resources/views/components/sampaui</code>.
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Copie o código-fonte Blade diretamente para o seu projeto Laravel.
                             </p>
                         </div>
                     </x-sampaui::tab-panel>
@@ -707,10 +703,10 @@ PHP,
                     checked
                 />
 
-                <div class="flex items-center justify-end gap-3 pt-4 border-t border-border/60">
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
                     <x-sampaui::button
                         type="button"
-                        variant="light"
+                        variant="outline"
                         x-on:click="close()"
                     >
                         Cancelar
@@ -720,7 +716,6 @@ PHP,
                         type="submit"
                         variant="primary"
                         icon="check2"
-                        loading-target="saveSettings"
                     >
                         Salvar Alterações
                     </x-sampaui::button>
