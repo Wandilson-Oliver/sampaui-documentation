@@ -122,7 +122,7 @@ export function registerPlayground(Alpine) {
         ],
 
         init() {
-            const saved = localStorage.getItem('sampaui_playground_state_v13');
+            const saved = localStorage.getItem('sampaui_playground_state_v14');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -658,7 +658,7 @@ export function registerPlayground(Alpine) {
                 currentDevice: this.currentDevice,
                 splitPercent: this.splitPercent,
             };
-            localStorage.setItem('sampaui_playground_state_v13', JSON.stringify(state));
+            localStorage.setItem('sampaui_playground_state_v14', JSON.stringify(state));
         },
 
         async compileBladeCode(code) {
@@ -1125,10 +1125,6 @@ export function registerPlayground(Alpine) {
     }, true);
   </script>
 
-  <!-- SampaUI Runtime & Alpine.js -->
-  <script src="${sampauiJsUrl}"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
-
   <style>
     [x-cloak] {
       display: none !important;
@@ -1184,6 +1180,16 @@ export function registerPlayground(Alpine) {
 </head>
 <body class="h-full ${bodyBg} antialiased selection:bg-primary/30">
   ${compiledHtml}
+
+  <!-- SampaUI Runtime & Alpine.js -->
+  <script src="${sampauiJsUrl}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+  <script>
+    if (window.Alpine && typeof window.Alpine.start === 'function' && !window.Alpine.initialized) {
+      window.Alpine.initialized = true;
+      window.Alpine.start();
+    }
+  </script>
 
   <script>
     try {
