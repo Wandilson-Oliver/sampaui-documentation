@@ -754,8 +754,18 @@ export function registerPlayground(Alpine) {
   <!-- Bootstrap Icons CDN -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-  <!-- SampaUI CSS Pré-compilado -->
-  <link rel="stylesheet" href="${sampauiCssUrl}">
+  <!-- Silenciar aviso informativo do Tailwind CDN no preview -->
+  <script>
+    (function() {
+      const _origWarn = console.warn;
+      console.warn = function(...args) {
+        if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com')) {
+          return;
+        }
+        _origWarn.apply(console, args);
+      };
+    })();
+  </script>
 
   <!-- Tailwind CSS CDN para utilitários dinâmicos -->
   <script src="https://cdn.tailwindcss.com"></script>
