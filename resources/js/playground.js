@@ -122,7 +122,7 @@ export function registerPlayground(Alpine) {
         ],
 
         init() {
-            const saved = localStorage.getItem('sampaui_playground_state_v10');
+            const saved = localStorage.getItem('sampaui_playground_state_v11');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -658,7 +658,7 @@ export function registerPlayground(Alpine) {
                 currentDevice: this.currentDevice,
                 splitPercent: this.splitPercent,
             };
-            localStorage.setItem('sampaui_playground_state_v10', JSON.stringify(state));
+            localStorage.setItem('sampaui_playground_state_v11', JSON.stringify(state));
         },
 
         async compileBladeCode(code) {
@@ -926,26 +926,36 @@ export function registerPlayground(Alpine) {
     document.addEventListener('submit', (e) => {
       e.preventDefault();
       const form = e.target;
-      const submitBtn = form.querySelector('button[type="submit"]');
+      const submitBtn = form.querySelector('button[type="submit"]') || form.querySelector('button:not([type="button"])');
 
       if (submitBtn) {
-        const originalHtml = submitBtn.innerHTML;
+        const loadingIcon = submitBtn.querySelector('[wire\\:loading]') || submitBtn.querySelector('.animate-spin');
+        const normalIcon = submitBtn.querySelector('[wire\\:loading\\.remove]') || submitBtn.querySelector('.bi-check2') || submitBtn.querySelector('.bi-check');
+
         submitBtn.disabled = true;
         submitBtn.classList.add('opacity-75', 'cursor-wait');
-        submitBtn.innerHTML = '<i class="bi bi-arrow-repeat animate-spin" aria-hidden="true"></i> <span>Salvando...</span>';
+
+        if (loadingIcon) loadingIcon.style.setProperty('display', 'inline-block', 'important');
+        if (normalIcon) normalIcon.style.setProperty('display', 'none', 'important');
 
         setTimeout(() => {
           submitBtn.disabled = false;
           submitBtn.classList.remove('opacity-75', 'cursor-wait');
-          submitBtn.innerHTML = originalHtml;
 
-          window.dispatchEvent(new CustomEvent('toast', {
-            detail: {
-              type: 'success',
-              title: 'Configurações salvas!',
-              message: 'As preferências foram atualizadas com sucesso.'
-            }
-          }));
+          if (loadingIcon) loadingIcon.style.setProperty('display', 'none', 'important');
+          if (normalIcon) normalIcon.style.setProperty('display', 'inline-block', 'important');
+
+          const toastData = {
+            type: 'success',
+            title: 'Configurações salvas!',
+            message: 'As preferências foram atualizadas com sucesso.'
+          };
+
+          window.dispatchEvent(new CustomEvent('toast', { detail: toastData }));
+          document.dispatchEvent(new CustomEvent('toast', { detail: toastData }));
+          if (window.parent && window.parent !== window) {
+            window.parent.dispatchEvent(new CustomEvent('toast', { detail: toastData }));
+          }
 
           // Fechar modal após salvar com sucesso
           document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
@@ -959,7 +969,7 @@ export function registerPlayground(Alpine) {
           });
           dispatchOverlayClose('edit-profile');
           dispatchOverlayClose();
-        }, 500);
+        }, 600);
       } else {
         dispatchOverlayClose('edit-profile');
         dispatchOverlayClose();
@@ -1095,6 +1105,19 @@ export function registerPlayground(Alpine) {
   <style>
     [x-cloak] {
       display: none !important;
+    }
+    [wire\:loading],
+    [wire\:loading\.delay],
+    [wire\:loading\.inline-block],
+    [wire\:loading\.inline],
+    [wire\:loading\.block],
+    [wire\:loading\.flex],
+    [wire\:loading\.table],
+    [wire\:loading\.grid] {
+      display: none !important;
+    }
+    [wire\:loading\.remove] {
+      display: inline-flex !important;
     }
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;

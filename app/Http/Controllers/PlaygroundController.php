@@ -595,6 +595,9 @@ PHP,
                 'description' => 'Arquitetura composável estilo Radix/shadcn com modal acessível, abas, badge e utilitário de classes.',
                 'html' => <<<'BLADE'
 <div class="flex min-h-screen items-center justify-center bg-slate-50 p-6 font-sans">
+    <!-- Componente Global de Notificações Toast -->
+    <x-sampaui::toast position="top-right" />
+
     <div class="w-full max-w-xl space-y-6">
         <!-- Card de Apresentação da Arquitetura -->
         <x-sampaui::card
