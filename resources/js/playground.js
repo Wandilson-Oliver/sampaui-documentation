@@ -125,7 +125,7 @@ export function registerPlayground(Alpine) {
         compileAbortController: null,
 
         init() {
-            const saved = localStorage.getItem('sampaui_playground_state_v24');
+            const saved = localStorage.getItem('sampaui_playground_state_v25');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -666,7 +666,7 @@ export function registerPlayground(Alpine) {
                 currentDevice: this.currentDevice,
                 splitPercent: this.splitPercent,
             };
-            localStorage.setItem('sampaui_playground_state_v24', JSON.stringify(state));
+            localStorage.setItem('sampaui_playground_state_v25', JSON.stringify(state));
         },
 
         async compileBladeCode(code) {
@@ -879,6 +879,43 @@ export function registerPlayground(Alpine) {
   ${compiledHtml}
 
   <script>
+    function openMatchingOverlays(key) {
+      const candidates = [key, 'sampaui-modal-standalone-' + key, 'sampaui-drawer-standalone-' + key].filter(Boolean);
+      window.dispatchEvent(new CustomEvent('open-modal', { detail: key }));
+      window.dispatchEvent(new CustomEvent('open-drawer', { detail: key }));
+
+      document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
+        if (el._x_dataStack) {
+          el._x_dataStack.forEach((scope) => {
+            if (scope && typeof scope.openOverlay === 'function' && !scope.visible) {
+              const elId = el.getAttribute('id') || '';
+              if (!key || candidates.includes(elId) || elId.endsWith('-' + key) || elId.includes(key)) {
+                scope.openOverlay();
+              }
+            }
+          });
+        }
+      });
+    }
+
+    function closeMatchingOverlays(key) {
+      const candidates = [key, 'sampaui-modal-standalone-' + key, 'sampaui-drawer-standalone-' + key].filter(Boolean);
+      window.dispatchEvent(new CustomEvent('close-modal', { detail: key }));
+      window.dispatchEvent(new CustomEvent('close-drawer', { detail: key }));
+
+      document.querySelectorAll('[data-sampaui-overlay]').forEach((el) => {
+        if (el._x_dataStack) {
+          el._x_dataStack.forEach((scope) => {
+            if (scope && typeof scope.close === 'function' && scope.visible) {
+              const elId = el.getAttribute('id') || '';
+              if (!key || candidates.includes(elId) || elId.endsWith('-' + key) || elId.includes(key)) {
+                scope.close();
+              }
+            }
+          });
+        }
+      });
+    }
 
     // Interceptar cliques em gatilhos wire:click para modais, drawers e propriedades reativas
     document.addEventListener('click', (e) => {
@@ -893,50 +930,52 @@ export function registerPlayground(Alpine) {
       }
 
       if (action) {
-        // Atribuição direta: wire:click="showModal = true"
+        // Atribuição direta: wire:click="showModal = true" ou $wire.showModal = true
         if (action.includes('=')) {
-          const parts = action.split('=');
+          const parts = action.replace(/^\$wire\./, '').split('=');
           const prop = parts[0].trim();
           const val = parts[1].trim().toLowerCase() === 'true' || parts[1].trim() === '1';
           window.wireState[prop] = val;
-          window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: prop }));
-          window.dispatchEvent(new CustomEvent(val ? 'open-drawer' : 'close-drawer', { detail: prop }));
+          if (val) openMatchingOverlays(prop);
+          else closeMatchingOverlays(prop);
           return;
         }
 
-        // $set: wire:click="$set('showModal', true)"
-        if (action.startsWith('$set(')) {
-          const match = action.match(/\$set\(\s*['"]([^'"]+)['"]\s*,\s*(true|false|1|0|'[^']*'|"[^"]*")\s*\)/i);
+        // $set / set: wire:click="$set('showModal', true)" ou $wire.$set(...)
+        if (action.includes('$set(') || action.includes('.set(') || action.startsWith('set(')) {
+          const match = action.match(/(?:\$set|set)\(\s*['"]([^'"]+)['"]\s*,\s*(true|false|1|0|'[^']*'|"[^"]*")\s*\)/i);
           if (match) {
             const prop = match[1];
             const val = match[2].toLowerCase() === 'true' || match[2] === '1';
             window.wireState[prop] = val;
-            window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: prop }));
-            window.dispatchEvent(new CustomEvent(val ? 'open-drawer' : 'close-drawer', { detail: prop }));
+            if (val) openMatchingOverlays(prop);
+            else closeMatchingOverlays(prop);
             return;
           }
         }
 
-        // $toggle: wire:click="$toggle('showModal')"
-        if (action.startsWith('$toggle(')) {
-          const match = action.match(/\$toggle\(\s*['"]([^'"]+)['"]\s*\)/i);
+        // $toggle / toggle: wire:click="$toggle('showModal')" ou $wire.$toggle(...)
+        if (action.includes('$toggle(') || action.includes('.toggle(') || action.startsWith('toggle(')) {
+          const match = action.match(/(?:\$toggle|toggle)\(\s*['"]([^'"]+)['"]\s*\)/i);
           if (match) {
             const prop = match[1];
             window.wireState[prop] = !window.wireState[prop];
             const val = window.wireState[prop];
-            window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: prop }));
-            window.dispatchEvent(new CustomEvent(val ? 'open-drawer' : 'close-drawer', { detail: prop }));
+            if (val) openMatchingOverlays(prop);
+            else closeMatchingOverlays(prop);
             return;
           }
         }
 
-        // $dispatch: wire:click="$dispatch('open-modal', 'meu-modal')"
+        // $dispatch / dispatch: wire:click="$dispatch('open-modal', 'meu-modal')"
         if (action.includes('$dispatch(') || action.includes('dispatch(')) {
           const match = action.match(/(?:\$)?dispatch\(\s*['"]([^'"]+)['"](?:\s*,\s*['"]?([^'")]+)['"]?)?\s*\)/i);
           if (match) {
             const ev = match[1];
             const detail = match[2] || '';
-            window.dispatchEvent(new CustomEvent(ev, { detail }));
+            if (ev === 'open-modal' || ev === 'open-drawer') openMatchingOverlays(detail);
+            else if (ev === 'close-modal' || ev === 'close-drawer') closeMatchingOverlays(detail);
+            else window.dispatchEvent(new CustomEvent(ev, { detail }));
             return;
           }
         }
@@ -945,8 +984,8 @@ export function registerPlayground(Alpine) {
         if (action in window.wireState || typeof window.wireState[action] === 'boolean') {
           window.wireState[action] = !window.wireState[action];
           const val = window.wireState[action];
-          window.dispatchEvent(new CustomEvent(val ? 'open-modal' : 'close-modal', { detail: action }));
-          window.dispatchEvent(new CustomEvent(val ? 'open-drawer' : 'close-drawer', { detail: action }));
+          if (val) openMatchingOverlays(action);
+          else closeMatchingOverlays(action);
           return;
         }
 
@@ -960,8 +999,7 @@ export function registerPlayground(Alpine) {
             message: 'As alterações foram processadas.'
           };
           window.dispatchEvent(new CustomEvent('toast', { detail: toastData }));
-          window.dispatchEvent(new CustomEvent('close-modal', { detail: overlayId }));
-          window.dispatchEvent(new CustomEvent('close-drawer', { detail: overlayId }));
+          closeMatchingOverlays(overlayId);
           return;
         }
       }
@@ -981,11 +1019,10 @@ export function registerPlayground(Alpine) {
         if (text === 'cancelar' || text === 'fechar' || text === 'cancel' || text === 'close') {
           const parentOverlay = btn.closest('[data-sampaui-overlay]');
           const overlayId = parentOverlay ? parentOverlay.id : null;
-          window.dispatchEvent(new CustomEvent('close-modal', { detail: overlayId }));
-          window.dispatchEvent(new CustomEvent('close-drawer', { detail: overlayId }));
+          closeMatchingOverlays(overlayId);
         }
       }
-    });
+    }, true);
 
     // Interceptar formulários submit simulando ciclo de loading e fechamento automático com Toast
     document.addEventListener('submit', (e) => {
