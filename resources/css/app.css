@@ -50,15 +50,24 @@
 html.dark {
     color-scheme: dark;
     --doc-bg: #0b0f19;
-    --doc-surface: #131823;
-    --doc-surface-subtle: #1c2333;
-    --doc-border: #232b3e;
+    --doc-surface: #111726;
+    --doc-surface-subtle: #172033;
+    --doc-border: #232d42;
     --doc-border-strong: #334155;
     --doc-text: #94a3b8;
     --doc-heading: #f8fafc;
-    --doc-muted: #64748b;
+    --doc-muted: #8b949e;
     --doc-code-bg: #090d16;
     --doc-code-text: #f8fafc;
+
+    --color-surface: #111726;
+    --color-surface-subtle: #172033;
+    --color-heading: #f8fafc;
+    --color-secondary: #c9d1d9;
+    --color-muted: #8b949e;
+    --color-border: #232d42;
+    --color-text: #e6edf3;
+    --color-light: #1c2438;
 }
 
 [x-cloak] {
