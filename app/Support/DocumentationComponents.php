@@ -4140,7 +4140,7 @@ BLADE],
     ['label' => 'Ana Souza'],
 ]" />
 BLADE],
-            'brand-mark' => ['Brand Mark', '<x-sampaui::brand-mark />', 'Marca compacta do SampaUI para sidebars, headers e estados de marca.', 'Identidade visual', '<x-sampaui::brand-mark />'],
+            'brand-mark' => ['Brand Mark', '<x-sampaui::brand-mark />', 'Marca compacta e flexivel do SampaUI para sidebars, headers, logins e estados institucionais.', 'Identidade visual', '<x-sampaui::brand-mark label="SampaUI" subtitle="Design System & UI Kit" badge="v1.0" />'],
             'dropdown-item' => ['Dropdown Item', '<x-sampaui::dropdown-item />', 'Subcomponente de item acionavel para menus Dropdown.', 'Item de menu', <<<'BLADE'
 <x-sampaui::dropdown label="Acoes">
     <x-sampaui::dropdown-item icon="pencil" wire:click="edit">Editar</x-sampaui::dropdown-item>
