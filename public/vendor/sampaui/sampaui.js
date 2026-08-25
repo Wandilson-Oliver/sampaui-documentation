@@ -133,7 +133,7 @@ const portalMenu = (config = {}) => ({
 });
 
 const SampaUI = {
-  version: '0.1.30',
+  version: '0.1.31',
 
   input({ clearable = false } = {}) {
     return {
