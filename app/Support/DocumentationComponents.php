@@ -1435,15 +1435,19 @@ BLADE,
                     ['name' => 'stateEvent', 'type' => 'string', 'default' => 'sampaui:sidebar-state', 'notes' => 'Evento emitido ao iniciar, abrir, fechar ou recolher. Use para ajustar `margin-left` do conteudo.'],
                     ['name' => 'position', 'type' => 'fixed|static', 'default' => 'fixed', 'notes' => 'Use `static` apenas quando a sidebar participar de um container ou preview; dashboards usam `fixed`.'],
                     ['name' => 'logoutHref', 'type' => 'string|null', 'default' => 'null', 'notes' => 'Exibe link de saida quando informado.'],
+                    ['name' => 'logoutLabel', 'type' => 'string', 'default' => 'Sair do sistema', 'notes' => 'Rotulo do link de logout.'],
+                    ['name' => '$brand', 'type' => 'Named slot', 'default' => '-', 'notes' => 'Substitui a area da logo/marca por markup customizado.'],
+                    ['name' => '$userSlot', 'type' => 'Named slot', 'default' => '-', 'notes' => 'Substitui a area de perfil do usuario por markup customizado.'],
                     ['name' => '$footer', 'type' => 'Named slot', 'default' => '-', 'notes' => 'Substitui o rodape padrao.'],
+                    ['name' => '$slot', 'type' => 'Default slot', 'default' => '-', 'notes' => 'Permite injetar blocos e componentes extras na navegacao.'],
                 ],
                 'attributes' => ['class', 'id', 'wire:key', 'x-on:*', 'aria-*', 'data-*'],
                 'accessibility' => [
                     'O componente usa `aria-label` em aside/nav e `aria-current="page"` no item ativo.',
+                    'No mobile (< 768px), um backdrop suave e renderizado com suporte a tecla Escape e clique fora.',
                     'Quando usar `logo-src`, informe `logo-alt` com o nome da marca.',
-                    'Mantenha labels textuais mesmo quando iniciar com `initial-state="closed"`; o estado recolhido esconde apenas visualmente no desktop.',
+                    'Mantenha labels textuais mesmo quando iniciar com `initial-state="closed"`; o estado recolhido exibe tooltip nativo ao passar o mouse.',
                     'Em layouts com sidebar fixa, escute `sampaui:sidebar-state` e aplique a largura emitida no container de conteudo.',
-                    'Evite usar `#` em links reais; envie URLs validas do app consumidor.',
                 ],
                 'examples' => [
                     [
@@ -1466,6 +1470,30 @@ BLADE,
         ['label' => 'Imóveis', 'href' => '/properties', 'icon' => 'buildings', 'active' => true],
         ['label' => 'Mapa', 'href' => '/map', 'icon' => 'map'],
     ]"
+/>
+BLADE,
+                    ],
+                    [
+                        'title' => 'Com Badges e Subitens',
+                        'description' => 'Contadores de notificacoes e submenus com expansao sanfona suave.',
+                        'code' => <<<'BLADE'
+<x-sampaui::sidebar
+    logo-src="/images/logo-operacao.svg"
+    initial-state="open"
+    :items="[
+        ['label' => 'Dashboard', 'href' => '/dashboard', 'icon' => 'grid', 'active' => true],
+        ['label' => 'Mensagens', 'href' => '/mensagens', 'icon' => 'chat-dots', 'badge' => '5', 'badgeVariant' => 'danger'],
+        [
+            'label' => 'Gestao Comercial',
+            'icon' => 'folder',
+            'children' => [
+                ['label' => 'Clientes', 'href' => '/clients', 'active' => false],
+                ['label' => 'Contratos', 'href' => '/contracts', 'icon' => 'file-earmark-text'],
+                ['label' => 'Faturamento', 'href' => '/invoices'],
+            ],
+        ],
+    ]"
+    logout-href="/logout"
 />
 BLADE,
                     ],
